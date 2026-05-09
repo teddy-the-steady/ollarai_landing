@@ -41,6 +41,10 @@
             border-color: rgba(59, 130, 246, 0.5);
         }
 
+        @media (max-width: 640px) {
+            .lang-label-text { display: none; }
+        }
+
         .tooltip-wrapper {
             position: relative;
             display: inline-block;
@@ -89,9 +93,21 @@
                 <a href="#vision" class="hover:text-blue-400 transition">로드맵</a>
                 <a href="#features" class="hover:text-blue-400 transition">주요 기능</a>
             </div>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition shadow-lg shadow-blue-900/30">
-                베타 참여하기
-            </button>
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <button id="lang-btn" onclick="toggleLangMenu()" class="flex items-center gap-1.5 text-slate-300 hover:text-white px-3 py-2 rounded-full hover:bg-white/10 transition text-sm font-medium">
+                        <i class="fas fa-globe text-base"></i>
+                        <span id="lang-label" class="lang-label-text">KO</span>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-32 glass-morphism rounded-xl overflow-hidden shadow-xl z-50">
+                        <button onclick="setLang('ko')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-white/10 transition">한국어</button>
+                        <button onclick="setLang('en')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-white/10 transition">English</button>
+                    </div>
+                </div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition shadow-lg shadow-blue-900/30" data-i18n="cta">
+                    베타 참여하기
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -489,6 +505,33 @@
                 e.stopPropagation();
                 openDialog(this.dataset.dialog);
             });
+        });
+    </script>
+
+    <script>
+        const i18n = {
+            ko: { cta: '베타 참여하기', roadmap: '로드맵', features: '주요 기능' },
+            en: { cta: 'Join Beta', roadmap: 'Roadmap', features: 'Features' }
+        };
+        let currentLang = 'ko';
+
+        function toggleLangMenu() {
+            document.getElementById('lang-menu').classList.toggle('hidden');
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.getElementById('lang-label').textContent = lang.toUpperCase();
+            document.getElementById('lang-menu').classList.add('hidden');
+            document.querySelector('[data-i18n="cta"]').textContent = i18n[lang].cta;
+            document.querySelector('a[href="#vision"]').textContent = i18n[lang].roadmap;
+            document.querySelector('a[href="#features"]').textContent = i18n[lang].features;
+        }
+
+        document.addEventListener('click', function(e) {
+            const btn = document.getElementById('lang-btn');
+            const menu = document.getElementById('lang-menu');
+            if (!btn.contains(e.target)) menu.classList.add('hidden');
         });
     </script>
 </body>
