@@ -441,15 +441,48 @@
             btn.addEventListener('click', () => openDialog());
         });
 
+        function positionAndShow(wrapper) {
+            const box = wrapper.querySelector('.tooltip-box');
+            const rect = wrapper.getBoundingClientRect();
+            const tooltipWidth = 260;
+            const vw = window.innerWidth;
+            const margin = 8;
+            const center = rect.left + rect.width / 2;
+            const tipLeft = center - tooltipWidth / 2;
+            const tipRight = center + tooltipWidth / 2;
+            if (tipLeft < margin) {
+                box.style.transform = `translateX(calc(-50% + ${margin - tipLeft}px))`;
+            } else if (tipRight > vw - margin) {
+                box.style.transform = `translateX(calc(-50% - ${tipRight - (vw - margin)}px))`;
+            } else {
+                box.style.transform = '';
+            }
+            wrapper.classList.add('active');
+        }
+
+        function closeAll() {
+            document.querySelectorAll('.tooltip-wrapper.active').forEach(t => t.classList.remove('active'));
+        }
+
         document.querySelectorAll('.tooltip-wrapper').forEach(tip => {
+            tip.addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const wasActive = this.classList.contains('active');
+                closeAll();
+                if (!wasActive) positionAndShow(this);
+            }, { passive: false });
+
             tip.addEventListener('click', function (e) {
                 e.stopPropagation();
-                this.classList.toggle('active');
+                const wasActive = this.classList.contains('active');
+                closeAll();
+                if (!wasActive) positionAndShow(this);
             });
         });
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.tooltip-wrapper.active').forEach(t => t.classList.remove('active'));
-        });
+
+        document.addEventListener('touchstart', closeAll);
+        document.addEventListener('click', closeAll);
 
         document.querySelectorAll('a[data-dialog]').forEach(link => {
             link.addEventListener('click', function (e) {
