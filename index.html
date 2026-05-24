@@ -426,11 +426,14 @@
                 <p class="text-slate-400 text-lg mb-12 relative z-10" data-i18n="cta-desc">
                     OllarAI의 초기 테스터가 되어 가장 먼저 미래의 투자 환경을 경험하세요.
                 </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
-                    <input type="email" data-i18n-placeholder="email-placeholder" placeholder="이메일을 입력하고 알림 받기" class="px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 outline-none focus:border-blue-500 transition-all md:w-96">
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-bold transition shadow-xl shadow-blue-900/40" data-i18n="cta-register">
-                        지금 등록하기
-                    </button>
+                <div class="flex flex-col items-center gap-2 relative z-10">
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 w-full">
+                        <input id="cta-email-input" type="email" data-i18n-placeholder="email-placeholder" placeholder="이메일을 입력하고 알림 받기" class="px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 outline-none focus:border-blue-500 transition-all md:w-96">
+                        <button id="cta-register-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-bold transition shadow-xl shadow-blue-900/40 min-w-[160px]" data-i18n="cta-register">
+                            지금 등록하기
+                        </button>
+                    </div>
+                    <p id="cta-email-error" class="hidden text-red-400 text-sm mt-1"></p>
                 </div>
             </div>
         </div>
@@ -499,7 +502,7 @@
         document.getElementById('dialog-close').addEventListener('click', closeDialog);
         document.getElementById('dialog-backdrop').addEventListener('click', closeDialog);
 
-        document.querySelectorAll('button.bg-blue-600:not(#dialog-close)').forEach(btn => {
+        document.querySelectorAll('button.bg-blue-600:not(#dialog-close):not(#cta-register-btn)').forEach(btn => {
             btn.addEventListener('click', () => openDialog());
         });
 
@@ -545,6 +548,64 @@
 
         document.addEventListener('touchstart', closeAll);
         document.addEventListener('click', closeAll);
+
+        const API_URL = 'https://flpyq9u80g.execute-api.ap-northeast-2.amazonaws.com/prod/subscribe';
+
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const SPINNER = '<span class="flex items-center justify-center"><span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>';
+
+        document.getElementById('cta-register-btn').addEventListener('click', async () => {
+            const input = document.getElementById('cta-email-input');
+            const email = input.value.trim();
+
+            const errorEl = document.getElementById('cta-email-error');
+            const showError = (msg) => {
+                input.classList.add('border-red-500');
+                errorEl.textContent = msg;
+                errorEl.classList.remove('hidden');
+                setTimeout(() => {
+                    input.classList.remove('border-red-500');
+                    errorEl.classList.add('hidden');
+                }, 2500);
+            };
+
+            if (!email) {
+                showError(i18n[currentLang]['error-empty']);
+                input.focus();
+                return;
+            }
+
+            if (!EMAIL_RE.test(email)) {
+                showError(i18n[currentLang]['error-invalid']);
+                return;
+            }
+
+            const btn = document.getElementById('cta-register-btn');
+            btn.disabled = true;
+            btn.innerHTML = SPINNER;
+
+            const [res] = await Promise.all([
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, lang: currentLang }),
+                }).catch(() => null),
+                new Promise(r => setTimeout(r, 800)),
+            ]);
+
+            if (!res) {
+                openDialog(i18n[currentLang]['error-network']);
+            } else {
+                input.value = '';
+                openDialog(res.status === 201
+                    ? i18n[currentLang]['success-registered']
+                    : i18n[currentLang]['already-registered']
+                );
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = i18n[currentLang]['cta-register'];
+        });
 
         document.querySelectorAll('a[data-i18n-dialog]').forEach(link => {
             link.addEventListener('click', function (e) {
@@ -611,6 +672,11 @@
                 'dialog-privacy': '안전한 개인정보처리방침으로 곧 만나요',
                 'footer-terms': '이용약관',
                 'footer-privacy': '개인정보처리방침',
+                'error-empty': '이메일을 입력해주세요.',
+                'error-invalid': '올바른 이메일 형식이 아닙니다.',
+                'error-network': '오류가 발생했습니다. 다시 시도해주세요.',
+                'success-registered': '등록되었습니다! 새로운 소식으로 인사드릴게요.',
+                'already-registered': '이미 등록된 이메일입니다.',
             },
             en: {
                 title: 'OllarAI - When Data Becomes the Answer to Investment',
@@ -667,6 +733,11 @@
                 'dialog-privacy': 'Our Privacy Policy will be ready soon.',
                 'footer-terms': 'Terms of Service',
                 'footer-privacy': 'Privacy Policy',
+                'error-empty': 'Please enter your email.',
+                'error-invalid': 'Please enter a valid email address.',
+                'error-network': 'Something went wrong. Please try again.',
+                'success-registered': 'Registered! Stay tuned.',
+                'already-registered': 'Already registered.',
             }
         };
 
