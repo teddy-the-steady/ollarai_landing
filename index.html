@@ -32,6 +32,7 @@
             scroll-behavior: smooth;
             word-break: keep-all;
             overflow-wrap: break-word;
+            background-color: rgb(18, 32, 15);
         }
 
         .glass-morphism {
@@ -47,7 +48,7 @@
         }
 
         .hero-bg {
-            background: radial-gradient(circle at 50% -20%, rgba(76, 150, 48, 0.4) 0%, #0f172a 60%);
+            background: radial-gradient(circle at 50% -20%, rgba(76, 150, 48, 0.3) 0%, rgb(18, 32, 15) 60%);
         }
 
         .vision-card {
@@ -101,13 +102,13 @@
         .border-primary { border-color: var(--primary-green) !important; }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200">
+<body class="text-slate-200">
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-morphism py-5">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <a href="#" class="cursor-pointer">
-                <span class="text-2xl tracking-tighter text-white ollarai-brand">OllarAI</span>
+                <span class="text-3xl tracking-tighter text-white ollarai-brand">OllarAI</span>
             </a>
             <div class="hidden md:flex gap-10 text-sm font-medium tracking-wide">
                 <a href="#vision" class="hover:text-primary transition" data-i18n="nav-roadmap">로드맵</a>
@@ -141,7 +142,7 @@
             <p class="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed font-light" data-i18n="hero-subtitle">
                 그럴듯한 문장에 현혹되지 마세요.<br/>
                 올라AI는 환각(Hallucination) 없이 공시 데이터 그대로의<br/>
-                <span class="text-primary font-medium">진실된 숫자</span>를 인출합니다.
+                <span class="text-primary font-semibold">진실된 숫자</span>를 인출합니다.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-5">
                 <button class="bg-primary bg-primary-hover text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all hover:scale-105" data-i18n="hero-cta">
@@ -152,7 +153,7 @@
     </section>
 
     <!-- Problem Section -->
-    <section class="py-32 bg-[#0f172a]">
+    <section class="py-32" style="background-color: rgb(22, 38, 18);">
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto text-center mb-20">
                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-i18n="problem-title">데이터가 없는 분석은 가설일 뿐입니다.</h2>
@@ -183,7 +184,7 @@
     </section>
 
     <!-- Vision Roadmap -->
-    <section id="vision" class="py-32 bg-slate-900/30 relative overflow-hidden">
+    <section id="vision" class="py-32 relative overflow-hidden" style="background-color: rgb(26, 44, 22);">
         <div class="container mx-auto px-6">
             <div class="text-center mb-24">
                 <h2 class="text-4xl font-bold text-white mb-6" data-i18n="vision-title">OllarAI의 진화</h2>
@@ -235,7 +236,7 @@
     </section>
 
     <!-- Key Differentiator Section -->
-    <section id="features" class="py-32 bg-[#0f172a] overflow-hidden">
+    <section id="features" class="py-32 overflow-hidden" style="background-color: rgb(18, 32, 15);">
         <div class="container mx-auto px-6">
             <div class="text-center mb-24">
                 <h2 class="text-4xl md:text-5xl font-bold text-white mb-6" data-i18n="features-title">왜 올라AI여야만 하는가</h2>
@@ -468,7 +469,7 @@
     <footer class="py-16 border-t border-white/5">
         <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
             <div>
-                <span class="text-white tracking-tighter ollarai-brand">OllarAI</span>
+                <span class="text-xl text-white tracking-tighter ollarai-brand">OllarAI</span>
             </div>
             <div class="text-slate-500 text-sm">
                 &copy; 2026 Nexora Inc. All rights reserved.
@@ -629,7 +630,7 @@
                 'nav-features': '주요 기능',
                 'cta': '베타 참여하기',
                 'hero-title': '투자의 <span class="gradient-text">본질</span>은<br/>거짓말하지 않는 숫자에 있습니다.',
-                'hero-subtitle': '그럴듯한 문장에 현혹되지 마세요.<br/>올라<span class="ollarai-brand">AI</span>는 환각(Hallucination) 없이 공시 데이터 그대로의<br/><span class="text-blue-400 font-medium">진실된 숫자</span>를 인출합니다.',
+                'hero-subtitle': '그럴듯한 문장에 현혹되지 마세요.<br/>올라<span class="ollarai-brand">AI</span>는 환각(Hallucination) 없이 공시 데이터 그대로의<br/><span class="text-primary font-semibold">진실된 숫자</span>를 인출합니다.',
                 'hero-cta': '나만의 분석가 만나기',
                 'problem-title': '데이터가 없는 분석은 가설일 뿐입니다.',
                 'problem-desc': '시장의 소음과 AI가 지어내는 거짓 숫자들 사이에서 개인 투자자는 고립되어 있습니다.<br/>전문가들의 모델은 강력하지만, 그 모델을 지탱하는 \'정밀한 데이터\'는 너무나 비싸고 어렵습니다.',
@@ -650,10 +651,10 @@
                 'features-title': '왜 올라<span class="ollarai-brand">AI</span>여야만 하는가',
                 'features-desc': '단순한 검색 엔진을 넘어, 당신의 투자 확신을 위한 정밀 공학을 제공합니다.',
                 'feat1-title': '숫자의 근원,<br/>기업 공시에서 직접 인출합니다.',
-                'feat1-desc': '애널리스트들이 수작업으로 엑셀에 옮겨 적던 공시 자료의 표들을 AI가 직접 읽습니다. 우리는 웹상의 떠도는 정보를 요약하지 않습니다. <span class="text-blue-400 font-bold">전자공시시스템(DART)</span>과 같은 원천 데이터를 데이터베이스에 수집/가공하여 1원 단위까지 정확한 수치를 제공합니다.',
+                'feat1-desc': '애널리스트들이 수작업으로 엑셀에 옮겨 적던 공시 자료의 표들을 AI가 직접 읽습니다. 우리는 웹상의 떠도는 정보를 요약하지 않습니다. <span class="text-primary font-bold">전자공시시스템(DART)</span>과 같은 원천 데이터를 데이터베이스에 수집/가공하여 1원 단위까지 정확한 수치를 제공합니다.',
                 'feat1-tooltip': '블룸버그에 비하면 아직은 버그에 불과하지만 올라<span class="ollarai-brand">ai</span>의 데이터 커버리지는 매일 조금씩 넓어지고 있습니다.',
                 'feat2-title': '질문 그 이상의 통찰,<br/>프로의 데이터를 연결합니다.',
-                'feat2-desc': '"이 종목 왜 올라?"라는 단순한 질문에도 올라<span class="ollarai-brand">AI</span>는 전문 투자자의 시나리오로 응답합니다. 뉴스 제목 요약이 아니라, 해당 종목의 <span class="text-cyan-400 font-bold">선행 지표와 원가 구조</span>까지 파고들어 입체적인 보고서를 즉시 구성합니다.',
+                'feat2-desc': '"이 종목 왜 올라?"라는 단순한 질문에도 올라<span class="ollarai-brand">AI</span>는 전문 투자자의 시나리오로 응답합니다. 뉴스 제목 요약이 아니라, 해당 종목의 <span class="text-primary font-bold">선행 지표와 원가 구조</span>까지 파고들어 입체적인 보고서를 즉시 구성합니다.',
                 'feat2-question': '"요즘 제주반도체 주가 왜이래? 분석해줘."',
                 'feat2-source1': '한국무역협회 제주지부 반도체 수출액',
                 'feat2-source2': '중국 H고객사 모바일 기기 판매량 추세',
@@ -690,7 +691,7 @@
                 'nav-features': 'Features',
                 'cta': 'Join Beta',
                 'hero-title': 'The <span class="gradient-text">truth</span> of investing<br/>lies in numbers that don\'t lie.',
-                'hero-subtitle': 'Don\'t be misled by plausible-sounding text.<br/><span class="ollarai-brand">OllarAI</span> retrieves the exact numbers from real data<br/><span class="text-blue-400 font-medium">without hallucination.</span>',
+                'hero-subtitle': 'Don\'t be misled by plausible-sounding text.<br/><span class="ollarai-brand">OllarAI</span> retrieves the exact numbers from real data<br/><span class="text-primary font-semibold">without hallucination.</span>',
                 'hero-cta': 'Meet My Analyst',
                 'problem-title': 'Analysis without data is just a hypothesis.',
                 'problem-desc': 'Individual investors are isolated amid market noise and numbers fabricated by AI.<br/>Expert models are powerful, but the "precise data" underpinning them is prohibitively expensive and inaccessible.',
@@ -711,10 +712,10 @@
                 'features-title': 'Why <span class="ollarai-brand">OllarAI</span>?',
                 'features-desc': 'Beyond a simple search engine — precision engineering for your investment conviction.',
                 'feat1-title': 'The source of numbers,<br/>extracted directly from filings.',
-                'feat1-desc': 'AI reads the tables in public filings that analysts used to copy manually into spreadsheets. We don\'t summarize information floating around the web. We collect and process source data from systems like <span class="text-blue-400 font-bold">EDGAR (EDINET, DART)</span> into our database to provide figures accurate to the last cent.',
+                'feat1-desc': 'AI reads the tables in public filings that analysts used to copy manually into spreadsheets. We don\'t summarize information floating around the web. We collect and process source data from systems like <span class="text-primary font-bold">EDGAR (EDINET, DART)</span> into our database to provide figures accurate to the last cent.',
                 'feat1-tooltip': 'Compared to Bloomberg we\'re still a tiny bug — but <span class="ollarai-brand">OllarAI</span>\'s data coverage grows a little wider every day.',
                 'feat2-title': 'Insight beyond questions,<br/>connecting professional data.',
-                'feat2-desc': 'Even for a simple question like "Why is this stock rising?", <span class="ollarai-brand">OllarAI</span> responds with a professional investor\'s scenario. Not just a summary of headlines — an instant in-depth report drilling into the stock\'s <span class="text-cyan-400 font-bold">leading indicators and cost structure.</span>',
+                'feat2-desc': 'Even for a simple question like "Why is this stock rising?", <span class="ollarai-brand">OllarAI</span> responds with a professional investor\'s scenario. Not just a summary of headlines — an instant in-depth report drilling into the stock\'s <span class="text-primary font-bold">leading indicators and cost structure.</span>',
                 'feat2-question': '"Why is Jeju Semiconductor moving lately? Analyze it for me."',
                 'feat2-source1': 'KITA Jeju Branch Semiconductor Export Volume',
                 'feat2-source2': 'China H-client Mobile Device Sales Trend',
