@@ -35,6 +35,13 @@
             background-color: rgb(15, 23, 35);
         }
 
+        /* Japanese-specific word breaking */
+        html[lang="ja"] body {
+            word-break: normal;
+            overflow-wrap: anywhere;
+            line-break: strict;
+        }
+
         .glass-morphism {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(15px);
