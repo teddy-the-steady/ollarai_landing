@@ -5,6 +5,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const DOMAIN = 'https://ollarai.com'; // absolute base for og:image (crawlers ignore <base href>)
+
 const base = fs.readFileSync('index.html', 'utf8');
 
 const locales = {
@@ -12,21 +14,21 @@ const locales = {
     dir: 'en',
     ogTitle:       'OllarAI - When Data Becomes the Answer to Investment',
     ogDesc:        'AI-native investment research platform. Real data from DART, EDGAR &amp; EDINET — zero hallucination.',
-    ogImage:       'og/ollarai-og-image.svg',
+    ogImage:       `${DOMAIN}/og/ollarai-og-image.svg`,
     ogLocale:      'en_US',
     twTitle:       'OllarAI - When Data Becomes the Answer to Investment',
     twDesc:        'AI-native investment research platform. Real data from DART, EDGAR &amp; EDINET — zero hallucination.',
-    twImage:       'og/ollarai-og-image.svg',
+    twImage:       `${DOMAIN}/og/ollarai-og-image.svg`,
   },
   ja: {
     dir: 'ja',
     ogTitle:       'OllarAI - データが投資の答えになる瞬間',
     ogDesc:        'ハルシネーションなし。DART・EDGAR・EDINETの開示データをそのまま取得するAI投資リサーチプラットフォーム。',
-    ogImage:       'og/ollarai-og-image-ja.svg',
+    ogImage:       `${DOMAIN}/og/ollarai-og-image-ja.svg`,
     ogLocale:      'ja_JP',
     twTitle:       'OllarAI - データが投資の答えになる瞬間',
     twDesc:        'ハルシネーションなし。開示データをそのまま取得するAI投資リサーチプラットフォーム。',
-    twImage:       'og/ollarai-og-image-ja.svg',
+    twImage:       `${DOMAIN}/og/ollarai-og-image-ja.svg`,
   },
 };
 
