@@ -2,10 +2,10 @@
   <defs>
     <!-- Dynamic gradient for message text -->
     <linearGradient id="messageGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#5BC73E;stop-opacity:1" />
-      <stop offset="35%" style="stop-color:#74D24E;stop-opacity:1" />
-      <stop offset="65%" style="stop-color:#9AF07A;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#B8F099;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#1A6B0A;stop-opacity:1" />
+      <stop offset="35%" style="stop-color:#28881A;stop-opacity:1" />
+      <stop offset="65%" style="stop-color:#3DA82C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5BC73E;stop-opacity:1" />
     </linearGradient>
   </defs>
 
