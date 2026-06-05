@@ -13,18 +13,20 @@ const locales = {
   en: {
     dir: 'en',
     ogTitle:       'OllarAI - When Data Becomes the Answer to Investment',
-    ogDesc:        'AI-native investment research platform. Real data from DART, EDGAR &amp; EDINET — zero hallucination.',
+    ogDesc:        'Zero hallucination AI-native investment research platform. Go beyond intuition. Invest with real market data and filings.',
     ogImage:       `${DOMAIN}/og/ollarai-og-image.svg`,
+    ogImageType:   'image/svg+xml',
     ogLocale:      'en_US',
     twTitle:       'OllarAI - When Data Becomes the Answer to Investment',
-    twDesc:        'AI-native investment research platform. Real data from DART, EDGAR &amp; EDINET — zero hallucination.',
+    twDesc:        'Zero hallucination AI-native investment research platform. Go beyond intuition. Invest with real market data and filings.',
     twImage:       `${DOMAIN}/og/ollarai-og-image.svg`,
   },
   ja: {
     dir: 'ja',
     ogTitle:       'OllarAI - データが投資の答えになる瞬間',
-    ogDesc:        'ハルシネーションなし。DART・EDGAR・EDINETの開示データをそのまま取得するAI投資リサーチプラットフォーム。',
+    ogDesc:        'ハルシネーションなし。開示データをそのまま取得するAI投資リサーチプラットフォーム。',
     ogImage:       `${DOMAIN}/og/ollarai-og-image-ja.svg`,
+    ogImageType:   'image/svg+xml',
     ogLocale:      'ja_JP',
     twTitle:       'OllarAI - データが投資の答えになる瞬間',
     twDesc:        'ハルシネーションなし。開示データをそのまま取得するAI投資リサーチプラットフォーム。',
@@ -43,6 +45,7 @@ for (const [lang, cfg] of Object.entries(locales)) {
     .replace(/(<meta property="og:title"\s+content=")[^"]*(")/,       `$1${cfg.ogTitle}$2`)
     .replace(/(<meta property="og:description"\s+content=")[^"]*(")/,  `$1${cfg.ogDesc}$2`)
     .replace(/(<meta property="og:image"\s+content=")[^"]*(")/,        `$1${cfg.ogImage}$2`)
+    .replace(/(<meta property="og:image:type"\s+content=")[^"]*(")/,   `$1${cfg.ogImageType}$2`)
     .replace(/(<meta property="og:locale"\s+content=")[^"]*(")/,       `$1${cfg.ogLocale}$2`)
     .replace(/(<meta name="twitter:title"\s+content=")[^"]*(")/,       `$1${cfg.twTitle}$2`)
     .replace(/(<meta name="twitter:description"\s+content=")[^"]*(")/,  `$1${cfg.twDesc}$2`)
