@@ -635,7 +635,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, lang: currentLang }),
-                }).catch(() => null),
+                }).catch((err) => { console.error('fetch failed:', err); return null; }),
                 new Promise(r => setTimeout(r, 800)),
             ]);
 
