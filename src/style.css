@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Blinker';
+    src: url('/fonts/Blinker-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --primary-green: rgb(116, 210, 78);
+    --primary-green-dark: rgb(96, 180, 58);
+    --primary-green-darker: rgb(76, 150, 48);
+    --primary-green-light: rgb(136, 220, 98);
+}
+
+.ollarai-brand {
+    font-family: 'Blinker', sans-serif;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans KR', sans-serif;
+    scroll-behavior: smooth;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    background-color: rgb(15, 23, 35);
+}
+
+/* Japanese-specific word breaking */
+html[lang="ja"] body {
+    word-break: normal;
+    overflow-wrap: anywhere;
+    line-break: strict;
+}
+
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-green-light) 0%, var(--primary-green) 50%, var(--primary-green-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-bg {
+    background: radial-gradient(circle at 50% -20%, rgba(76, 150, 48, 0.3) 0%, rgb(15, 23, 35) 60%);
+}
+
+.vision-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vision-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(116, 210, 78, 0.5);
+}
+
+@media (max-width: 640px) {
+    .lang-label-text { display: none; }
+}
+
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(116, 210, 78, 0.35);
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    padding: 10px 14px;
+    border-radius: 12px;
+    width: 260px;
+    transition: opacity 0.2s ease;
+    z-index: 200;
+    pointer-events: none;
+    white-space: normal;
+}
+.tooltip-wrapper:hover .tooltip-box,
+.tooltip-wrapper:focus .tooltip-box,
+.tooltip-wrapper.active .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+}
+
+.bg-primary { background-color: var(--primary-green) !important; }
+.bg-primary-hover:hover { background-color: var(--primary-green-dark) !important; }
+.text-primary { color: var(--primary-green) !important; }
+.border-primary { border-color: var(--primary-green) !important; }
+
+/* Prevent flash of untranslated content */
+[data-i18n]:empty, [data-i18n-placeholder][placeholder=""] {
+    opacity: 1;
+}

@@ -1,17 +1,17 @@
-// Generates en/index.html and ja/index.html from index.html
+// Generates dist/en/index.html and dist/ja/index.html from dist/index.html
 // with locale-specific OG meta tags pre-baked for social crawlers.
-// Run: node build-locale-pages.js
+// Run after Vite build: npm run build:locales
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const DOMAIN = 'https://ollarai.com'; // absolute base for og:image (crawlers ignore <base href>)
 
-const base = fs.readFileSync('index.html', 'utf8');
+const base = fs.readFileSync('dist/index.html', 'utf8');
 
 const locales = {
   en: {
-    dir: 'en',
+    dir: 'dist/en',
     ogTitle:       'OllarAI - When Data Becomes the Answer to Investment',
     ogDesc:        'Zero hallucination AI-native investment research platform. Go beyond intuition. Invest with real market data and filings.',
     ogImage:       `${DOMAIN}/og/ollarai-og-image.png`,
@@ -22,7 +22,7 @@ const locales = {
     twImage:       `${DOMAIN}/og/ollarai-og-image.png`,
   },
   ja: {
-    dir: 'ja',
+    dir: 'dist/ja',
     ogTitle:       'OllarAI - データが投資の答えになる瞬間',
     ogDesc:        'ハルシネーションなし。開示データをそのまま取得するAI投資リサーチプラットフォーム。',
     ogImage:       `${DOMAIN}/og/ollarai-og-image-ja.png`,

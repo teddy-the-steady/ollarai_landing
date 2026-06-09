@@ -1,0 +1,31 @@
+{
+  "name": "ollarai_landing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build-locale-pages.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:locales": "node build-locale-pages.js",
+    "build:all": "vite build && node build-locale-pages.js",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teddy-the-steady/ollarai_landing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/teddy-the-steady/ollarai_landing/issues"
+  },
+  "homepage": "https://github.com/teddy-the-steady/ollarai_landing#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.0.16"
+  }
+}
