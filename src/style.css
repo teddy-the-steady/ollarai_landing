@@ -11,6 +11,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Pretendard';
+    src: url('/fonts/Pretendard-Bold-ollarai.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 :root {
     --primary-green: rgb(116, 210, 78);
     --primary-green-dark: rgb(96, 180, 58);
@@ -20,6 +27,14 @@
 
 .ollarai-brand {
     font-family: 'Blinker', sans-serif;
+}
+
+.pretendard {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: bold;
+    font-size: 0.5em;
+    vertical-align: baseline;
+    line-height: inherit;
 }
 
 body {
