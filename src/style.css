@@ -29,6 +29,11 @@
     font-family: 'Blinker', sans-serif;
 }
 
+.ollarai-brand-bold {
+    font-family: 'Blinker', sans-serif;
+    font-weight: bold;
+}
+
 .pretendard {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: bold;
