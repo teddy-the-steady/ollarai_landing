@@ -146,6 +146,26 @@ html[lang="ja"] body {
     letter-spacing: 0.05em;
 }
 
+.screener-caret {
+    display: inline-block;
+    margin-left: 1px;
+    color: var(--primary-green);
+    animation: screener-blink 1s step-end infinite;
+}
+@keyframes screener-blink {
+    50% { opacity: 0; }
+}
+
+.screener-row {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.screener-row.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Prevent flash of untranslated content */
 [data-i18n]:empty, [data-i18n-placeholder][placeholder=""] {
     opacity: 1;

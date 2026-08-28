@@ -29,9 +29,20 @@ function closeDialog() {
 document.getElementById('dialog-close').addEventListener('click', closeDialog);
 document.getElementById('dialog-backdrop').addEventListener('click', closeDialog);
 
-document.querySelectorAll('button.bg-primary:not(#dialog-close):not(#cta-register-btn)').forEach(btn => {
+document.querySelectorAll('button.bg-primary:not(#dialog-close):not(#cta-register-btn):not(#screening-cta-btn)').forEach(btn => {
     btn.addEventListener('click', () => openDialog());
 });
+
+// Screening early-access CTA: scroll to the real email capture instead of the generic "coming soon" dialog
+const screeningCtaBtn = document.getElementById('screening-cta-btn');
+if (screeningCtaBtn) {
+    screeningCtaBtn.addEventListener('click', () => {
+        const emailInput = document.getElementById('cta-email-input');
+        if (!emailInput) return;
+        emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => emailInput.focus(), 500);
+    });
+}
 
 // Tooltip positioning
 function positionAndShow(wrapper) {
@@ -147,8 +158,10 @@ const i18n = {
     ko: {
         title: 'Ollarai - 데이터가 투자의 해답이 되는 순간',
         'nav-roadmap': '로드맵',
+        'nav-screening': 'AI 스크리닝',
         'nav-features': '주요 기능',
         'cta': '베타 참여하기',
+        'hero-kicker': '공시 데이터 기반 AI 투자 리서치 어시스턴트',
         'hero-title': '투자의 <span class="gradient-text">본질</span>은<br/>거짓말하지 않는 숫자에 있습니다.',
         'hero-subtitle': '그럴듯한 문장에 현혹되지 마세요.<br/><span class="ollarai-brand">Ollarai</span>는 환각(Hallucination) 없이 공시 데이터 그대로의<br/><span class="text-primary font-semibold">진실된 숫자</span>를 인출합니다.',
         'hero-cta': '나만의 분석가 만나기',
@@ -168,6 +181,10 @@ const i18n = {
         'screening-ribbon': '공사중',
         'screening-badge': '스크리닝 화면 준비 중입니다',
         'screening-badge-desc': '정확한 데이터 위에 세워질 다음 기능을 곧 만나보세요.',
+        'screening-launch-badge': '2026년 4분기 베타 오픈',
+        'screening-cta': '얼리액세스 신청하기',
+        'screening-preview-tag': '미리보기',
+        'screening-query-caption': '공시 원문 데이터 기반 · 원하는 지표를 자유롭게 추출',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>의 진화',
         'vision-desc': '우리의 목표는 단순한 툴이 아닙니다. 당신의 주머니 속 \'전담 애널리스트\'가 되는 것입니다.',
         'vision1-title': '무결점 데이터 토대',
@@ -218,8 +235,10 @@ const i18n = {
     en: {
         title: 'Ollarai - When Data Becomes the Answer to Investment',
         'nav-roadmap': 'Roadmap',
+        'nav-screening': 'AI Screening',
         'nav-features': 'Features',
         'cta': 'Join Beta',
+        'hero-kicker': '',
         'hero-title': 'The <span class="gradient-text">truth</span> of investing<br/>lies in numbers that don\'t lie.',
         'hero-subtitle': 'Don\'t be misled by plausible-sounding text.<br/><span class="ollarai-brand">Ollarai</span> retrieves the exact numbers from real data<br/><span class="text-primary font-semibold">without hallucination.</span>',
         'hero-cta': 'Meet My Analyst',
@@ -239,6 +258,10 @@ const i18n = {
         'screening-ribbon': 'Under Construction',
         'screening-badge': 'Screening Dashboard Coming Soon',
         'screening-badge-desc': 'The next feature, built on accurate data, is on its way.',
+        'screening-launch-badge': 'Beta Launching Q4 2026',
+        'screening-cta': 'Request Early Access',
+        'screening-preview-tag': 'Preview',
+        'screening-query-caption': 'Built on original filings · extract any metric you need',
         'vision-title': 'The Evolution of <span class="ollarai-brand">Ollarai</span>',
         'vision-desc': 'Our goal is not just a tool. It\'s to become the "dedicated analyst" in your pocket.',
         'vision1-title': 'Flawless Data Foundation',
@@ -289,8 +312,10 @@ const i18n = {
     ja: {
         title: 'Ollarai - データが投資の答えになる瞬間',
         'nav-roadmap': 'ロードマップ',
+        'nav-screening': 'AIスクリーニング',
         'nav-features': '主な機能',
         'cta': 'ベータに参加',
+        'hero-kicker': '',
         'hero-title': '投資の<span class="gradient-text">本質</span>は<br/>嘘をつかない数字にあります。',
         'hero-subtitle': 'もっともらしい文章に惑わされないでください。<br/><span class="ollarai-brand">Ollarai</span>は開示データそのままの<br/><span class="text-primary font-semibold">真実の数字</span>をハルシネーションなしで引き出します。',
         'hero-cta': '専属アナリストに会う',
@@ -310,6 +335,10 @@ const i18n = {
         'screening-ribbon': '工事中',
         'screening-badge': 'スクリーニング画面、準備中です',
         'screening-badge-desc': '正確なデータの上に築かれる次の機能に、もうすぐ出会えます。',
+        'screening-launch-badge': '2026年第4四半期 ベータ公開',
+        'screening-cta': '早期アクセスを申請',
+        'screening-preview-tag': 'プレビュー',
+        'screening-query-caption': '開示原本データに基づく・欲しい指標を自由に抽出',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>の進化',
         'vision-desc': '私たちの目標は単なるツールではありません。あなたのポケットの中の「専属アナリスト」になることです。',
         'vision1-title': '完璧なデータ基盤',
@@ -447,3 +476,159 @@ if (document.readyState === 'loading') {
 } else {
     setLang(currentLang);
 }
+
+// Screening demo: types a sample query, then reveals results row by row (illustrative sample data).
+// Columns are rendered per-query on purpose — the real product isn't a fixed-column screener,
+// it extracts whatever data the query asks for, and scoring itself happens server-side (no
+// client-side "Score" column here).
+(function () {
+    const demoEl = document.getElementById('screener-demo');
+    const queryEl = document.getElementById('screener-query-text');
+    const thead = document.getElementById('screener-result-head');
+    const tbody = document.getElementById('screener-result-body');
+    if (!demoEl || !queryEl || !thead || !tbody) return;
+
+    const demosByLang = {
+        ko: [
+            { query: 'PER 10 이하 · ROE 15% 이상 반도체주', columns: ['Ticker', 'PER', 'ROE', '영업이익률'], highlight: [1, 2], rows: [
+                ['005930', '8.2', '17.4%', '21.3%'],
+                ['000660', '9.1', '19.8%', '24.6%'],
+                ['042700', '7.6', '16.2%', '18.9%'],
+            ] },
+            { query: '영업이익률 20%↑ 저평가 성장주 (한·미·일)', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
+                ['035420', '9.1', '21.4%', '42%'],
+                ['AAPL', '7.6', '28.4%', '35%'],
+                ['6758.T', '9.8', '22.9%', '58%'],
+            ] },
+            { query: '삼성전자 최근 4개 분기 실적 추이', columns: ['분기', '매출 YoY', '영업이익 YoY', '영업이익률'], highlight: [1, 2, 3], rows: [
+                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
+                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
+                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
+                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
+            ] },
+        ],
+        en: [
+            { query: 'PER under 10 · ROE above 15% (semiconductors)', columns: ['Ticker', 'PER', 'ROE', 'Op Margin'], highlight: [1, 2], rows: [
+                ['005930', '8.2', '17.4%', '21.3%'],
+                ['000660', '9.1', '19.8%', '24.6%'],
+                ['042700', '7.6', '16.2%', '18.9%'],
+            ] },
+            { query: 'Undervalued growth, 20%+ op. margin (KR/US/JP)', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
+                ['035420', '9.1', '21.4%', '42%'],
+                ['AAPL', '7.6', '28.4%', '35%'],
+                ['6758.T', '9.8', '22.9%', '58%'],
+            ] },
+            { query: 'Samsung Electronics — last 4 quarters trend', columns: ['Quarter', 'Revenue YoY', 'Op. Income YoY', 'Op Margin'], highlight: [1, 2, 3], rows: [
+                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
+                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
+                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
+                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
+            ] },
+        ],
+        ja: [
+            { query: 'PER10倍以下・ROE15%以上の半導体株', columns: ['Ticker', 'PER', 'ROE', '営業利益率'], highlight: [1, 2], rows: [
+                ['005930', '8.2', '17.4%', '21.3%'],
+                ['000660', '9.1', '19.8%', '24.6%'],
+                ['042700', '7.6', '16.2%', '18.9%'],
+            ] },
+            { query: '営業利益率20%以上の割安成長株(韓・米・日)', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
+                ['035420', '9.1', '21.4%', '42%'],
+                ['AAPL', '7.6', '28.4%', '35%'],
+                ['6758.T', '9.8', '22.9%', '58%'],
+            ] },
+            { query: 'サムスン電子、直近4四半期の業績推移', columns: ['四半期', '売上高YoY', '営業利益YoY', '営業利益率'], highlight: [1, 2, 3], rows: [
+                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
+                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
+                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
+                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
+            ] },
+        ],
+    };
+
+    let demoIndex = 0;
+    let running = false;
+    let pendingTimeout = null;
+
+    function sleep(ms) {
+        return new Promise(resolve => { pendingTimeout = setTimeout(resolve, ms); });
+    }
+
+    function renderHeader(columns) {
+        const tr = document.createElement('tr');
+        tr.className = 'screener-row border-b border-white/10 text-slate-500';
+        tr.innerHTML = columns.map((label, i) =>
+            '<th class="' + (i === 0 ? 'text-left' : 'text-right') + ' py-2 font-normal">' + label + '</th>'
+        ).join('');
+        thead.appendChild(tr);
+        requestAnimationFrame(() => requestAnimationFrame(() => tr.classList.add('visible')));
+    }
+
+    function renderRow(cells, highlight) {
+        const tr = document.createElement('tr');
+        tr.className = 'screener-row border-b border-white/5';
+        tr.innerHTML = cells.map((val, i) => {
+            if (i === 0) return '<td class="py-2">' + val + '</td>';
+            const isHighlighted = (highlight || []).includes(i);
+            return '<td class="text-right' + (isHighlighted ? ' text-primary font-bold' : '') + '">' + val + '</td>';
+        }).join('');
+        tbody.appendChild(tr);
+        requestAnimationFrame(() => requestAnimationFrame(() => tr.classList.add('visible')));
+    }
+
+    async function typeText(text) {
+        queryEl.textContent = '';
+        for (let i = 0; i < text.length; i++) {
+            queryEl.textContent += text[i];
+            await sleep(35);
+        }
+    }
+
+    async function eraseText() {
+        while (queryEl.textContent.length > 0) {
+            queryEl.textContent = queryEl.textContent.slice(0, -1);
+            await sleep(15);
+        }
+    }
+
+    async function runLoop() {
+        if (running) return;
+        running = true;
+        while (running) {
+            const demos = demosByLang[currentLang] || demosByLang.ko;
+            const demo = demos[demoIndex % demos.length];
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            await typeText(demo.query);
+            if (!running) break;
+            await sleep(400);
+            renderHeader(demo.columns);
+            await sleep(200);
+            for (const row of demo.rows) {
+                if (!running) break;
+                renderRow(row, demo.highlight);
+                await sleep(220);
+            }
+            await sleep(3200);
+            await eraseText();
+            await sleep(300);
+            demoIndex++;
+        }
+    }
+
+    function stopLoop() {
+        running = false;
+        if (pendingTimeout) clearTimeout(pendingTimeout);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                runLoop();
+            } else {
+                stopLoop();
+            }
+        });
+    }, { threshold: 0.3 });
+
+    observer.observe(demoEl);
+})();
