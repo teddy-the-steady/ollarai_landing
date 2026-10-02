@@ -90,7 +90,14 @@
             <form id="query-form" class="query-box glass-morphism rounded-2xl p-3 md:p-4">
                 <textarea id="query-input" rows="2" maxlength="1000" class="w-full bg-transparent resize-none outline-none text-white placeholder-slate-500 text-base md:text-lg leading-relaxed px-2 pt-1" placeholder="예: 삼성전자 최근 4개 분기 영업이익 추이"></textarea>
                 <div class="flex items-center justify-between gap-3 pt-2">
-                    <span id="query-hint" class="text-slate-500 text-xs pl-2">Enter로 전송 · Shift+Enter로 줄바꿈</span>
+                    <div class="flex items-center gap-3 min-w-0">
+                        <!-- Paid accounts only: pick the pipeline per request -->
+                        <div id="tier-toggle" class="tier-toggle hidden" role="radiogroup" aria-label="답변 방식">
+                            <button type="button" role="radio" data-tier="free" aria-checked="false">무료</button>
+                            <button type="button" role="radio" data-tier="paid" aria-checked="false">유료</button>
+                        </div>
+                        <span id="query-hint" class="text-slate-500 text-xs pl-2 truncate">Enter로 전송 · Shift+Enter로 줄바꿈</span>
+                    </div>
                     <button id="query-submit" type="submit" aria-label="질문 보내기" class="w-10 h-10 shrink-0 rounded-xl bg-primary bg-primary-hover text-white flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed">
                         <i class="fas fa-arrow-up"></i>
                     </button>

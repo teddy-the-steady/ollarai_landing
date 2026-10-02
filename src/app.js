@@ -33,10 +33,42 @@ function renderAccount() {
     emailEl.textContent = me.email || '';
     emailEl.classList.toggle('md:inline', !!me.email);
 
+    // Only paid-tier queries are counted (free is unlimited, daily_limit is null)
+    const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
-    badge.classList.toggle('hidden', me.status !== 'approved');
-    badge.textContent = `오늘 ${me.used_today} / ${me.daily_limit}`;
+    badge.classList.toggle('hidden', !isPaid || me.daily_limit == null);
+    badge.textContent = `유료 ${me.used_today} / ${me.daily_limit}`;
+
+    document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
+    document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
+    renderTierToggle();
 }
+
+// ---------- tier toggle (paid accounts only) ----------
+
+const TIER_KEY = 'ollarai-beta-tier';
+const TIER_LABEL = { free: '무료', paid: '유료' };
+
+// The tier sent with /query: null lets the server use the account's tier
+function selectedTier() {
+    if (me?.tier !== 'paid') return null;
+    return storageGet(TIER_KEY) === 'free' ? 'free' : 'paid';
+}
+
+function renderTierToggle() {
+    const tier = selectedTier();
+    document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
+        btn.setAttribute('aria-checked', String(btn.dataset.tier === tier));
+    });
+}
+
+document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        storageSet(TIER_KEY, btn.dataset.tier);
+        renderTierToggle();
+        queryInput.focus();
+    });
+});
 
 function routeByStatus() {
     if (me.status === 'approved') return showView('query');
@@ -116,9 +148,10 @@ function errorMessage(error) {
     const detailMessage = typeof error.detail === 'string' ? null : error.detail?.message;
     switch (error.status) {
         case 0: return '네트워크 연결을 확인해 주세요.';
+        case 403: return '이 계정에서는 유료 방식을 사용할 수 없어요.';
         case 429:
             return error.detail?.daily_limit
-                ? `오늘 질문 한도(${error.detail.daily_limit}회)를 모두 사용했어요. 매일 자정(한국 시간)에 초기화돼요.`
+                ? `오늘 유료 질문 한도(${error.detail.daily_limit}회)를 모두 사용했어요. 무료로 바꾸면 계속 질문할 수 있고, 유료 한도는 매일 자정(한국 시간)에 초기화돼요.`
                 : '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.';
         case 503: return detailMessage || '서비스가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.';
         default: return '답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.';
@@ -160,15 +193,16 @@ queryForm.addEventListener('submit', async (e) => {
     resultsEl.prepend(card.el);
 
     try {
-        const response = await api('/query', { method: 'POST', body: { question, language: 'ko' } });
+        const tier = selectedTier();
+        const response = await api('/query', { method: 'POST', body: { question, language: 'ko', ...(tier ? { tier } : {}) } });
         card.showResponse(response);
         queryInput.value = '';
         autoResize();
     } catch (error) {
         if (handleAuthError(error)) return;
-        if (error instanceof ApiError && error.status === 403) {
+        if (error instanceof ApiError && error.status === 403 && error.detail?.status) {
             // Approval was revoked / never granted
-            me.status = error.detail?.status || 'pending';
+            me.status = error.detail.status;
             routeByStatus();
             return;
         }
@@ -191,7 +225,9 @@ function el(tag, className, text) {
 
 function createResultCard(question) {
     const root = el('article', 'result-card');
-    root.appendChild(el('h2', 'text-xl md:text-2xl font-semibold text-white mb-5 leading-snug', question));
+    const header = el('div', 'flex items-start justify-between gap-3 mb-5');
+    header.appendChild(el('h2', 'text-xl md:text-2xl font-semibold text-white leading-snug', question));
+    root.appendChild(header);
 
     const body = el('div', 'flex flex-col gap-6');
     const loading = el('div', 'flex items-center gap-3 text-slate-400 text-sm');
@@ -213,6 +249,10 @@ function createResultCard(question) {
         el: root,
         showResponse(response) {
             clearInterval(timer);
+            // Paid accounts can switch tiers, so mark which path produced this answer
+            if (me?.tier === 'paid' && TIER_LABEL[response.tier]) {
+                header.appendChild(el('span', `tier-badge tier-badge-${response.tier}`, TIER_LABEL[response.tier]));
+            }
             body.replaceChildren();
             const parts = response.is_multi_query && response.queries?.length ? response.queries : [response];
             parts.forEach(part => body.appendChild(renderPart(part, response.is_multi_query)));

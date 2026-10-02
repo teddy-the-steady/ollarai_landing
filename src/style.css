@@ -369,3 +369,46 @@ html[lang="ja"] body {
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
+
+/* Free / paid tier toggle (paid accounts) */
+.tier-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.tier-toggle.hidden { display: none; }
+.tier-toggle button {
+    padding: 0.3rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(148, 163, 184);
+    transition: background-color 0.2s, color 0.2s;
+}
+.tier-toggle button:hover { color: #fff; }
+.tier-toggle button[aria-checked="true"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+.tier-toggle button[data-tier="paid"][aria-checked="true"] {
+    background: rgba(116, 210, 78, 0.18);
+    color: var(--primary-green-light);
+}
+
+.tier-badge {
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgb(148, 163, 184);
+}
+.tier-badge-paid {
+    border-color: rgba(116, 210, 78, 0.35);
+    color: var(--primary-green-light);
+}
