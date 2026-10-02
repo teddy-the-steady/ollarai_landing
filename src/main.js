@@ -221,7 +221,7 @@ const i18n = {
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>는 현재 열심히 준비중입니다.<br/>조금만 기다려주세요!',
         'dialog-close': '확인',
         'dialog-terms': '꼼꼼하게 작성된 이용약관 곧 보여드릴게요',
-        'dialog-privacy': '안전한 개인정보처리방침으로 곧 만나요',
+        'privacy-href': '/privacy/',
         'footer-terms': '이용약관',
         'footer-privacy': '개인정보처리방침',
         'footer-company': '상호명: Nexora | 대표자: 전태호<br/>사업자등록번호: 226-23-07642',
@@ -298,7 +298,7 @@ const i18n = {
         'dialog-default': '<span class="ollarai-brand">Ollarai</span> is currently hard at work.<br/>Please wait a little longer!',
         'dialog-close': 'OK',
         'dialog-terms': 'Our carefully written Terms of Service are coming soon.',
-        'dialog-privacy': 'Our Privacy Policy will be ready soon.',
+        'privacy-href': '/en/privacy/',
         'footer-terms': 'Terms of Service',
         'footer-privacy': 'Privacy Policy',
         'footer-company': '',
@@ -375,7 +375,7 @@ const i18n = {
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>は現在準備中です。<br/>もう少しお待ちください!',
         'dialog-close': '確認',
         'dialog-terms': '利用規約は近日中に公開予定です。',
-        'dialog-privacy': 'プライバシーポリシーは近日中に公開予定です。',
+        'privacy-href': '/ja/privacy/',
         'footer-terms': '利用規約',
         'footer-privacy': 'プライバシーポリシー',
         'footer-company': '',
@@ -444,6 +444,10 @@ window.setLang = function(lang) {
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         el.innerHTML = i18n[lang][el.dataset.i18n] ?? el.innerHTML;
+    });
+
+    document.querySelectorAll('[data-i18n-href]').forEach(el => {
+        el.href = i18n[lang][el.dataset.i18nHref] ?? el.href;
     });
 
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
