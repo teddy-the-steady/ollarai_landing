@@ -252,3 +252,120 @@ html[lang="ja"] body {
     padding-left: 1rem;
     margin-bottom: 2rem;
 }
+
+/* Beta: login + app */
+.beta-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.beta-input::placeholder { color: rgb(100, 116, 139); }
+.beta-input:focus { border-color: var(--primary-green); }
+
+.auth-tab { color: rgb(148, 163, 184); }
+.auth-tab.is-active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.beta-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-top-color: var(--primary-green);
+    border-radius: 9999px;
+    animation: beta-spin 0.8s linear infinite;
+}
+.beta-spinner-sm { width: 1rem; height: 1rem; }
+@keyframes beta-spin { to { transform: rotate(360deg); } }
+
+.query-box { transition: border-color 0.2s; }
+.query-box:focus-within { border-color: rgba(116, 210, 78, 0.5); }
+
+.skeleton-table {
+    height: 180px;
+    border-radius: 1rem;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.03) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.result-card + .result-card {
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.result-notice {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.result-notice-info { background: rgba(255, 255, 255, 0.04); color: rgb(203, 213, 225); }
+.result-notice-warn { background: rgba(245, 158, 11, 0.1); color: rgb(252, 211, 77); }
+.result-notice-error { background: rgba(239, 68, 68, 0.1); color: rgb(252, 165, 165); }
+
+.result-table-card {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+}
+.result-sql {
+    margin: 0;
+    padding: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: rgb(203, 213, 225);
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.result-table-scroll {
+    max-height: 520px;
+    overflow: auto;
+}
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    word-break: normal;
+}
+.result-table th,
+.result-table td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+.result-table th {
+    position: sticky;
+    top: 0;
+    background: rgb(22, 31, 44);
+    color: rgb(148, 163, 184);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.result-table td {
+    color: rgb(226, 232, 240);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.result-table tbody tr:last-child td { border-bottom: none; }
+.result-table tbody tr:hover td { background: rgba(255, 255, 255, 0.03); }
+.result-table .is-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}

@@ -15,3 +15,7 @@ npm-debug.log*
 
 # OS files
 .DS_Store
+# Local env (Supabase keys etc.)
+.env
+.env.*.local
+*.local

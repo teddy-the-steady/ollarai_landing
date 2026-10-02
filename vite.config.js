@@ -14,6 +14,8 @@ export default defineConfig({
         privacy: resolve(root, 'privacy/index.html'),
         privacyEn: resolve(root, 'en/privacy/index.html'),
         privacyJa: resolve(root, 'ja/privacy/index.html'),
+        login: resolve(root, 'login/index.html'),
+        app: resolve(root, 'app/index.html'),
       },
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',

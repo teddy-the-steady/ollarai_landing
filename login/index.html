@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="robots" content="noindex">
+    <title>로그인 - Ollarai</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKE2BBMBGT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NKE2BBMBGT');
+    </script>
+
+    <script type="module" src="/src/login.js"></script>
+</head>
+<body class="text-slate-200 hero-bg min-h-screen flex flex-col">
+
+    <nav class="w-full py-5">
+        <div class="container mx-auto px-6">
+            <a href="/" class="cursor-pointer">
+                <span class="text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-12">
+        <div class="glass-morphism rounded-3xl p-8 md:p-10 w-full max-w-md shadow-2xl">
+            <div class="inline-block px-3 py-1 rounded-full text-[11px] font-bold mb-5 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: rgb(116, 210, 78);">Beta</div>
+            <h1 id="auth-title" class="text-2xl md:text-3xl font-bold text-white mb-2">로그인</h1>
+            <p id="auth-subtitle" class="text-slate-400 text-sm mb-8">베타 테스트에 참여하려면 로그인해 주세요.</p>
+
+            <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-white/5 mb-6 text-sm font-medium">
+                <button type="button" data-mode="login" class="auth-tab is-active py-2 rounded-lg transition">로그인</button>
+                <button type="button" data-mode="signup" class="auth-tab py-2 rounded-lg transition">회원가입</button>
+            </div>
+
+            <form id="auth-form" class="flex flex-col gap-4" novalidate>
+                <label class="flex flex-col gap-1.5">
+                    <span class="text-sm text-slate-400">이메일</span>
+                    <input id="auth-email" type="email" autocomplete="email" required class="beta-input" placeholder="you@example.com">
+                </label>
+                <label class="flex flex-col gap-1.5">
+                    <span class="text-sm text-slate-400">비밀번호</span>
+                    <input id="auth-password" type="password" autocomplete="current-password" required minlength="8" class="beta-input" placeholder="8자 이상">
+                </label>
+                <label data-signup-only class="hidden flex-col gap-1.5">
+                    <span class="text-sm text-slate-400">비밀번호 확인</span>
+                    <input id="auth-password-confirm" type="password" autocomplete="new-password" class="beta-input">
+                </label>
+                <label data-signup-only class="hidden items-start gap-2.5 text-sm text-slate-400 leading-relaxed cursor-pointer">
+                    <input id="auth-consent" type="checkbox" class="mt-1 accent-[rgb(116,210,78)]">
+                    <span>만 14세 이상이며, <a href="/privacy/" target="_blank" class="text-primary underline underline-offset-2">개인정보처리방침</a>에 따른 개인정보 수집·이용에 동의합니다.</span>
+                </label>
+
+                <p id="auth-error" class="hidden text-red-400 text-sm"></p>
+                <p id="auth-notice" class="hidden text-sm leading-relaxed rounded-xl px-4 py-3" style="background-color: rgba(116, 210, 78, 0.1); color: rgb(136, 220, 98);"></p>
+
+                <button id="auth-submit" type="submit" class="bg-primary bg-primary-hover text-white py-3.5 rounded-xl font-bold transition mt-2 disabled:opacity-60">로그인</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
