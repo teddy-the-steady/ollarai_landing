@@ -8,6 +8,8 @@ const queryForm = document.getElementById('query-form');
 const queryInput = document.getElementById('query-input');
 const querySubmit = document.getElementById('query-submit');
 const resultsEl = document.getElementById('results');
+const historyMoreWrap = document.getElementById('history-more-wrap');
+const historyMoreBtn = document.getElementById('history-more');
 
 let me = null;
 let busy = false;
@@ -71,7 +73,11 @@ document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
 });
 
 function routeByStatus() {
-    if (me.status === 'approved') return showView('query');
+    if (me.status === 'approved') {
+        showView('query');
+        if (!historyLoaded) loadHistory();
+        return;
+    }
     if (me.status === 'blocked') return showView('blocked');
     // pending: the first visit shows the start screen, later visits go straight to the waiting screen
     showView(storageGet(startedKey(me.id)) ? 'pending' : 'start');
@@ -140,6 +146,43 @@ document.getElementById('pending-refresh-btn').addEventListener('click', async (
         btn.disabled = false;
     }
 });
+
+// ---------- history ----------
+
+const HISTORY_PAGE_SIZE = 10;
+let historyLoaded = false;
+let historyBefore = null;
+
+// Past questions (newest first) go below anything asked on this page
+async function loadHistory() {
+    historyLoaded = true;
+    historyMoreBtn.disabled = true;
+    try {
+        const params = new URLSearchParams({ limit: HISTORY_PAGE_SIZE });
+        if (historyBefore) params.set('before', historyBefore);
+        const page = await api(`/history?${params}`);
+        page.items.forEach(item => resultsEl.appendChild(historyCard(item).el));
+        historyBefore = page.next_before;
+        historyMoreBtn.textContent = '이전 질문 더 보기';
+        historyMoreWrap.classList.toggle('hidden', !historyBefore);
+    } catch (error) {
+        if (handleAuthError(error)) return;
+        console.error(error);
+        historyMoreBtn.textContent = '이전 질문을 불러오지 못했어요 · 다시 시도';
+        historyMoreWrap.classList.remove('hidden');
+    } finally {
+        historyMoreBtn.disabled = false;
+    }
+}
+
+function historyCard(item) {
+    const card = createResultCard(item.question, item.created_at);
+    if (item.status === 200 && item.response) card.showResponse(item.response);
+    else card.showError(errorMessage(new ApiError(item.status, item.error)));
+    return card;
+}
+
+historyMoreBtn.addEventListener('click', loadHistory);
 
 // ---------- errors ----------
 
@@ -223,10 +266,15 @@ function el(tag, className, text) {
     return node;
 }
 
-function createResultCard(question) {
+const timeFormat = new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+function createResultCard(question, createdAt = new Date()) {
     const root = el('article', 'result-card');
     const header = el('div', 'flex items-start justify-between gap-3 mb-5');
-    header.appendChild(el('h2', 'text-xl md:text-2xl font-semibold text-white leading-snug', question));
+    const titleWrap = el('div', 'min-w-0');
+    titleWrap.appendChild(el('h2', 'text-xl md:text-2xl font-semibold text-white leading-snug', question));
+    titleWrap.appendChild(el('p', 'mt-1 text-xs text-slate-500 tabular-nums', timeFormat.format(new Date(createdAt))));
+    header.appendChild(titleWrap);
     root.appendChild(header);
 
     const body = el('div', 'flex flex-col gap-6');
