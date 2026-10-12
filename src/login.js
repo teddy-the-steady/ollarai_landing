@@ -71,7 +71,7 @@ function validate() {
     if (password.length < 8) return '비밀번호는 8자 이상이어야 해요.';
     if (mode === 'signup') {
         if (password !== confirmInput.value) return '비밀번호가 서로 달라요.';
-        if (!consentInput.checked) return '개인정보 수집·이용에 동의해 주세요.';
+        if (!consentInput.checked) return '이용약관과 개인정보처리방침에 동의해 주세요.';
     }
     return '';
 }

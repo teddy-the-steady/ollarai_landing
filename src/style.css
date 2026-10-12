@@ -172,9 +172,10 @@ html[lang="ja"] body {
 }
 
 /* Legal pages (privacy policy, terms) */
+/* Headings carry their own article numbers, so the TOC list is unnumbered */
 .legal-toc ol {
-    list-style: decimal;
-    padding-left: 1.25rem;
+    list-style: none;
+    padding-left: 0;
     color: rgb(148, 163, 184);
     font-size: 0.9rem;
     line-height: 1.9;
@@ -239,6 +240,7 @@ html[lang="ja"] body {
     padding: 0.75rem 1rem;
     text-align: left;
     vertical-align: top;
+    min-width: 7rem;
 }
 .legal-content th {
     background: rgba(255, 255, 255, 0.04);
@@ -411,4 +413,49 @@ html[lang="ja"] body {
 .tier-badge-paid {
     border-color: rgba(116, 210, 78, 0.35);
     color: var(--primary-green-light);
+}
+
+/* Legal pages: "at a glance" summary and archived-version banner */
+.legal-content .legal-summary {
+    margin-bottom: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+.legal-content .legal-summary-title {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+.legal-content .legal-summary dl {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem 1.5rem;
+    margin: 0;
+}
+@media (min-width: 640px) {
+    .legal-content .legal-summary dl { grid-template-columns: 1fr 1fr; }
+}
+.legal-content .legal-summary dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(148, 163, 184);
+}
+.legal-content .legal-summary dd {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.legal-archive-banner {
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    background: rgba(245, 158, 11, 0.1);
+    color: rgb(252, 211, 77);
+}
+.legal-archive-banner a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }

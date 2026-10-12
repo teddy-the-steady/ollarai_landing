@@ -154,12 +154,6 @@ document.getElementById('cta-register-btn').addEventListener('click', async () =
     btn.innerHTML = i18n[currentLang]['cta-register'];
 });
 
-document.querySelectorAll('a[data-i18n-dialog]').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.stopPropagation();
-        openDialog(i18n[currentLang][this.dataset.i18nDialog]);
-    });
-});
 
 // i18n data
 const i18n = {
@@ -228,7 +222,7 @@ const i18n = {
         'cta-register': '지금 등록하기',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>는 현재 열심히 준비중입니다.<br/>조금만 기다려주세요!',
         'dialog-close': '확인',
-        'dialog-terms': '꼼꼼하게 작성된 이용약관 곧 보여드릴게요',
+        'terms-href': '/terms/',
         'privacy-href': '/privacy/',
         'footer-terms': '이용약관',
         'footer-privacy': '개인정보처리방침',
@@ -306,7 +300,7 @@ const i18n = {
         'dialog-default': '<span class="ollarai-brand">Ollarai</span> is currently hard at work.<br/>Please wait a little longer!',
         'dialog-close': 'OK',
         'dialog-beta-ko-only': 'The beta is currently available on the Korean site only.<br/><a href="/ko" class="text-primary underline underline-offset-2">Go to the Korean site</a>',
-        'dialog-terms': 'Our carefully written Terms of Service are coming soon.',
+        'terms-href': '/en/terms/',
         'privacy-href': '/en/privacy/',
         'footer-terms': 'Terms of Service',
         'footer-privacy': 'Privacy Policy',
@@ -384,7 +378,7 @@ const i18n = {
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>は現在準備中です。<br/>もう少しお待ちください!',
         'dialog-close': '確認',
         'dialog-beta-ko-only': 'ベータテストは現在、韓国語サイトでのみ実施しています。<br/><a href="/ko" class="text-primary underline underline-offset-2">韓国語サイトへ移動</a>',
-        'dialog-terms': '利用規約は近日中に公開予定です。',
+        'terms-href': '/ja/terms/',
         'privacy-href': '/ja/privacy/',
         'footer-terms': '利用規約',
         'footer-privacy': 'プライバシーポリシー',

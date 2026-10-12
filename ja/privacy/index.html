@@ -40,109 +40,198 @@
     <main class="pt-36 pb-24">
         <div class="container mx-auto px-6 max-w-3xl">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">プライバシーポリシー</h1>
-            <p class="text-slate-500 text-sm mb-12">施行日：2026年10月3日</p>
+            <p class="text-slate-500 text-sm mb-12">施行日：2026年10月19日</p>
 
             <nav id="legal-toc" class="legal-toc glass-morphism rounded-2xl p-6 mb-12">
                 <p class="text-white font-bold mb-3">目次</p>
                 <ol></ol>
             </nav>
 
-            <!-- 本文: 各条項は <h2>、下位項目は <h3>/<ol>/<ul>/<table> を使用。目次は <h2> から自動生成されます。 -->
+            <!-- Each article is an <h2>; the table of contents is generated from them (src/legal.js). -->
             <article class="legal-content">
                 <p class="legal-note">本日本語版は便宜上の翻訳です。本翻訳と<a href="/privacy/">韓国語版</a>との間に相違がある場合は、韓国語版が優先されます。</p>
 
-                <p>Nexora（以下「運営者」）は、Ollarai ベータサービス（以下「本サービス」）の提供にあたり、以下のとおり個人情報を取り扱います。</p>
+                <p>Nexora（以下「運営者」）は、韓国「個人情報保護法」第30条に基づき、Ollarai ベータサービス（以下「本サービス」）の利用者の個人情報を保護し、これに関する苦情を迅速かつ円滑に処理するため、以下のとおり個人情報処理方針を定め、公開します。</p>
 
-                <h2 id="collection">1. 収集する項目</h2>
-                <ul>
-                    <li><strong>会員登録時：</strong>メールアドレス、パスワード（認証サービス提供者が暗号化して保存し、運営者は元のパスワードを知ることができません）</li>
-                    <li><strong>サービス利用時：</strong>入力した質問、質問から生成された照会履歴、1日あたりの利用回数、最終アクセス日時、アクセスIPアドレス</li>
-                    <li><strong>事前登録時：</strong>メールアドレス、登録日時、選択した言語</li>
-                    <li><strong>ウェブサイト訪問時：</strong>Cookieによる訪問記録および利用統計（Google Analytics）</li>
-                </ul>
+                <div class="legal-summary">
+                    <p class="legal-summary-title">概要</p>
+                    <dl>
+                        <div><dt>取り扱う項目</dt><dd>メールアドレス、パスワード（暗号化）、質問・照会履歴、アクセス記録</dd></div>
+                        <div><dt>利用目的</dt><dd>会員管理、質問への回答の提供、本サービスとAIの改善</dd></div>
+                        <div><dt>第三者提供</dt><dd>なし</dd></div>
+                        <div><dt>業務委託</dt><dd>Supabase、Amazon Web Services、Google</dd></div>
+                        <div><dt>国外移転</dt><dd>日本（会員認証）、米国（質問の分析・利用統計）</dd></div>
+                        <div><dt>お問い合わせ</dt><dd><a href="mailto:contact@ollarai.com">contact@ollarai.com</a></dd></div>
+                    </dl>
+                </div>
 
-                <h2 id="purpose">2. 利用目的</h2>
-                <ul>
-                    <li>会員の識別、ベータ利用の承認および利用上限の管理</li>
-                    <li>質問への回答の提供</li>
-                    <li>サービス品質の改善およびエラー分析</li>
-                    <li>不正利用の防止</li>
-                    <li>事前登録者へのサービス公開およびベータ開始のお知らせ</li>
-                    <li>ウェブサイトの訪問統計の分析</li>
-                </ul>
+                <h2 id="purpose">第1条 個人情報の利用目的</h2>
+                <p>運営者は、以下の目的のために個人情報を取り扱います。取り扱う個人情報は以下の目的以外には利用せず、利用目的を変更する場合は、韓国「個人情報保護法」第18条に基づき別途同意を得るなど必要な措置を講じます。</p>
+                <ol>
+                    <li><strong>会員登録および管理：</strong>会員の識別、メール認証、ベータ利用の承認、利用上限の管理、退会手続き</li>
+                    <li><strong>本サービスの提供：</strong>質問の分析、データ照会文（SQL）の生成、照会結果の提供</li>
+                    <li><strong>本サービスおよびAIの品質改善：</strong>エラー分析、検索拡張生成（RAG）データの改善、AIモデルの学習および性能評価（第8条に基づき仮名加工して利用）</li>
+                    <li><strong>不正利用の防止：</strong>異常なアクセスや過度なリクエストの検知および遮断</li>
+                    <li><strong>事前登録者へのご案内：</strong>サービス公開およびベータ開始のお知らせの送信</li>
+                    <li><strong>ウェブサイトの利用統計分析：</strong>訪問状況の把握およびウェブサイトの改善</li>
+                </ol>
 
-                <h2 id="retention">3. 保有および破棄</h2>
-                <ul>
-                    <li><strong>アカウント情報：</strong>退会（削除の請求）時に遅滞なく破棄します。</li>
-                    <li><strong>質問およびアクセス記録（ログ）：</strong>収集日から180日間保管した後、自動的に削除します。</li>
-                    <li><strong>事前登録メールアドレス：</strong>公開案内の目的を達成した時点、または利用者が配信停止（削除の請求）をした時点で遅滞なく破棄します。</li>
-                    <li><strong>ウェブサイト利用統計：</strong>Google Analytics のデータ保持期間（2か月）の経過後に自動的に削除されます。</li>
-                    <li>電子ファイルは復元できない方法で削除します。</li>
-                </ul>
-
-                <h2 id="outsourcing">4. 業務委託および国外移転</h2>
-                <p>本サービスの運営のため、以下の事業者に処理を委託しており、一部は国外で処理されます。</p>
+                <h2 id="items">第2条 取り扱う個人情報の項目</h2>
                 <div class="table-wrap">
                     <table>
                         <thead>
-                            <tr>
-                                <th>委託先</th>
-                                <th>委託業務</th>
-                                <th>移転先の国</th>
-                                <th>移転する項目</th>
-                            </tr>
+                            <tr><th>区分</th><th>項目</th><th>取得方法</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Supabase Inc.</td>
-                                <td>会員認証</td>
-                                <td>日本</td>
-                                <td>メールアドレス、パスワード（暗号化）</td>
-                            </tr>
-                            <tr>
-                                <td>Amazon Web Services</td>
-                                <td>サーバーおよびデータの保管</td>
-                                <td>大韓民国（ソウルリージョン）</td>
-                                <td>全項目</td>
-                            </tr>
-                            <tr>
-                                <td>Google LLC などのAI API提供者</td>
-                                <td>質問の分析および回答の生成</td>
-                                <td>米国など</td>
-                                <td>入力した質問</td>
-                            </tr>
-                            <tr>
-                                <td>Google LLC（Google Analytics）</td>
-                                <td>ウェブサイト利用統計の分析</td>
-                                <td>米国</td>
-                                <td>Cookie識別子、訪問記録、アクセスIPアドレス</td>
-                            </tr>
+                            <tr><td>会員登録（必須）</td><td>メールアドレス、パスワード</td><td>会員登録画面</td></tr>
+                            <tr><td>サービス利用（必須）</td><td>入力した質問、質問から生成されたSQLと照会結果、回答方式（無料・有料）、1日あたりの利用回数、最終アクセス日時、アクセスIPアドレス</td><td>サービス利用の過程で生成・取得</td></tr>
+                            <tr><td>事前登録（任意）</td><td>メールアドレス、登録日時、選択した言語</td><td>ウェブサイトの事前登録フォーム</td></tr>
+                            <tr><td>ウェブサイト訪問（自動）</td><td>Cookie識別子、閲覧したページと日時、ブラウザ・端末情報、アクセスIPアドレス</td><td>Google Analytics</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>国外移転は本サービスの利用時にネットワークを通じて行われ、保有期間は上記第3項のとおりです。国外移転を望まない場合は、本サービスの利用を中止し、退会することができます。</p>
-
-                <h2 id="rights">5. 利用者の権利</h2>
-                <p>利用者はいつでも、自身の個人情報の閲覧、訂正、削除、処理停止を下記の連絡先に請求することができ、運営者は遅滞なく対応します。</p>
-
-                <h2 id="cookies">6. Cookie等</h2>
-                <p>ログイン状態を維持するため、ブラウザのストレージに認証情報を保存します。また、ウェブサイトの利用統計の分析のために Google Analytics を使用しており、その過程で分析用Cookieが保存されます。広告目的のCookieは使用しません。</p>
-                <p>利用者はブラウザの設定でCookieの保存を拒否または削除できます。また、<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics オプトアウト アドオン</a>を利用して統計の収集を拒否することもできます。</p>
-
-                <h2 id="children">7. 児童の個人情報</h2>
-                <p>14歳未満の方は本サービスに登録できません。</p>
-
-                <h2 id="security">8. 安全管理措置</h2>
-                <p>通信経路の暗号化（HTTPS）、パスワードの暗号化保存、アクセス権限の最小化、サービスデータと会員情報の分離保管を実施しています。</p>
-
-                <h2 id="contact">9. 個人情報保護責任者およびお問い合わせ</h2>
                 <ul>
-                    <li><strong>責任者：</strong>Taeho Jeon</li>
-                    <li><strong>メール：</strong><a href="mailto:taeho@ollarai.com">taeho@ollarai.com</a></li>
+                    <li>パスワードは認証サービス提供者（Supabase）が一方向暗号化して保存し、運営者は元のパスワードを知ることができません。</li>
+                    <li>質問入力欄には、ご本人や他の方の個人情報（氏名、連絡先、口座番号など）を入力しないでください。入力された質問は第1条の目的で取り扱われます。</li>
+                    <li>運営者は、センシティブ情報および固有識別情報（住民登録番号、旅券番号など）を取得しません。</li>
                 </ul>
 
-                <h2 id="effective-date">10. 施行日</h2>
-                <p>本ポリシーは2026年10月3日から適用されます。内容を変更する場合は、本サービスの画面を通じてお知らせします。</p>
+                <h2 id="retention">第3条 個人情報の保有期間</h2>
+                <p>運営者は、法令に定める保有・利用期間、または個人情報の取得時に同意を得た保有・利用期間の範囲内で個人情報を取り扱い、保有します。</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>取り扱う情報</th><th>保有期間</th><th>根拠</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>会員アカウント情報（メールアドレス、アカウント識別子、利用区分）</td><td>退会時まで</td><td>サービス利用契約の履行</td></tr>
+                            <tr><td>質問、照会履歴、アクセス記録（ログ）</td><td>取得日から180日間</td><td>サービス利用契約の履行、エラー分析および不正利用の防止</td></tr>
+                            <tr><td>仮名加工した質問データ</td><td>仮名加工日から3年間</td><td>韓国「個人情報保護法」第28条の2</td></tr>
+                            <tr><td>事前登録メールアドレス</td><td>公開案内の完了または配信停止（削除の請求）時まで</td><td>本人の同意</td></tr>
+                            <tr><td>ウェブサイト利用統計</td><td>取得日から2か月間</td><td>本人の同意（Cookie設定）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="destruction">第4条 個人情報の破棄手続きおよび方法</h2>
+                <ol>
+                    <li><strong>破棄手続き：</strong>運営者は、保有期間が経過した個人情報または利用目的を達成した個人情報を遅滞なく（5日以内に）破棄します。アクセス記録など自動削除が設定された情報は、保有期間の経過時に自動的に削除されます。他の法令により保存が必要な場合は、別のデータベースに移して分離保管し、当該目的以外には利用しません。</li>
+                    <li><strong>破棄方法：</strong>電子ファイルは復元・再生できない技術的方法により削除し、紙の書類は裁断または焼却します。</li>
+                </ol>
+
+                <h2 id="third-party">第5条 個人情報の第三者提供</h2>
+                <p>運営者は、個人情報を第1条に定める範囲内でのみ取り扱い、本人の同意、法律の特別な規定など韓国「個人情報保護法」第17条および第18条に該当する場合に限り、第三者に提供します。現在、運営者が第三者に提供している個人情報はありません。</p>
+
+                <h2 id="outsourcing">第6条 個人情報の取扱いの委託</h2>
+                <p>運営者は、本サービスの提供のため、以下のとおり個人情報の取扱いを委託しています。委託期間は、退会時または委託契約の終了時までです。</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>委託先</th><th>委託業務</th><th>取扱場所</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Supabase Inc.</td><td>会員認証（登録、ログイン、認証メールの送信）およびアカウント情報の保管</td><td>日本</td></tr>
+                            <tr><td>Amazon Web Services, Inc.</td><td>サーバーの運用、データおよびアクセス記録の保管、事前登録情報の保存</td><td>大韓民国（ソウルリージョン）</td></tr>
+                            <tr><td>Google LLC（Gemini API）</td><td>質問の分析および生成されたSQLの検証・補完</td><td>米国</td></tr>
+                            <tr><td>Google LLC（Google Analytics）</td><td>ウェブサイトの利用統計分析</td><td>米国</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>運営者は、韓国「個人情報保護法」第26条に基づき、委託業務の目的外での個人情報の取扱いの禁止、技術的・管理的保護措置、再委託の制限、委託先の管理・監督、損害賠償等の責任に関する事項を契約書等の書面に明記し、委託先が個人情報を安全に取り扱っているかを監督します。委託先または委託業務が変更された場合は、本方針により公開します。</p>
+
+                <h2 id="transfer">第7条 個人情報の国外移転</h2>
+                <p>運営者は、韓国「個人情報保護法」第28条の8第1項第3号に基づき、サービス利用契約の締結および履行のため、以下のとおり個人情報を国外に移転（委託・保管）します。</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>移転先</th><th>国</th><th>移転する項目</th><th>移転の目的</th><th>移転の時期・方法</th><th>保有・利用期間</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>日本</td><td>メールアドレス、暗号化されたパスワード、アカウント識別子</td><td>会員認証</td><td>会員登録・ログイン時にネットワーク経由で送信</td><td>退会時まで</td></tr>
+                            <tr><td>Google LLC（Gemini API）<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>米国</td><td>入力した質問（翻訳・加工された形を含む）</td><td>質問の分析およびSQLの検証・補完</td><td>質問の送信時にネットワーク経由で送信</td><td>Google API利用規約に定める期間</td></tr>
+                            <tr><td>Google LLC（Google Analytics）<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>米国</td><td>Cookie識別子、訪問記録、アクセスIPアドレス</td><td>ウェブサイトの利用統計分析</td><td>ウェブサイト訪問時にネットワーク経由で送信</td><td>取得日から2か月間</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>国外移転を拒否する方法：</strong>会員認証および質問の分析のための国外移転を望まない場合は、会員登録を行わないか、第9条の方法により退会を請求することができます。この場合、会員サービスはご利用いただけません。Google Analyticsへの移転は第10条の方法により拒否でき、拒否しても本サービスの利用に影響はありません。</p>
+
+                <h2 id="pseudonymization">第8条 仮名加工情報の取扱い</h2>
+                <p>運営者は、本サービスおよびAIモデルの改善のため、韓国「個人情報保護法」第28条の2に基づき、質問データを仮名加工して利用します。</p>
+                <ul>
+                    <li><strong>利用目的：</strong>検索拡張生成（RAG）データの改善、AIモデルの学習および性能評価などの技術開発・研究</li>
+                    <li><strong>項目：</strong>入力した質問、生成されたSQLおよび処理結果の情報</li>
+                    <li><strong>仮名加工の方法：</strong>メールアドレス、アカウント識別子、IPアドレスなど利用者を識別できる情報を削除し、アカウントと結び付けられないように加工します。質問文に個人情報と思われる内容が含まれている場合は、その部分を削除するか、当該質問を学習データから除外します。</li>
+                    <li><strong>保有期間：</strong>仮名加工日から3年間</li>
+                    <li><strong>第三者提供：</strong>仮名加工情報を第三者に提供しません。</li>
+                    <li><strong>安全管理措置：</strong>元の状態に復元するための追加情報は保管せず、仮名加工情報へのアクセス権限を制限し、取扱いの記録を作成・保管します。</li>
+                    <li><strong>学習利用の停止の請求：</strong>ご自身の質問を学習に利用されたくない場合は、第9条の方法により請求できます。仮名加工前の質問は学習データから除外します。すでに仮名加工されたデータは利用者を識別できないため、個別に特定して削除することが難しい場合があります。</li>
+                </ul>
+
+                <h2 id="rights">第9条 本人の権利・義務およびその行使方法</h2>
+                <ol>
+                    <li>本人は、運営者に対していつでも、個人情報の開示、訂正・削除、利用停止、同意の撤回を請求することができます（韓国「個人情報保護法」第35条から第37条まで）。</li>
+                    <li>権利の行使は、メール（<a href="mailto:contact@ollarai.com">contact@ollarai.com</a>）または書面（大韓民国 江原特別自治道 江陵市 冠大キル26、203号）により行うことができ、運営者は本人確認の後、遅滞なく（10日以内に）対応し、その結果をお知らせします。</li>
+                    <li>退会は、登録したメールアドレスから上記のメールアドレス宛てにご請求ください。退会時、アカウント情報は遅滞なく破棄されます。</li>
+                    <li>権利の行使は、法定代理人または委任を受けた方などの代理人を通じて行うこともできます。この場合、委任状の提出が必要です。</li>
+                    <li>韓国「個人情報保護法」第35条第4項、第36条第1項、第37条第2項など法律に定める事由に該当する場合は請求が制限されることがあり、その場合は理由をお知らせします。</li>
+                    <li><strong>個人情報の移転請求：</strong>運営者は現在、韓国「個人情報保護法」第35条の2に基づく移転義務の対象ではありませんが、ご請求があればアカウント情報と保管中の質問記録をCSVまたはJSONファイルで提供します。</li>
+                    <li>本人は、自身の個人情報を正確に保たなければならず、他人の個人情報を侵害し、または質問に入力してはなりません。</li>
+                </ol>
+
+                <h2 id="cookies">第10条 自動取得装置の設置・運用およびその拒否</h2>
+                <ol>
+                    <li><strong>ブラウザのストレージ：</strong>ログイン状態を維持するための認証情報と画面設定（ベータ案内の表示有無、回答方式の選択）を、ブラウザのローカルストレージに保存します。認証情報はログアウトすると削除されます。</li>
+                    <li><strong>分析用Cookie：</strong>ウェブサイトの利用統計分析のため、Google AnalyticsのCookieを使用します。</li>
+                    <li>運営者は、オンラインのターゲティング広告のための行動履歴情報を取得・利用せず、広告目的のCookieを使用しません。</li>
+                </ol>
+                <p><strong>拒否の方法</strong></p>
+                <ul>
+                    <li>Chrome：設定 &gt; プライバシーとセキュリティ &gt; サードパーティ Cookie、または閲覧履歴データの削除</li>
+                    <li>Safari：設定 &gt; プライバシー &gt; Webサイトデータを管理</li>
+                    <li>Edge：設定 &gt; Cookie とサイトのアクセス許可 &gt; Cookie とサイトデータの管理と削除</li>
+                    <li>Firefox：設定 &gt; プライバシーとセキュリティ &gt; Cookie とサイトデータ</li>
+                    <li>Google Analyticsのみを拒否する場合は、<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics オプトアウト アドオン</a>をインストールできます。</li>
+                </ul>
+                <p>ブラウザのストレージの利用をブロックすると、ログイン状態が維持されず会員サービスをご利用いただけません。分析用Cookieを拒否しても、本サービスの利用に影響はありません。</p>
+
+                <h2 id="automated-decision">第11条 自動化された決定</h2>
+                <p>運営者は、韓国「個人情報保護法」第37条の2に定める自動化された決定を行いません。本サービスのAIは、利用者の質問をデータ照会文（SQL）に変換し結果を表示するために使用され、利用者の権利や義務に影響を与える決定は行いません。ベータ利用の承認は運営者が直接審査して決定し、1日あたりの利用上限は本サービスで事前に案内した基準に従って適用されます。</p>
+
+                <h2 id="children">第12条 14歳未満の児童の個人情報</h2>
+                <p>14歳未満の方は本サービスに登録できず、運営者は14歳未満の児童の個人情報を取得しません。14歳未満の児童が登録したことが判明した場合は、当該個人情報を遅滞なく破棄します。</p>
+
+                <h2 id="security">第13条 安全管理措置</h2>
+                <ul>
+                    <li><strong>組織的・人的措置：</strong>個人情報の取扱者を代表者に限定し、アクセス権限を定期的に点検します。</li>
+                    <li><strong>技術的措置：</strong>通信経路の暗号化（HTTPS）、パスワードの一方向暗号化保存、認証トークンの検証、最小権限の原則に基づくアクセス制御（データ照会用の読み取り専用アカウントの分離）、アクセス記録の保管、会員情報とサービスデータの分離保管を実施しています。</li>
+                    <li><strong>物理的措置：</strong>個人情報はクラウド事業者（Amazon Web Services、Supabase）のデータセンターに保管され、入退室管理などの物理的セキュリティは各事業者のセキュリティ体制に従います。</li>
+                </ul>
+
+                <h2 id="contact">第14条 個人情報保護責任者および開示請求の窓口</h2>
+                <p>運営者の代表者は、個人情報の取扱いに関する最終的な責任を負い、個人情報の取扱いに関する業務を統括し、本人の苦情処理および被害救済のため、以下のとおり個人情報保護責任者を指定しています。個人情報の開示請求の受付・処理も同じ窓口で行います。</p>
+                <ul>
+                    <li><strong>個人情報保護責任者：</strong>Taeho Jeon（代表）</li>
+                    <li><strong>メール：</strong><a href="mailto:contact@ollarai.com">contact@ollarai.com</a></li>
+                    <li><strong>所在地：</strong>大韓民国 江原特別自治道 江陵市 冠大キル26、203号</li>
+                </ul>
+
+                <h2 id="remedies">第15条 権利侵害に対する救済方法</h2>
+                <p>本人は、個人情報の侵害に対する救済を受けるため、以下の韓国の機関に紛争解決や相談などを申請することができます。</p>
+                <ul>
+                    <li>個人情報紛争調停委員会：+82-1833-6972（<a href="https://www.kopico.go.kr" target="_blank" rel="noopener">www.kopico.go.kr</a>）</li>
+                    <li>個人情報侵害申告センター（KISA）：韓国国内から118（<a href="https://privacy.kisa.or.kr" target="_blank" rel="noopener">privacy.kisa.or.kr</a>）</li>
+                    <li>大検察庁：韓国国内から1301（<a href="https://www.spo.go.kr" target="_blank" rel="noopener">www.spo.go.kr</a>）</li>
+                    <li>警察庁：韓国国内から182（<a href="https://ecrm.police.go.kr" target="_blank" rel="noopener">ecrm.police.go.kr</a>）</li>
+                </ul>
+
+                <h2 id="changes">第16条 本方針の変更</h2>
+                <p>本方針の内容が追加・削除・修正される場合は、変更の施行日の7日前から、ウェブサイトおよびサービス画面でお知らせします。取得項目や利用目的の追加など、利用者の権利に重要な影響を与える変更の場合は、会員にメールでも個別に通知します。</p>
+                <p><strong>改定履歴</strong></p>
+                <ul>
+                    <li>2026年10月3日 制定</li>
+                    <li>2026年10月19日 改定：本サービスとAIの改善のための仮名加工情報の取扱い（第8条）を追加、国外移転に関する情報を詳細化、第三者提供・破棄手続き・権利侵害の救済方法など法定記載事項を補完</li>
+                </ul>
+                <p>本方針は2026年10月19日から施行します。</p>
             </article>
         </div>
     </main>
@@ -151,6 +240,10 @@
     <footer class="py-12 border-t border-white/5">
         <div class="container mx-auto px-6 max-w-3xl flex flex-col md:flex-row md:items-center gap-4 text-slate-500 text-sm">
             <span class="text-xl text-white tracking-tighter ollarai-brand">Ollarai</span>
+            <div class="flex gap-6 md:ml-8">
+                    <a href="/ja/terms/" class="hover:text-primary transition">利用規約</a>
+                    <a href="/ja/privacy/" class="hover:text-primary transition text-slate-300">プライバシーポリシー</a>
+            </div>
             <div class="md:ml-auto">&copy; <span id="footer-year"></span> Ollarai. All rights reserved.</div>
         </div>
     </footer>

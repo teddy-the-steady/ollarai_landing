@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./privacy/**/*.html",
+    "./terms/**/*.html",
     "./login/**/*.html",
     "./app/**/*.html",
     "./en/**/*.html",
