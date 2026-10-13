@@ -178,7 +178,10 @@ async function loadHistory() {
 function historyCard(item) {
     const card = createResultCard(item.question, item.created_at);
     if (item.status === 200 && item.response) card.showResponse(item.response);
-    else card.showError(errorMessage(new ApiError(item.status, item.error)));
+    else {
+        const error = new ApiError(item.status, item.error);
+        card.showError(errorMessage(error), error.requestId);
+    }
     return card;
 }
 
@@ -250,7 +253,7 @@ queryForm.addEventListener('submit', async (e) => {
             return;
         }
         console.error(error);
-        card.showError(errorMessage(error));
+        card.showError(errorMessage(error), error instanceof ApiError ? error.requestId : null);
     } finally {
         setBusy(false);
         loadMe().catch(() => {});
@@ -273,7 +276,9 @@ function createResultCard(question, createdAt = new Date()) {
     const header = el('div', 'flex items-start justify-between gap-3 mb-5');
     const titleWrap = el('div', 'min-w-0');
     titleWrap.appendChild(el('h2', 'text-xl md:text-2xl font-semibold text-white leading-snug', question));
-    titleWrap.appendChild(el('p', 'mt-1 text-xs text-slate-500 tabular-nums', timeFormat.format(new Date(createdAt))));
+    const meta = el('p', 'mt-1 flex flex-wrap items-center gap-x-2 text-xs text-slate-500 tabular-nums');
+    meta.appendChild(el('span', null, timeFormat.format(new Date(createdAt))));
+    titleWrap.appendChild(meta);
     header.appendChild(titleWrap);
     root.appendChild(header);
 
@@ -293,10 +298,31 @@ function createResultCard(question, createdAt = new Date()) {
         loadingText.textContent = s < 5 ? '질문을 분석하고 있어요…' : s < 15 ? `데이터를 조회하고 있어요… ${s}초` : `조금만 기다려 주세요… ${s}초`;
     }, 1000);
 
+    // Beta users can quote this when reporting a problem (matches the server's req= log lines)
+    function showRequestId(requestId) {
+        if (!requestId) return;
+        const label = `ID ${requestId}`;
+        const btn = el('button', 'font-mono hover:text-slate-300 transition', label);
+        btn.type = 'button';
+        btn.title = '요청 ID 복사';
+        btn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(requestId);
+                btn.textContent = '복사됨';
+            } catch {
+                btn.textContent = '복사 실패';
+            }
+            setTimeout(() => { btn.textContent = label; }, 1500);
+        });
+        meta.appendChild(el('span', null, '·'));
+        meta.appendChild(btn);
+    }
+
     return {
         el: root,
         showResponse(response) {
             clearInterval(timer);
+            showRequestId(response.request_id);
             // Paid accounts can switch tiers, so mark which path produced this answer
             if (me?.tier === 'paid' && TIER_LABEL[response.tier]) {
                 header.appendChild(el('span', `tier-badge tier-badge-${response.tier}`, TIER_LABEL[response.tier]));
@@ -305,8 +331,9 @@ function createResultCard(question, createdAt = new Date()) {
             const parts = response.is_multi_query && response.queries?.length ? response.queries : [response];
             parts.forEach(part => body.appendChild(renderPart(part, response.is_multi_query)));
         },
-        showError(message) {
+        showError(message, requestId) {
             clearInterval(timer);
+            showRequestId(requestId);
             body.replaceChildren(notice(message, 'error'));
         },
     };

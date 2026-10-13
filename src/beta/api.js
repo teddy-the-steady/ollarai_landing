@@ -18,10 +18,11 @@ export const LOGIN_PATH = '/login/';
 export const APP_PATH = '/app/';
 
 export class ApiError extends Error {
-    constructor(status, detail) {
+    constructor(status, detail, requestId = null) {
         super(typeof detail === 'string' ? detail : detail?.message || `HTTP ${status}`);
         this.status = status;
         this.detail = detail;
+        this.requestId = requestId ?? detail?.request_id ?? null;
     }
 }
 
@@ -45,7 +46,7 @@ export async function api(path, { method = 'GET', body } = {}) {
     }
 
     const data = await res.json().catch(() => null);
-    if (!res.ok) throw new ApiError(res.status, data?.detail ?? null);
+    if (!res.ok) throw new ApiError(res.status, data?.detail ?? null, res.headers.get('X-Request-ID'));
     return data;
 }
 
