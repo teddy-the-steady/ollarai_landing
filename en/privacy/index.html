@@ -40,7 +40,7 @@
     <main class="pt-36 pb-24">
         <div class="container mx-auto px-6 max-w-3xl">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">Privacy Policy</h1>
-            <p class="text-slate-500 text-sm mb-12">Effective date: October 19, 2026</p>
+            <p class="text-slate-500 text-sm mb-12">Effective date: November 20, 2026</p>
 
             <nav id="legal-toc" class="legal-toc glass-morphism rounded-2xl p-6 mb-12">
                 <p class="text-white font-bold mb-3">Contents</p>
@@ -51,16 +51,16 @@
             <article class="legal-content">
                 <p class="legal-note">This English version is a translation provided for convenience. If there is any inconsistency between this translation and the <a href="/privacy/">Korean version</a>, the Korean version prevails.</p>
 
-                <p>In accordance with Article 30 of the Personal Information Protection Act of Korea (the "PIPA"), Nexora (the "Operator") establishes and discloses this Privacy Policy to protect the personal information of users of the Ollarai beta service (the "Service") and to handle related complaints promptly and smoothly.</p>
+                <p>In accordance with Article 30 of the Personal Information Protection Act of Korea (the "PIPA"), Nexora (the "Operator") establishes and discloses this Privacy Policy to protect the personal information of users of the Ollarai service (the "Service") and to handle related complaints promptly and smoothly.</p>
 
                 <div class="legal-summary">
                     <p class="legal-summary-title">At a glance</p>
                     <dl>
-                        <div><dt>What we collect</dt><dd>Email, password (encrypted), questions and query history, access logs</dd></div>
-                        <div><dt>Why</dt><dd>Account management, answering your questions, improving the Service and our AI</dd></div>
-                        <div><dt>Sharing with third parties</dt><dd>None</dd></div>
-                        <div><dt>Processors</dt><dd>Supabase, Amazon Web Services, Google</dd></div>
-                        <div><dt>International transfers</dt><dd>Japan (authentication), United States (question analysis, analytics)</dd></div>
+                        <div><dt>What we collect</dt><dd>Email, password (encrypted), questions and query history, access logs, payment and subscription information (if you use the Paid Service)</dd></div>
+                        <div><dt>Why</dt><dd>Account management, answering your questions, payments for the Paid Service, improving the Service and our AI</dd></div>
+                        <div><dt>Sharing with third parties</dt><dd>Paddle (overseas payments only)</dd></div>
+                        <div><dt>Processors</dt><dd>Supabase, Amazon Web Services, Google, Toss Payments</dd></div>
+                        <div><dt>International transfers</dt><dd>Japan (authentication), United States (question analysis, analytics), United Kingdom (overseas payments)</dd></div>
                         <div><dt>Contact</dt><dd><a href="mailto:contact@ollarai.com">contact@ollarai.com</a></dd></div>
                     </dl>
                 </div>
@@ -70,6 +70,7 @@
                 <ol>
                     <li><strong>Account registration and management:</strong> identifying members, email verification, approving beta access, managing usage limits, and processing account closure</li>
                     <li><strong>Providing the Service:</strong> analyzing questions, generating data queries (SQL), and providing query results</li>
+                    <li><strong>Payments for the Paid Service:</strong> subscription and recurring payments, handling withdrawals and refunds, payment-related notices and support, and preventing fraudulent payments</li>
                     <li><strong>Improving the Service and our AI:</strong> analyzing errors, improving retrieval-augmented generation (RAG) data, and training and evaluating AI models (using pseudonymized data under Article 8)</li>
                     <li><strong>Preventing misuse:</strong> detecting and blocking abnormal access and excessive requests</li>
                     <li><strong>Notifying pre-registered users:</strong> sending news about the launch and beta opening</li>
@@ -85,6 +86,8 @@
                         <tbody>
                             <tr><td>Sign-up (required)</td><td>Email address, password</td><td>Sign-up screen</td></tr>
                             <tr><td>Using the Service (required)</td><td>Questions you enter, SQL and query results generated from them, answer mode (free/paid), daily usage count, last access time, IP address</td><td>Generated or collected while you use the Service</td></tr>
+                            <tr><td>Domestic payments (required for the Paid Service)</td><td>Order number, payment amount and time, payment status, card issuer, partially masked card number, billing key for recurring payments, subscription information (plan, start date, next billing date, cancellation time)</td><td>Collected through Toss Payments on the checkout screen</td></tr>
+                            <tr><td>Overseas payments (required for the Paid Service)</td><td>Paddle customer and subscription identifiers, order number, payment amount, currency and time, payment status, country, subscription information (plan, start date, next billing date, cancellation time)</td><td>Received from Paddle</td></tr>
                             <tr><td>Pre-registration (optional)</td><td>Email address, registration date and time, selected language</td><td>Pre-registration form on the website</td></tr>
                             <tr><td>Website visits (automatic)</td><td>Cookie identifiers, pages visited and time of visit, browser and device information, IP address</td><td>Google Analytics</td></tr>
                         </tbody>
@@ -93,6 +96,8 @@
                 <ul>
                     <li>Passwords are stored with one-way encryption by our authentication provider (Supabase), and the Operator cannot see the original password.</li>
                     <li>Please do not enter your own or anyone else's personal information (such as names, phone numbers, or account numbers) in the question field. Questions you enter are processed for the purposes in Article 1.</li>
+                    <li>Payment method details such as the full card number, expiry date, and CVC are processed directly by Toss Payments or Paddle, and the Operator does not store them.</li>
+                    <li>For overseas payments, information that Paddle collects directly on its checkout screen as the Merchant of Record (such as your name, email address, payment method, and billing country and postal code) is handled under the <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener">Paddle Privacy Policy</a>.</li>
                     <li>The Operator does not collect sensitive information or unique identification information (such as resident registration numbers or passport numbers).</li>
                 </ul>
 
@@ -106,6 +111,10 @@
                         <tbody>
                             <tr><td>Account information (email, account identifier, usage tier)</td><td>Until account closure</td><td>Performance of the service agreement</td></tr>
                             <tr><td>Questions, query history, access logs</td><td>180 days from collection</td><td>Performance of the service agreement, error analysis, and misuse prevention</td></tr>
+                            <tr><td>Billing key for recurring payments, subscription information</td><td>Until the subscription is cancelled or the account is closed</td><td>Performance of the service agreement</td></tr>
+                            <tr><td>Records of contracts and withdrawals</td><td>5 years</td><td>Article 6 of the Act on the Consumer Protection in Electronic Commerce</td></tr>
+                            <tr><td>Records of payments and supply of goods or services</td><td>5 years</td><td>Article 6 of the Act on the Consumer Protection in Electronic Commerce</td></tr>
+                            <tr><td>Records of consumer complaints and dispute handling</td><td>3 years</td><td>Article 6 of the Act on the Consumer Protection in Electronic Commerce</td></tr>
                             <tr><td>Pseudonymized question data</td><td>3 years from pseudonymization</td><td>Article 28-2 of the PIPA</td></tr>
                             <tr><td>Pre-registration email</td><td>Until the launch notice is sent or you opt out (request deletion)</td><td>Consent</td></tr>
                             <tr><td>Website analytics</td><td>2 months from collection</td><td>Consent (cookie settings)</td></tr>
@@ -120,7 +129,18 @@
                 </ol>
 
                 <h2 id="third-party">Article 5. Provision to Third Parties</h2>
-                <p>The Operator processes personal information only within the scope stated in Article 1 and provides it to third parties only in the cases set out in Articles 17 and 18 of the PIPA, such as with your consent or under specific provisions of law. The Operator currently does not provide personal information to any third party.</p>
+                <p>The Operator processes personal information only within the scope stated in Article 1 and provides it to third parties only in the cases set out in Articles 17 and 18 of the PIPA, such as with your consent or under specific provisions of law. Only for members who choose overseas payment, the Operator provides personal information as follows with consent obtained on the checkout screen.</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Recipient</th><th>Purpose</th><th>Items</th><th>Retention</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Paddle.com Market Limited</td><td>As Merchant of Record: selling the Paid Service, billing and payment, tax collection and filing, refunds, and fraud prevention</td><td>Email address, account identifier, selected plan</td><td>As set out in Paddle's Privacy Policy and applicable laws (such as tax laws)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>You may refuse this consent, in which case you cannot use overseas payment (domestic payment and the free mode are not affected).</p>
 
                 <h2 id="outsourcing">Article 6. Entrustment of Processing</h2>
                 <p>The Operator entrusts the processing of personal information as follows to provide the Service. The entrustment lasts until account closure or the end of the entrustment agreement.</p>
@@ -132,6 +152,7 @@
                         <tbody>
                             <tr><td>Supabase Inc.</td><td>Member authentication (sign-up, sign-in, verification emails) and storage of account information</td><td>Japan</td></tr>
                             <tr><td>Amazon Web Services, Inc.</td><td>Server operation, storage of data and access logs, storage of pre-registration information</td><td>Republic of Korea (Seoul region)</td></tr>
+                            <tr><td>Toss Payments Co., Ltd.</td><td>Processing domestic payments and managing payment methods for recurring billing</td><td>Republic of Korea</td></tr>
                             <tr><td>Google LLC (Gemini API)</td><td>Analyzing questions and verifying and refining generated SQL</td><td>United States</td></tr>
                             <tr><td>Google LLC (Google Analytics)</td><td>Website analytics</td><td>United States</td></tr>
                         </tbody>
@@ -140,7 +161,7 @@
                 <p>Under Article 26 of the PIPA, the Operator sets out in writing, such as in the entrustment agreement, the prohibition of processing for purposes other than the entrusted task, technical and administrative safeguards, restrictions on re-entrustment, management and supervision of the processor, and liability such as compensation for damages, and supervises whether processors handle personal information safely. Any change of processor or entrusted task will be disclosed through this Privacy Policy.</p>
 
                 <h2 id="transfer">Article 7. International Transfers</h2>
-                <p>Under Article 28-8(1)(iii) of the PIPA, the Operator transfers personal information abroad (through entrustment and storage) as follows to enter into and perform the service agreement.</p>
+                <p>Under Article 28-8(1)(iii) of the PIPA, the Operator transfers personal information abroad (through entrustment and storage) as follows to enter into and perform the service agreement. The transfer to Paddle for overseas payments is made with your consent, obtained on the checkout screen, under Article 28-8(1)(i).</p>
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -150,10 +171,11 @@
                             <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>Japan</td><td>Email address, encrypted password, account identifier</td><td>Member authentication</td><td>Sent over the network at sign-up and sign-in</td><td>Until account closure</td></tr>
                             <tr><td>Google LLC (Gemini API)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>United States</td><td>Questions you enter (including translated or processed forms)</td><td>Analyzing questions and verifying and refining SQL</td><td>Sent over the network when you submit a question</td><td>As set out in Google's API terms of service</td></tr>
                             <tr><td>Google LLC (Google Analytics)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>United States</td><td>Cookie identifiers, visit records, IP address</td><td>Website analytics</td><td>Sent over the network when you visit the website</td><td>2 months from collection</td></tr>
+                            <tr><td>Paddle.com Market Limited<br><a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener">paddle.com/legal/privacy</a></td><td>United Kingdom</td><td>Email address, account identifier, selected plan</td><td>Overseas payments (Merchant of Record)</td><td>Sent over the network when you proceed with an overseas payment</td><td>As set out in Paddle's Privacy Policy and applicable laws</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p><strong>How to refuse:</strong> If you do not want your information transferred abroad for authentication and question analysis, you may choose not to sign up or request account closure as described in Article 9; in that case you cannot use the member service. You can refuse the transfer to Google Analytics as described in Article 10 without affecting your use of the Service.</p>
+                <p><strong>How to refuse:</strong> If you do not want your information transferred abroad for authentication and question analysis, you may choose not to sign up or request account closure as described in Article 9; in that case you cannot use the member service. You can refuse the transfer to Google Analytics as described in Article 10 without affecting your use of the Service. You can refuse the transfer to Paddle by not consenting on the checkout screen, in which case you cannot use overseas payment.</p>
 
                 <h2 id="pseudonymization">Article 8. Processing of Pseudonymized Information</h2>
                 <p>To improve the Service and our AI models, the Operator pseudonymizes question data and uses it under Article 28-2 of the PIPA.</p>
@@ -171,7 +193,7 @@
                 <ol>
                     <li>You may at any time request access to, correction or deletion of, or suspension of processing of your personal information, or withdraw your consent (Articles 35 to 37 of the PIPA).</li>
                     <li>You may exercise these rights by email (<a href="mailto:contact@ollarai.com">contact@ollarai.com</a>) or in writing (26 Gwandae-gil, Room 203, Gangneung-si, Gangwon State, Republic of Korea). After verifying your identity, the Operator will act without delay (within 10 days) and inform you of the result.</li>
-                    <li>To close your account, send a request to the email address above from the email address you signed up with. Your account information will be destroyed without delay.</li>
+                    <li>To close your account, send a request to the email address above from the email address you signed up with. Your account information will be destroyed without delay. However, payment records are stored separately for the periods required by law under Article 3 and then destroyed.</li>
                     <li>You may also exercise your rights through a representative, such as your legal representative or a person you have authorized. In that case, a power of attorney must be submitted.</li>
                     <li>Requests may be restricted where the law so provides, such as under Article 35(4), Article 36(1), and Article 37(2) of the PIPA, in which case we will tell you the reason.</li>
                     <li><strong>Data transfer requests:</strong> The Operator is not currently subject to the transmission obligation under Article 35-2 of the PIPA, but on request will provide your account information and stored question history as a CSV or JSON file.</li>
@@ -182,6 +204,7 @@
                 <ol>
                     <li><strong>Browser storage:</strong> authentication information that keeps you signed in, and display settings (whether the beta introduction was shown, your answer mode selection), are stored in your browser's local storage. Authentication information is deleted when you sign out.</li>
                     <li><strong>Analytics cookies:</strong> Google Analytics cookies are used for website analytics.</li>
+                    <li><strong>Checkout screen:</strong> on the checkout screen, Toss Payments or Paddle may use cookies and similar technologies for payment processing and fraud prevention, under their own privacy policies.</li>
                     <li>The Operator does not collect or use behavioral information for online targeted advertising and does not use advertising cookies.</li>
                 </ol>
                 <p><strong>How to refuse</strong></p>
@@ -203,7 +226,7 @@
                 <h2 id="security">Article 13. Security Measures</h2>
                 <ul>
                     <li><strong>Administrative:</strong> personal information handlers are limited to the representative, and access rights are reviewed regularly.</li>
-                    <li><strong>Technical:</strong> encryption in transit (HTTPS), one-way encrypted password storage, authentication token verification, least-privilege access control (including a separate read-only account for data queries), retention of access logs, and separate storage of member information and service data.</li>
+                    <li><strong>Technical:</strong> encryption in transit (HTTPS), one-way encrypted password storage, authentication token verification, least-privilege access control (including a separate read-only account for data queries), retention of access logs, and separate storage of member information and service data. Payment method details such as card numbers are not stored.</li>
                     <li><strong>Physical:</strong> personal information is stored in the data centers of our cloud providers (Amazon Web Services, Supabase), and physical security such as access control follows those providers' security programs.</li>
                 </ul>
 
@@ -230,8 +253,9 @@
                 <ul>
                     <li>October 3, 2026: Established</li>
                     <li>October 19, 2026: Added processing of pseudonymized information to improve the Service and AI (Article 8), detailed international transfer information, and supplemented required disclosures such as provision to third parties, destruction procedures, and remedies for infringement</li>
+                    <li>November 20, 2026: With the introduction of the Paid Service, added purposes, items, and retention periods for payment and subscription information, entrustment to our payment service provider (Toss Payments), and provision and international transfer to Paddle for overseas payments</li>
                 </ul>
-                <p>This Privacy Policy takes effect on October 19, 2026.</p>
+                <p>This Privacy Policy takes effect on November 20, 2026.</p>
             </article>
         </div>
     </main>
