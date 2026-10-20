@@ -42,6 +42,13 @@
     line-height: inherit;
 }
 
+/* Paint the canvas dark so iOS overscroll / area below short pages isn't white,
+   and stop the rubber-band bounce that makes the footer look like it keeps going */
+html {
+    background-color: rgb(15, 23, 35);
+    overscroll-behavior-y: none;
+}
+
 body {
     font-family: 'Inter', 'Noto Sans KR', sans-serif;
     scroll-behavior: smooth;
@@ -70,7 +77,8 @@ html[lang="ja"] body {
 }
 
 .hero-bg {
-    background: radial-gradient(circle at 50% -20%, rgba(76, 150, 48, 0.3) 0%, rgb(15, 23, 35) 60%);
+    background-color: rgb(15, 23, 35);
+    background-image: radial-gradient(circle at 50% -20%, rgba(76, 150, 48, 0.3) 0%, rgb(15, 23, 35) 60%);
 }
 
 .vision-card {
