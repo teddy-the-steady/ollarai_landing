@@ -356,12 +356,35 @@ function renderPart(part, isMulti) {
     if (part.message) {
         wrap.appendChild(notice(part.message, part.result ? 'warn' : 'info'));
     }
+    if (part.clarification?.options?.length) {
+        wrap.appendChild(clarificationOptions(part.clarification));
+    }
     if (part.result) {
         wrap.appendChild(renderTable(part.result, part.sql));
     } else if (!part.message) {
         wrap.appendChild(notice('결과를 찾지 못했어요. 질문을 조금 바꿔서 다시 시도해 주세요.', 'info'));
     }
     return wrap;
+}
+
+// An ask-back ("디와이키" could be 디와이씨 or 디와이): requests are one-shot, so each option is
+// the whole question rewritten - picking one sends it as a new question, like typing it.
+function clarificationOptions(clarification) {
+    const box = el('div', 'clarify-options');
+    clarification.options.forEach(option => {
+        const btn = el('button', 'clarify-option', option.label);
+        btn.type = 'button';
+        btn.title = option.question;
+        btn.addEventListener('click', () => {
+            if (busy) return;
+            queryInput.value = option.question;
+            autoResize();
+            queryForm.requestSubmit();
+            resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        box.appendChild(btn);
+    });
+    return box;
 }
 
 // Columns whose integers are identifiers or periods, not amounts: no thousands separators

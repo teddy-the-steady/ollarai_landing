@@ -476,3 +476,25 @@ html[lang="ja"] body {
     font-size: 0.7rem;
     color: rgb(100, 116, 139);
 }
+
+/* Ask-back options: each sends the question rewritten with that company / item */
+.clarify-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.clarify-option {
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(226, 232, 240);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.clarify-option:hover {
+    color: #fff;
+    background: rgba(116, 210, 78, 0.12);
+    border-color: rgba(116, 210, 78, 0.35);
+}
