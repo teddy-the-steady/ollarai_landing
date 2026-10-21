@@ -1,5 +1,6 @@
 import './style.css';
 import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
+import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 
 const VIEWS = ['loading', 'start', 'pending', 'blocked', 'error', 'query'];
 const startedKey = (userId) => `ollarai-beta-started:${userId}`;
@@ -365,6 +366,7 @@ function renderPart(part, isMulti) {
 // Columns whose integers are identifiers or periods, not amounts: no thousands separators
 const RAW_NUMBER_COLUMN = /(year|yr|quarter|qtr|month|period|code|ticker|corp_code|stock_code|^id$|_id$)/i;
 const numberFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 4 });
+const amountFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 });
 
 function formatCell(value, column) {
     if (value === null || value === undefined) return { text: '—', numeric: false };
@@ -376,17 +378,72 @@ function formatCell(value, column) {
     return { text: String(value), numeric: false };
 }
 
+// ---------- currency toggle (result tables with amounts) ----------
+
+const CURRENCY_KEY = 'ollarai-beta-currency';
+const CURRENCY_EVENT = 'ollarai-currency';
+
+function selectedCurrency() {
+    const stored = storageGet(CURRENCY_KEY);
+    return VIEW_CURRENCIES.includes(stored) ? stored : 'KRW';
+}
+
+// One choice for every table on the page
+function currencyToggle(current) {
+    const group = el('div', 'tier-toggle currency-toggle');
+    group.setAttribute('role', 'radiogroup');
+    group.setAttribute('aria-label', '금액 통화');
+    VIEW_CURRENCIES.forEach(c => {
+        const btn = el('button', null, c);
+        btn.type = 'button';
+        btn.setAttribute('role', 'radio');
+        btn.dataset.currency = c;
+        btn.addEventListener('click', () => {
+            storageSet(CURRENCY_KEY, c);
+            document.dispatchEvent(new CustomEvent(CURRENCY_EVENT, { detail: c }));
+        });
+        group.appendChild(btn);
+    });
+    const mark = (view) => group.querySelectorAll('button').forEach(btn =>
+        btn.setAttribute('aria-checked', String(btn.dataset.currency === view)));
+    mark(current);
+    return { el: group, mark };
+}
+
+const UNCONVERTED_TITLE = {
+    MIXED: '여러 통화가 섞인 값이라 환산하지 않았어요',
+    null: '통화를 확인하지 못해 환산하지 않았어요',
+};
+
+// Shown values of `result` in `view`: [{ value, text, numeric, currency }] per cell; currency is set
+// on amount cells, and differs from `view` when the amount couldn't be converted.
+function viewCells(result, view) {
+    return result.rows.map((row, i) => row.map((value, j) => {
+        const cell = view ? moneyCell(value, result.columns[j], i, result.money, view) : null;
+        if (!cell) return { value, ...formatCell(value, result.columns[j]) };
+        const shown = cell.currency === view ? Math.round(cell.value) : cell.value;
+        return { value: shown, text: amountFormat.format(shown), numeric: true, currency: cell.currency };
+    }));
+}
+
 function renderTable(result, sql) {
     const card = el('div', 'result-table-card');
+    const toggleable = hasToggle(result);
+    let view = toggleable ? selectedCurrency() : null;
 
     const toolbar = el('div', 'flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-xs text-slate-400');
     toolbar.appendChild(el('span', 'tabular-nums', result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`));
     const actions = el('div', 'flex items-center gap-4');
+    let toggle = null;
+    if (toggleable) {
+        toggle = currencyToggle(view);
+        actions.appendChild(toggle.el);
+    }
     const copyBtn = el('button', 'hover:text-white transition', 'CSV 복사');
     copyBtn.type = 'button';
     copyBtn.addEventListener('click', async () => {
         try {
-            await navigator.clipboard.writeText(toCsv(result));
+            await navigator.clipboard.writeText(toCsv(result, view));
             copyBtn.textContent = '복사됨';
         } catch {
             copyBtn.textContent = '복사 실패';
@@ -416,29 +473,48 @@ function renderTable(result, sql) {
 
     const scroller = el('div', 'result-table-scroll');
     const table = el('table', 'result-table');
-    const thead = el('thead');
-    const headRow = el('tr');
+    scroller.appendChild(table);
+    card.appendChild(scroller);
 
     // Align a column right when all its non-null values are numbers
     const numericCols = result.columns.map((_, i) =>
         result.rows.some(r => r[i] !== null) && result.rows.every(r => r[i] === null || typeof r[i] === 'number'));
 
-    result.columns.forEach((c, i) => headRow.appendChild(el('th', numericCols[i] ? 'is-num' : '', c)));
-    thead.appendChild(headRow);
-    table.appendChild(thead);
-
-    const tbody = el('tbody');
-    result.rows.forEach(row => {
-        const tr = el('tr');
-        row.forEach((value, i) => {
-            const { text } = formatCell(value, result.columns[i]);
-            tr.appendChild(el('td', numericCols[i] ? 'is-num' : '', text));
+    function draw() {
+        const thead = el('thead');
+        const headRow = el('tr');
+        result.columns.forEach((c, i) => {
+            const label = view && result.money.columns[c] ? `${c} (${view})` : c;
+            headRow.appendChild(el('th', numericCols[i] ? 'is-num' : '', label));
         });
-        tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    scroller.appendChild(table);
-    card.appendChild(scroller);
+        thead.appendChild(headRow);
+
+        const tbody = el('tbody');
+        viewCells(result, view).forEach(row => {
+            const tr = el('tr');
+            row.forEach((cell, i) => {
+                const td = el('td', numericCols[i] ? 'is-num' : '', cell.text);
+                // An amount left in its own currency says which
+                if (cell.currency !== undefined && cell.currency !== view) {
+                    td.classList.add('is-unconverted');
+                    if (cell.currency && cell.currency !== 'MIXED') td.appendChild(el('span', 'cell-currency', cell.currency));
+                    td.title = UNCONVERTED_TITLE[cell.currency] ?? `${cell.currency} 환율이 없어 환산하지 않았어요`;
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.replaceChildren(thead, tbody);
+    }
+    draw();
+
+    if (toggleable) {
+        document.addEventListener(CURRENCY_EVENT, (e) => {
+            view = e.detail;
+            toggle.mark(view);
+            draw();
+        });
+    }
 
     if (result.truncated) {
         card.appendChild(el('p', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500',
@@ -447,12 +523,16 @@ function renderTable(result, sql) {
     return card;
 }
 
-function toCsv(result) {
+// The table as shown: amounts in the selected currency
+function toCsv(result, view) {
     const esc = (v) => {
         const s = v === null || v === undefined ? '' : String(v);
         return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
-    return [result.columns, ...result.rows].map(r => r.map(esc).join(',')).join('\n');
+    const header = result.columns.map(c => (view && result.money.columns[c] ? `${c} (${view})` : c));
+    const rows = viewCells(result, view).map(row => row.map(cell =>
+        cell.currency !== undefined && cell.currency !== view && cell.currency ? `${cell.value} ${cell.currency}` : cell.value));
+    return [header, ...rows].map(r => r.map(esc).join(',')).join('\n');
 }
 
 init();

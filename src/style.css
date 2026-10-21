@@ -467,3 +467,12 @@ html[lang="ja"] body {
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+/* Result table amounts: KRW / USD toggle, amounts left in their own currency */
+.currency-toggle button { padding: 0.2rem 0.65rem; font-size: 0.7rem; }
+.result-table td.is-unconverted { color: rgb(148, 163, 184); }
+.result-table .cell-currency {
+    margin-left: 0.35rem;
+    font-size: 0.7rem;
+    color: rgb(100, 116, 139);
+}
