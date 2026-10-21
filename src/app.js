@@ -241,7 +241,8 @@ queryForm.addEventListener('submit', async (e) => {
 
     try {
         const tier = selectedTier();
-        const response = await api('/query', { method: 'POST', body: { question, language: 'ko', ...(tier ? { tier } : {}) } });
+        // auto: the server reads the language (any Hangul = ko) - 'ko' sent English / Japanese through Korean MT
+        const response = await api('/query', { method: 'POST', body: { question, language: 'auto', ...(tier ? { tier } : {}) } });
         card.showResponse(response);
         queryInput.value = '';
         autoResize();
