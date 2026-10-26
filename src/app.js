@@ -450,31 +450,61 @@ function viewCells(result, view) {
     }));
 }
 
+// ---------- rows by account tier ----------
+
+// Paid tables open with this many rows, the rest one click away. Free accounts get only the
+// server's first rows (FREE_MAX_ROWS); the others come as a count, ResultTable.locked_rows.
+const PAID_PAGE_ROWS = 100;
+const LOCKED_PREVIEW_ROWS = 5;
+
+const isPaidAccount = () => me?.tier === 'paid';
+
+// Blurred stand-ins for held-back rows: shown rows with their digits scrambled - the real ones never reach the page
+function lockedPreview(cells, count, numericCols) {
+    return Array.from({ length: count }, (_, i) => {
+        const tr = el('tr', 'is-locked');
+        tr.setAttribute('aria-hidden', 'true');
+        tr.style.opacity = String(1 - i * 0.15);
+        cells[i % cells.length].forEach((cell, j) => {
+            const text = cell.text.replace(/\d/g, d => String((Number(d) * 7 + i + j) % 10));
+            tr.appendChild(el('td', numericCols[j] ? 'is-num' : '', text));
+        });
+        return tr;
+    });
+}
+
 function renderTable(result, sql) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
     let view = toggleable ? selectedCurrency() : null;
+    const locked = result.locked_rows || 0;
+    const lockedLabel = `${locked}${result.truncated ? '+' : ''}`;
+    let shown = Math.min(result.rows.length, PAID_PAGE_ROWS);
 
     const toolbar = el('div', 'flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-xs text-slate-400');
-    toolbar.appendChild(el('span', 'tabular-nums', result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`));
+    const rowCount = locked ? `${result.rows.length + locked}${result.truncated ? '+' : ''}행 중 ${result.rows.length}행`
+        : result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`;
+    toolbar.appendChild(el('span', 'tabular-nums', rowCount));
     const actions = el('div', 'flex items-center gap-4');
     let toggle = null;
     if (toggleable) {
         toggle = currencyToggle(view);
         actions.appendChild(toggle.el);
     }
-    const copyBtn = el('button', 'hover:text-white transition', 'CSV 복사');
-    copyBtn.type = 'button';
-    copyBtn.addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(toCsv(result, view));
-            copyBtn.textContent = '복사됨';
-        } catch {
-            copyBtn.textContent = '복사 실패';
-        }
-        setTimeout(() => { copyBtn.textContent = 'CSV 복사'; }, 1500);
-    });
-    actions.appendChild(copyBtn);
+    if (isPaidAccount()) {
+        const copyBtn = el('button', 'hover:text-white transition', 'CSV 복사');
+        copyBtn.type = 'button';
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(toCsv(result, view));
+                copyBtn.textContent = '복사됨';
+            } catch {
+                copyBtn.textContent = '복사 실패';
+            }
+            setTimeout(() => { copyBtn.textContent = 'CSV 복사'; }, 1500);
+        });
+        actions.appendChild(copyBtn);
+    }
     let sqlBlock = null;
     if (sql) {
         const sqlBtn = el('button', 'hover:text-white transition', 'SQL 보기');
@@ -514,7 +544,8 @@ function renderTable(result, sql) {
         thead.appendChild(headRow);
 
         const tbody = el('tbody');
-        viewCells(result, view).forEach(row => {
+        const cells = viewCells(result, view);
+        cells.slice(0, shown).forEach(row => {
             const tr = el('tr');
             row.forEach((cell, i) => {
                 const td = el('td', numericCols[i] ? 'is-num' : '', cell.text);
@@ -528,6 +559,7 @@ function renderTable(result, sql) {
             });
             tbody.appendChild(tr);
         });
+        if (locked) tbody.append(...lockedPreview(cells, Math.min(locked, LOCKED_PREVIEW_ROWS), numericCols));
         table.replaceChildren(thead, tbody);
     }
     draw();
@@ -540,7 +572,23 @@ function renderTable(result, sql) {
         });
     }
 
-    if (result.truncated) {
+    if (result.rows.length > shown) {
+        const moreBtn = el('button', 'result-more', `${result.rows.length - shown}행 더 보기`);
+        moreBtn.type = 'button';
+        moreBtn.addEventListener('click', () => {
+            shown = result.rows.length;
+            draw();
+            moreBtn.remove();
+        });
+        card.appendChild(moreBtn);
+    }
+
+    if (locked) {
+        const cta = el('div', 'result-locked');
+        cta.appendChild(el('i', 'fas fa-lock'));
+        cta.appendChild(el('span', null, `나머지 ${lockedLabel}행은 유료 플랜에서 볼 수 있어요.`));
+        card.appendChild(cta);
+    } else if (result.truncated) {
         card.appendChild(el('p', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500',
             `결과가 많아 상위 ${result.rows.length}행만 표시했어요. 조건을 더 좁히면 전체 결과를 볼 수 있어요.`));
     }
