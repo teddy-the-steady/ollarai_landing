@@ -39,8 +39,11 @@ function renderAccount() {
     // Only paid-tier queries are counted, per calendar month (free is unlimited, monthly_limit is null)
     const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
-    badge.classList.toggle('hidden', !isPaid || me.monthly_limit == null);
-    badge.textContent = `이번 달 유료 ${me.used_this_month.toLocaleString('ko-KR')} / ${me.monthly_limit?.toLocaleString('ko-KR')}`;
+    const showBadge = isPaid && me.monthly_limit != null;
+    badge.classList.toggle('hidden', !showBadge);
+    if (showBadge) {
+        badge.textContent = `이번 달 유료 ${(me.used_this_month ?? 0).toLocaleString('ko-KR')} / ${me.monthly_limit.toLocaleString('ko-KR')}`;
+    }
 
     document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
     document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
