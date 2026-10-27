@@ -1,6 +1,11 @@
 import './style.css';
 import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
+import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+
+applyI18n();
+langSwitch(document.getElementById('lang-switch'));
+document.getElementById('home-link').href = sitePath('/');
 
 const VIEWS = ['loading', 'start', 'pending', 'blocked', 'error', 'query'];
 const startedKey = (userId) => `ollarai-beta-started:${userId}`;
@@ -42,7 +47,10 @@ function renderAccount() {
     const showBadge = isPaid && me.monthly_limit != null;
     badge.classList.toggle('hidden', !showBadge);
     if (showBadge) {
-        badge.textContent = `이번 달 유료 ${(me.used_this_month ?? 0).toLocaleString('ko-KR')} / ${me.monthly_limit.toLocaleString('ko-KR')}`;
+        badge.textContent = t('app.usage', {
+            used: (me.used_this_month ?? 0).toLocaleString(locale),
+            limit: me.monthly_limit.toLocaleString(locale),
+        });
     }
 
     document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
@@ -53,7 +61,7 @@ function renderAccount() {
 // ---------- tier toggle (paid accounts only) ----------
 
 const TIER_KEY = 'ollarai-beta-tier';
-const TIER_LABEL = { free: '무료', paid: '유료' };
+const TIER_LABEL = { free: t('app.tier.free'), paid: t('app.tier.paid') };
 
 // The tier sent with /query: null lets the server use the account's tier
 function selectedTier() {
@@ -167,12 +175,12 @@ async function loadHistory() {
         const page = await api(`/history?${params}`);
         page.items.forEach(item => resultsEl.appendChild(historyCard(item).el));
         historyBefore = page.next_before;
-        historyMoreBtn.textContent = '이전 질문 더 보기';
+        historyMoreBtn.textContent = t('app.history.more');
         historyMoreWrap.classList.toggle('hidden', !historyBefore);
     } catch (error) {
         if (handleAuthError(error)) return;
         console.error(error);
-        historyMoreBtn.textContent = '이전 질문을 불러오지 못했어요 · 다시 시도';
+        historyMoreBtn.textContent = t('app.history.failed');
         historyMoreWrap.classList.remove('hidden');
     } finally {
         historyMoreBtn.disabled = false;
@@ -194,17 +202,17 @@ historyMoreBtn.addEventListener('click', loadHistory);
 // ---------- errors ----------
 
 function errorMessage(error) {
-    if (!(error instanceof ApiError)) return '문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
+    if (!(error instanceof ApiError)) return t('app.err.generic');
     const detailMessage = typeof error.detail === 'string' ? null : error.detail?.message;
     switch (error.status) {
-        case 0: return '네트워크 연결을 확인해 주세요.';
-        case 403: return '이 계정에서는 유료 방식을 사용할 수 없어요.';
+        case 0: return t('app.err.network');
+        case 403: return t('app.err.paid-unavailable');
         case 429:
             return error.detail?.monthly_limit
-                ? `이번 달 유료 질문 한도(${error.detail.monthly_limit.toLocaleString('ko-KR')}회)를 모두 사용했어요. 무료로 바꾸면 계속 질문할 수 있고, 유료 한도는 매월 1일 0시(한국 시간)에 초기화돼요.`
-                : '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.';
-        case 503: return detailMessage || '서비스가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.';
-        default: return '답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.';
+                ? t('app.err.monthly-limit', { limit: error.detail.monthly_limit.toLocaleString(locale) })
+                : t('app.err.rate-limit');
+        case 503: return detailMessage || t('app.err.unavailable');
+        default: return t('app.err.answer');
     }
 }
 
@@ -274,7 +282,7 @@ function el(tag, className, text) {
     return node;
 }
 
-const timeFormat = new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+const timeFormat = new Intl.DateTimeFormat(locale, { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 function createResultCard(question, createdAt = new Date()) {
     const root = el('article', 'result-card');
@@ -290,7 +298,7 @@ function createResultCard(question, createdAt = new Date()) {
     const body = el('div', 'flex flex-col gap-6');
     const loading = el('div', 'flex items-center gap-3 text-slate-400 text-sm');
     loading.appendChild(el('span', 'beta-spinner beta-spinner-sm'));
-    const loadingText = el('span', null, '질문을 분석하고 있어요…');
+    const loadingText = el('span', null, t('result.loading.analyzing'));
     loading.appendChild(loadingText);
     body.appendChild(loading);
     body.appendChild(el('div', 'skeleton-table'));
@@ -300,7 +308,8 @@ function createResultCard(question, createdAt = new Date()) {
     const started = Date.now();
     const timer = setInterval(() => {
         const s = Math.floor((Date.now() - started) / 1000);
-        loadingText.textContent = s < 5 ? '질문을 분석하고 있어요…' : s < 15 ? `데이터를 조회하고 있어요… ${s}초` : `조금만 기다려 주세요… ${s}초`;
+        loadingText.textContent = s < 5 ? t('result.loading.analyzing')
+            : t(s < 15 ? 'result.loading.querying' : 'result.loading.waiting', { s });
     }, 1000);
 
     // Beta users can quote this when reporting a problem (matches the server's req= log lines)
@@ -309,13 +318,13 @@ function createResultCard(question, createdAt = new Date()) {
         const label = `ID ${requestId}`;
         const btn = el('button', 'font-mono hover:text-slate-300 transition', label);
         btn.type = 'button';
-        btn.title = '요청 ID 복사';
+        btn.title = t('result.request-id.copy');
         btn.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(requestId);
-                btn.textContent = '복사됨';
+                btn.textContent = t('result.copied');
             } catch {
-                btn.textContent = '복사 실패';
+                btn.textContent = t('result.copy-failed');
             }
             setTimeout(() => { btn.textContent = label; }, 1500);
         });
@@ -369,7 +378,7 @@ function renderPart(part, isMulti, loadAll) {
     if (part.result) {
         wrap.appendChild(renderTable(part.result, part.sql, loadAll));
     } else if (!part.message) {
-        wrap.appendChild(notice('결과를 찾지 못했어요. 질문을 조금 바꿔서 다시 시도해 주세요.', 'info'));
+        wrap.appendChild(notice(t('result.not-found'), 'info'));
     }
     return wrap;
 }
@@ -396,8 +405,8 @@ function clarificationOptions(clarification) {
 
 // Columns whose integers are identifiers or periods, not amounts: no thousands separators
 const RAW_NUMBER_COLUMN = /(year|yr|quarter|qtr|month|period|code|ticker|corp_code|stock_code|^id$|_id$)/i;
-const numberFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 4 });
-const amountFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 });
+const numberFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 4 });
+const amountFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
 
 function formatCell(value, column) {
     if (value === null || value === undefined) return { text: '—', numeric: false };
@@ -416,14 +425,15 @@ const CURRENCY_EVENT = 'ollarai-currency';
 
 function selectedCurrency() {
     const stored = storageGet(CURRENCY_KEY);
-    return VIEW_CURRENCIES.includes(stored) ? stored : 'KRW';
+    if (VIEW_CURRENCIES.includes(stored)) return stored;
+    return lang === 'ko' ? 'KRW' : 'USD';
 }
 
 // One choice for every table on the page
 function currencyToggle(current) {
     const group = el('div', 'tier-toggle currency-toggle');
     group.setAttribute('role', 'radiogroup');
-    group.setAttribute('aria-label', '금액 통화');
+    group.setAttribute('aria-label', t('result.currency'));
     VIEW_CURRENCIES.forEach(c => {
         const btn = el('button', null, c);
         btn.type = 'button';
@@ -442,8 +452,8 @@ function currencyToggle(current) {
 }
 
 const UNCONVERTED_TITLE = {
-    MIXED: '여러 통화가 섞인 값이라 환산하지 않았어요',
-    null: '통화를 확인하지 못해 환산하지 않았어요',
+    MIXED: t('result.unconverted.mixed'),
+    null: t('result.unconverted.unknown'),
 };
 
 // Shown values of `result` in `view`: [{ value, text, numeric, currency }] per cell; currency is set
@@ -493,8 +503,9 @@ function renderTable(result, sql, loadAll) {
     const toolbar = el('div', 'flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-xs text-slate-400');
     const rowCount = el('span', 'tabular-nums');
     const countRows = () => {
-        rowCount.textContent = locked ? `${result.rows.length + locked}${result.truncated ? '+' : ''}행 중 ${result.rows.length}행`
-            : result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`;
+        const n = result.rows.length;
+        rowCount.textContent = locked ? t('result.rows.of', { n, total: `${n + locked}${result.truncated ? '+' : ''}` })
+            : t(result.truncated ? 'result.rows.top' : 'result.rows', { n });
     };
     countRows();
     toolbar.appendChild(rowCount);
@@ -505,27 +516,27 @@ function renderTable(result, sql, loadAll) {
         actions.appendChild(toggle.el);
     }
     if (isPaidAccount()) {
-        const copyBtn = el('button', 'hover:text-white transition', 'CSV 복사');
+        const copyBtn = el('button', 'hover:text-white transition', t('result.csv'));
         copyBtn.type = 'button';
         copyBtn.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(toCsv(result, view));
-                copyBtn.textContent = '복사됨';
+                copyBtn.textContent = t('result.copied');
             } catch {
-                copyBtn.textContent = '복사 실패';
+                copyBtn.textContent = t('result.copy-failed');
             }
-            setTimeout(() => { copyBtn.textContent = 'CSV 복사'; }, 1500);
+            setTimeout(() => { copyBtn.textContent = t('result.csv'); }, 1500);
         });
         actions.appendChild(copyBtn);
     }
     let sqlBlock = null;
     if (sql) {
-        const sqlBtn = el('button', 'hover:text-white transition', 'SQL 보기');
+        const sqlBtn = el('button', 'hover:text-white transition', t('result.sql.show'));
         sqlBtn.type = 'button';
         sqlBlock = el('pre', 'result-sql hidden', sql);
         sqlBtn.addEventListener('click', () => {
             const hidden = sqlBlock.classList.toggle('hidden');
-            sqlBtn.textContent = hidden ? 'SQL 보기' : 'SQL 숨기기';
+            sqlBtn.textContent = t(hidden ? 'result.sql.show' : 'result.sql.hide');
         });
         actions.appendChild(sqlBtn);
     }
@@ -534,7 +545,7 @@ function renderTable(result, sql, loadAll) {
     if (sqlBlock) card.appendChild(sqlBlock);
 
     if (!result.rows.length) {
-        card.appendChild(el('p', 'px-4 py-8 text-center text-slate-500 text-sm', '조건에 맞는 데이터가 없어요.'));
+        card.appendChild(el('p', 'px-4 py-8 text-center text-slate-500 text-sm', t('result.empty')));
         return card;
     }
 
@@ -567,7 +578,7 @@ function renderTable(result, sql, loadAll) {
                 if (cell.currency !== undefined && cell.currency !== view) {
                     td.classList.add('is-unconverted');
                     if (cell.currency && cell.currency !== 'MIXED') td.appendChild(el('span', 'cell-currency', cell.currency));
-                    td.title = UNCONVERTED_TITLE[cell.currency] ?? `${cell.currency} 환율이 없어 환산하지 않았어요`;
+                    td.title = UNCONVERTED_TITLE[cell.currency] ?? t('result.unconverted.no-rate', { currency: cell.currency });
                 }
                 tr.appendChild(td);
             });
@@ -588,9 +599,9 @@ function renderTable(result, sql, loadAll) {
 
     if (locked) {
         const cta = el('a', 'result-locked');
-        cta.href = '/pricing/';
+        cta.href = sitePath('/pricing/');
         cta.appendChild(el('i', 'fas fa-lock'));
-        cta.appendChild(el('span', null, `나머지 ${lockedLabel}행은 유료 플랜에서 볼 수 있어요.`));
+        cta.appendChild(el('span', null, t('result.locked', { n: lockedLabel })));
         cta.appendChild(el('i', 'fas fa-arrow-right text-xs'));
         card.appendChild(cta);
         return card;
@@ -602,7 +613,7 @@ function renderTable(result, sql, loadAll) {
 
     async function showAll(btn, hint) {
         btn.disabled = true;
-        btn.textContent = '불러오는 중…';
+        btn.textContent = t('result.load-all.loading');
         try {
             const full = await loadAll();
             Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money });
@@ -615,16 +626,16 @@ function renderTable(result, sql, loadAll) {
         } catch (error) {
             if (handleAuthError(error)) return;
             console.error(error);
-            hint.textContent = '전체 결과를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+            hint.textContent = t('result.load-all.failed');
             btn.disabled = false;
-            btn.textContent = '다시 시도';
+            btn.textContent = t('app.retry');
         }
     }
 
     function renderFooter() {
         footer.replaceChildren();
         if (result.rows.length > shown) {
-            const moreBtn = el('button', 'result-more', `${result.rows.length - shown}행 더 보기`);
+            const moreBtn = el('button', 'result-more', t('result.more', { n: result.rows.length - shown }));
             moreBtn.type = 'button';
             moreBtn.addEventListener('click', () => {
                 shown = result.rows.length;
@@ -634,15 +645,15 @@ function renderTable(result, sql, loadAll) {
             footer.appendChild(moreBtn);
         } else if (result.truncated && loadAll) {
             const box = el('div', 'result-load-all');
-            const hint = el('p', null, `결과가 ${result.rows.length}행보다 많아요. 전체를 불러오면 시간이 걸리고 화면이 느려질 수 있어요.`);
-            const btn = el('button', 'result-load-all-btn', '전체 불러오기');
+            const hint = el('p', null, t('result.load-all.hint', { n: result.rows.length }));
+            const btn = el('button', 'result-load-all-btn', t('result.load-all'));
             btn.type = 'button';
             btn.addEventListener('click', () => showAll(btn, hint));
             box.append(hint, btn);
             footer.appendChild(box);
         } else if (result.truncated) {
             footer.appendChild(el('p', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500',
-                `결과가 많아 상위 ${result.rows.length}행만 표시했어요. 조건을 더 좁히면 전체 결과를 볼 수 있어요.`));
+                t('result.truncated', { n: result.rows.length })));
         }
     }
     renderFooter();

@@ -1,5 +1,11 @@
 import './style.css';
 import { supabase, APP_PATH } from './beta/api.js';
+import { t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+
+document.title = t('login.page-title');
+applyI18n(document, { terms: sitePath('/terms/'), privacy: sitePath('/privacy/') });
+langSwitch(document.getElementById('lang-switch'));
+document.getElementById('home-link').href = sitePath('/');
 
 const form = document.getElementById('auth-form');
 const emailInput = document.getElementById('auth-email');
@@ -11,8 +17,8 @@ const errorEl = document.getElementById('auth-error');
 const noticeEl = document.getElementById('auth-notice');
 
 const MODES = {
-    login: { title: '로그인', subtitle: '베타 테스트에 참여하려면 로그인해 주세요.', submit: '로그인' },
-    signup: { title: '회원가입', subtitle: '이메일로 가입하고 베타 테스트를 신청하세요.', submit: '가입하기' },
+    login: { title: t('login.title'), subtitle: t('login.subtitle'), submit: t('login.submit') },
+    signup: { title: t('signup.title'), subtitle: t('signup.subtitle'), submit: t('signup.submit') },
 };
 let mode = 'login';
 
@@ -50,28 +56,28 @@ function showNotice(message) {
     noticeEl.classList.toggle('hidden', !message);
 }
 
-// Supabase auth error codes -> user-facing Korean messages
+// Supabase auth error codes -> user-facing messages
 function authErrorMessage(error) {
     switch (error.code) {
-        case 'invalid_credentials': return '이메일 또는 비밀번호가 올바르지 않아요.';
-        case 'email_not_confirmed': return '이메일 인증이 아직 완료되지 않았어요. 받은 메일함을 확인해 주세요.';
+        case 'invalid_credentials': return t('auth.error.invalid-credentials');
+        case 'email_not_confirmed': return t('auth.error.email-not-confirmed');
         case 'user_already_exists':
-        case 'email_exists': return '이미 가입된 이메일이에요. 로그인해 주세요.';
-        case 'weak_password': return '비밀번호가 너무 단순해요. 8자 이상으로 더 복잡하게 만들어 주세요.';
+        case 'email_exists': return t('auth.error.exists');
+        case 'weak_password': return t('auth.error.weak-password');
         case 'over_request_rate_limit':
-        case 'over_email_send_rate_limit': return '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.';
-        default: return '문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
+        case 'over_email_send_rate_limit': return t('auth.error.rate-limit');
+        default: return t('auth.error.generic');
     }
 }
 
 function validate() {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return '올바른 이메일 주소를 입력해 주세요.';
-    if (password.length < 8) return '비밀번호는 8자 이상이어야 해요.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return t('auth.invalid.email');
+    if (password.length < 8) return t('auth.invalid.password');
     if (mode === 'signup') {
-        if (password !== confirmInput.value) return '비밀번호가 서로 달라요.';
-        if (!consentInput.checked) return '이용약관과 개인정보처리방침에 동의해 주세요.';
+        if (password !== confirmInput.value) return t('auth.invalid.mismatch');
+        if (!consentInput.checked) return t('auth.invalid.consent');
     }
     return '';
 }
@@ -115,7 +121,7 @@ form.addEventListener('submit', async (e) => {
             return;
         }
         // Email confirmation is on: no session until the link is clicked
-        showNotice(`${email}로 인증 메일을 보냈어요. 메일의 링크를 누르면 가입이 완료돼요.`);
+        showNotice(t('auth.confirm-sent', { email }));
         form.reset();
     } catch (error) {
         console.error(error);

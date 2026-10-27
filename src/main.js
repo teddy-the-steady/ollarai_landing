@@ -33,11 +33,10 @@ document.querySelectorAll('button.bg-primary:not(#dialog-close):not(#cta-registe
     btn.addEventListener('click', () => openDialog());
 });
 
-// Beta CTAs: the beta runs on the Korean site only (/app/ redirects to /login/ when signed out)
+// Beta CTAs: the app opens in the site's language (src/beta/i18n.js; /app/ redirects to /login/ when signed out)
 ['nav-cta-btn', 'hero-cta-btn'].forEach(id => {
     document.getElementById(id).addEventListener('click', () => {
-        if (currentLang === 'ko') window.location.href = '/app/';
-        else openDialog(i18n[currentLang]['dialog-beta-ko-only']);
+        window.location.href = `/app/?lang=${currentLang}`;
     });
 });
 
@@ -303,7 +302,6 @@ const i18n = {
         'cta-register': 'Register Now',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span> is currently hard at work.<br/>Please wait a little longer!',
         'dialog-close': 'OK',
-        'dialog-beta-ko-only': 'The beta is currently available on the Korean site only.<br/><a href="/ko" class="text-primary underline underline-offset-2">Go to the Korean site</a>',
         'pricing-href': '/en/pricing/',
         'terms-href': '/en/terms/',
         'refund-href': '/en/terms/#refund',
@@ -385,7 +383,6 @@ const i18n = {
         'cta-register': '今すぐ登録',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>は現在準備中です。<br/>もう少しお待ちください!',
         'dialog-close': '確認',
-        'dialog-beta-ko-only': 'ベータテストは現在、韓国語サイトでのみ実施しています。<br/><a href="/ko" class="text-primary underline underline-offset-2">韓国語サイトへ移動</a>',
         'pricing-href': '/ja/pricing/',
         'terms-href': '/ja/terms/',
         'refund-href': '/ja/terms/#refund',
