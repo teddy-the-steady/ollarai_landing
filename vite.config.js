@@ -37,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
           pricingJa: resolve(root, 'ja/pricing/index.html'),
           login: resolve(root, 'login/index.html'),
           app: resolve(root, 'app/index.html'),
+          account: resolve(root, 'account/index.html'),
         },
         output: {
           assetFileNames: 'assets/[name]-[hash][extname]',

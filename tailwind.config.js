@@ -7,6 +7,7 @@ export default {
     "./pricing/**/*.html",
     "./login/**/*.html",
     "./app/**/*.html",
+    "./account/**/*.html",
     "./en/**/*.html",
     "./ja/**/*.html",
     "./src/**/*.{js,ts,jsx,tsx}",

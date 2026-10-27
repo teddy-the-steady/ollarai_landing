@@ -31,7 +31,10 @@
                 <div id="lang-switch" class="tier-toggle currency-toggle" role="radiogroup" aria-label="Language"></div>
                 <div id="account" class="hidden items-center gap-3 md:gap-4 text-sm">
                     <span id="usage-badge" class="hidden px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs tabular-nums"></span>
-                    <span id="account-email" class="hidden md:inline text-slate-400 truncate max-w-[220px]"></span>
+                    <a href="/account/" class="flex items-center gap-2 text-slate-400 hover:text-white transition" data-i18n-aria-label="account.nav">
+                        <i class="fas fa-circle-user text-base md:hidden"></i>
+                        <span id="account-email" class="hidden md:inline truncate max-w-[220px]"></span>
+                    </a>
                     <button id="logout-btn" type="button" class="text-slate-400 hover:text-white transition" data-i18n="app.logout">로그아웃</button>
                 </div>
             </div>
