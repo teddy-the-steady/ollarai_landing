@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./privacy/**/*.html",
     "./terms/**/*.html",
+    "./pricing/**/*.html",
     "./login/**/*.html",
     "./app/**/*.html",
     "./en/**/*.html",

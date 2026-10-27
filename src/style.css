@@ -517,7 +517,9 @@ html[lang="ja"] body {
     color: var(--primary-green-light);
     font-size: 0.8rem;
     font-weight: 600;
+    transition: background-color 0.2s;
 }
+.result-locked:hover { background: rgba(116, 210, 78, 0.12); }
 .result-more {
     display: block;
     width: 100%;
@@ -528,3 +530,78 @@ html[lang="ja"] body {
     transition: background-color 0.2s, color 0.2s;
 }
 .result-more:hover { color: #fff; background: rgba(255, 255, 255, 0.03); }
+.result-load-all {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(245, 158, 11, 0.06);
+    font-size: 0.75rem;
+    color: rgb(252, 211, 77);
+}
+.result-load-all-btn {
+    flex-shrink: 0;
+    padding: 0.35rem 0.9rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(252, 211, 77, 0.35);
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.result-load-all-btn:hover:not(:disabled) { background: rgba(245, 158, 11, 0.12); }
+.result-load-all-btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* Pricing page */
+.pricing-plan {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+.pricing-plan-paid {
+    border-color: rgba(116, 210, 78, 0.35);
+    background: rgba(116, 210, 78, 0.04);
+}
+.pricing-features {
+    flex: 1;
+    margin: 1.75rem 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgb(203, 213, 225);
+}
+.pricing-features li {
+    position: relative;
+    padding-left: 1.5rem;
+}
+.pricing-features li::before {
+    content: '';
+    position: absolute;
+    left: 0.15rem;
+    top: 0.45rem;
+    width: 0.65rem;
+    height: 0.35rem;
+    border-left: 2px solid var(--primary-green);
+    border-bottom: 2px solid var(--primary-green);
+    transform: rotate(-45deg);
+}
+.pricing-features strong { color: #fff; }
+.pricing-cta {
+    display: block;
+    padding: 0.8rem 1rem;
+    border-radius: 9999px;
+    text-align: center;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+}
+.pricing-cta-primary { background: var(--primary-green); color: rgb(15, 23, 42); }
+.pricing-cta-primary:hover { background: var(--primary-green-dark); }
+.pricing-cta-primary:disabled { background: rgba(255, 255, 255, 0.08); color: rgb(148, 163, 184); cursor: not-allowed; }
+.pricing-cta-secondary { border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; }
+.pricing-cta-secondary:hover { background: rgba(255, 255, 255, 0.06); }

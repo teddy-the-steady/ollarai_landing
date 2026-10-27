@@ -36,11 +36,11 @@ function renderAccount() {
     emailEl.textContent = me.email || '';
     emailEl.classList.toggle('md:inline', !!me.email);
 
-    // Only paid-tier queries are counted (free is unlimited, daily_limit is null)
+    // Only paid-tier queries are counted, per calendar month (free is unlimited, monthly_limit is null)
     const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
-    badge.classList.toggle('hidden', !isPaid || me.daily_limit == null);
-    badge.textContent = `유료 ${me.used_today} / ${me.daily_limit}`;
+    badge.classList.toggle('hidden', !isPaid || me.monthly_limit == null);
+    badge.textContent = `이번 달 유료 ${me.used_this_month.toLocaleString('ko-KR')} / ${me.monthly_limit?.toLocaleString('ko-KR')}`;
 
     document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
     document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
@@ -178,7 +178,7 @@ async function loadHistory() {
 
 function historyCard(item) {
     const card = createResultCard(item.question, item.created_at);
-    if (item.status === 200 && item.response) card.showResponse(item.response);
+    if (item.status === 200 && item.response) card.showResponse(item.response, item.id);
     else {
         const error = new ApiError(item.status, item.error);
         card.showError(errorMessage(error), error.requestId);
@@ -197,8 +197,8 @@ function errorMessage(error) {
         case 0: return '네트워크 연결을 확인해 주세요.';
         case 403: return '이 계정에서는 유료 방식을 사용할 수 없어요.';
         case 429:
-            return error.detail?.daily_limit
-                ? `오늘 유료 질문 한도(${error.detail.daily_limit}회)를 모두 사용했어요. 무료로 바꾸면 계속 질문할 수 있고, 유료 한도는 매일 자정(한국 시간)에 초기화돼요.`
+            return error.detail?.monthly_limit
+                ? `이번 달 유료 질문 한도(${error.detail.monthly_limit.toLocaleString('ko-KR')}회)를 모두 사용했어요. 무료로 바꾸면 계속 질문할 수 있고, 유료 한도는 매월 1일 0시(한국 시간)에 초기화돼요.`
                 : '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.';
         case 503: return detailMessage || '서비스가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.';
         default: return '답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.';
@@ -322,7 +322,7 @@ function createResultCard(question, createdAt = new Date()) {
 
     return {
         el: root,
-        showResponse(response) {
+        showResponse(response, historyId = response.history_id) {
             clearInterval(timer);
             showRequestId(response.request_id);
             // Paid accounts can switch tiers, so mark which path produced this answer
@@ -331,7 +331,11 @@ function createResultCard(question, createdAt = new Date()) {
             }
             body.replaceChildren();
             const parts = response.is_multi_query && response.queries?.length ? response.queries : [response];
-            parts.forEach(part => body.appendChild(renderPart(part, response.is_multi_query)));
+            parts.forEach((part, i) => {
+                const loadAll = historyId != null && isPaidAccount()
+                    ? () => api(`/history/${historyId}/rows?part=${i}`) : null;
+                body.appendChild(renderPart(part, response.is_multi_query, loadAll));
+            });
         },
         showError(message, requestId) {
             clearInterval(timer);
@@ -348,7 +352,7 @@ function notice(message, kind = 'info') {
     return box;
 }
 
-function renderPart(part, isMulti) {
+function renderPart(part, isMulti, loadAll) {
     const wrap = el('section', 'flex flex-col gap-3');
     if (isMulti && part.question) {
         wrap.appendChild(el('h3', 'text-sm font-semibold text-slate-300', part.question));
@@ -360,7 +364,7 @@ function renderPart(part, isMulti) {
         wrap.appendChild(clarificationOptions(part.clarification));
     }
     if (part.result) {
-        wrap.appendChild(renderTable(part.result, part.sql));
+        wrap.appendChild(renderTable(part.result, part.sql, loadAll));
     } else if (!part.message) {
         wrap.appendChild(notice('결과를 찾지 못했어요. 질문을 조금 바꿔서 다시 시도해 주세요.', 'info'));
     }
@@ -452,8 +456,9 @@ function viewCells(result, view) {
 
 // ---------- rows by account tier ----------
 
-// Paid tables open with this many rows, the rest one click away. Free accounts get only the
-// server's first rows (FREE_MAX_ROWS); the others come as a count, ResultTable.locked_rows.
+// Paid tables open with this many rows; "more" shows the rest of what /query sent (SQL_EXEC_MAX_ROWS),
+// and past that, after a warning, every row comes from GET /history/{id}/rows. Free accounts get only
+// the server's first rows (FREE_MAX_ROWS); the others come as a count, ResultTable.locked_rows.
 const PAID_PAGE_ROWS = 100;
 const LOCKED_PREVIEW_ROWS = 5;
 
@@ -473,7 +478,8 @@ function lockedPreview(cells, count, numericCols) {
     });
 }
 
-function renderTable(result, sql) {
+// loadAll: fetches every row of a truncated table (paid accounts), or null
+function renderTable(result, sql, loadAll) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
     let view = toggleable ? selectedCurrency() : null;
@@ -482,9 +488,13 @@ function renderTable(result, sql) {
     let shown = Math.min(result.rows.length, PAID_PAGE_ROWS);
 
     const toolbar = el('div', 'flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-xs text-slate-400');
-    const rowCount = locked ? `${result.rows.length + locked}${result.truncated ? '+' : ''}행 중 ${result.rows.length}행`
-        : result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`;
-    toolbar.appendChild(el('span', 'tabular-nums', rowCount));
+    const rowCount = el('span', 'tabular-nums');
+    const countRows = () => {
+        rowCount.textContent = locked ? `${result.rows.length + locked}${result.truncated ? '+' : ''}행 중 ${result.rows.length}행`
+            : result.truncated ? `상위 ${result.rows.length}행` : `${result.rows.length}행`;
+    };
+    countRows();
+    toolbar.appendChild(rowCount);
     const actions = el('div', 'flex items-center gap-4');
     let toggle = null;
     if (toggleable) {
@@ -531,8 +541,9 @@ function renderTable(result, sql) {
     card.appendChild(scroller);
 
     // Align a column right when all its non-null values are numbers
-    const numericCols = result.columns.map((_, i) =>
+    const numericColumns = () => result.columns.map((_, i) =>
         result.rows.some(r => r[i] !== null) && result.rows.every(r => r[i] === null || typeof r[i] === 'number'));
+    let numericCols = numericColumns();
 
     function draw() {
         const thead = el('thead');
@@ -572,26 +583,66 @@ function renderTable(result, sql) {
         });
     }
 
-    if (result.rows.length > shown) {
-        const moreBtn = el('button', 'result-more', `${result.rows.length - shown}행 더 보기`);
-        moreBtn.type = 'button';
-        moreBtn.addEventListener('click', () => {
-            shown = result.rows.length;
-            draw();
-            moreBtn.remove();
-        });
-        card.appendChild(moreBtn);
-    }
-
     if (locked) {
-        const cta = el('div', 'result-locked');
+        const cta = el('a', 'result-locked');
+        cta.href = '/pricing/';
         cta.appendChild(el('i', 'fas fa-lock'));
         cta.appendChild(el('span', null, `나머지 ${lockedLabel}행은 유료 플랜에서 볼 수 있어요.`));
+        cta.appendChild(el('i', 'fas fa-arrow-right text-xs'));
         card.appendChild(cta);
-    } else if (result.truncated) {
-        card.appendChild(el('p', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500',
-            `결과가 많아 상위 ${result.rows.length}행만 표시했어요. 조건을 더 좁히면 전체 결과를 볼 수 있어요.`));
+        return card;
     }
+
+    // 100 rows -> the rest /query sent -> (warned) every row
+    const footer = el('div');
+    card.appendChild(footer);
+
+    async function showAll(btn, hint) {
+        btn.disabled = true;
+        btn.textContent = '불러오는 중…';
+        try {
+            const full = await loadAll();
+            Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money });
+            loadAll = null; // still truncated only under SQL_FULL_MAX_ROWS - nothing more to load
+            numericCols = numericColumns();
+            shown = result.rows.length;
+            countRows();
+            draw();
+            renderFooter();
+        } catch (error) {
+            if (handleAuthError(error)) return;
+            console.error(error);
+            hint.textContent = '전체 결과를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+            btn.disabled = false;
+            btn.textContent = '다시 시도';
+        }
+    }
+
+    function renderFooter() {
+        footer.replaceChildren();
+        if (result.rows.length > shown) {
+            const moreBtn = el('button', 'result-more', `${result.rows.length - shown}행 더 보기`);
+            moreBtn.type = 'button';
+            moreBtn.addEventListener('click', () => {
+                shown = result.rows.length;
+                draw();
+                renderFooter();
+            });
+            footer.appendChild(moreBtn);
+        } else if (result.truncated && loadAll) {
+            const box = el('div', 'result-load-all');
+            const hint = el('p', null, `결과가 ${result.rows.length}행보다 많아요. 전체를 불러오면 시간이 걸리고 화면이 느려질 수 있어요.`);
+            const btn = el('button', 'result-load-all-btn', '전체 불러오기');
+            btn.type = 'button';
+            btn.addEventListener('click', () => showAll(btn, hint));
+            box.append(hint, btn);
+            footer.appendChild(box);
+        } else if (result.truncated) {
+            footer.appendChild(el('p', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500',
+                `결과가 많아 상위 ${result.rows.length}행만 표시했어요. 조건을 더 좁히면 전체 결과를 볼 수 있어요.`));
+        }
+    }
+    renderFooter();
     return card;
 }
 

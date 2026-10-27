@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <title>Pricing - Ollarai</title>
+    <meta name="description" content="Ollarai plans and usage limits">
+    <link rel="alternate" hreflang="ko" href="https://ollarai.com/pricing/">
+    <link rel="alternate" hreflang="en" href="https://ollarai.com/en/pricing/">
+    <link rel="alternate" hreflang="ja" href="https://ollarai.com/ja/pricing/">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKE2BBMBGT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NKE2BBMBGT');
+    </script>
+
+    <script type="module" src="/src/legal.js"></script>
+</head>
+<body class="text-slate-200">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-morphism py-5">
+        <div class="container mx-auto px-6 flex justify-between items-center gap-4">
+            <a href="/en" class="cursor-pointer">
+                <span class="text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
+            </a>
+            <div class="flex items-center gap-1 text-sm font-medium">
+                <a href="/app/" class="hidden sm:inline px-3 py-2 mr-2 text-slate-300 hover:text-white transition">Open app</a>
+                <a href="/pricing/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">KO</a>
+                <a href="/en/pricing/" class="px-3 py-2 rounded-full text-white bg-white/10">EN</a>
+                <a href="/ja/pricing/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">JA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-36 pb-24">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">Pricing</h1>
+            <p class="text-slate-400 mb-12">Start for free, and subscribe when you need more.</p>
+
+            <!-- Plans: limits must match the server (FREE_MAX_ROWS, PAID_MONTHLY_QUERY_LIMIT) and stay the same in
+                 /pricing/, /en/pricing/, /ja/pricing/ - terms 제7조, 제8조 -->
+            <div class="grid md:grid-cols-2 gap-6 mb-16">
+                <section class="pricing-plan">
+                    <h2 class="text-lg font-semibold text-white">Free</h2>
+                    <p class="mt-3 text-3xl font-extrabold text-white">$0</p>
+                    <p class="mt-1 text-sm text-slate-500">No payment details needed - just sign up</p>
+                    <ul class="pricing-features">
+                        <li>Unlimited questions</li>
+                        <li>First 20 rows of each result table</li>
+                        <li>See the generated SQL</li>
+                        <li>Show amounts in KRW or USD</li>
+                    </ul>
+                    <a href="/app/" class="pricing-cta pricing-cta-secondary">Start for free</a>
+                </section>
+
+                <section class="pricing-plan pricing-plan-paid">
+                    <h2 class="text-lg font-semibold text-white">Paid</h2>
+                    <p class="mt-3 text-3xl font-extrabold text-white">$7.99<span class="text-base font-medium text-slate-400"> / month</span></p>
+                    <p class="mt-1 text-sm text-slate-500">Plus applicable taxes · Renews monthly · Cancel anytime</p>
+                    <ul class="pricing-features">
+                        <li>Everything in Free</li>
+                        <li><strong>Paid mode</strong>: the generated SQL is verified and refined once more before answering (1,000 per month)</li>
+                        <li>Full result tables</li>
+                        <li>Copy results as CSV</li>
+                    </ul>
+                    <button type="button" class="pricing-cta pricing-cta-primary" disabled>Coming soon</button>
+                </section>
+            </div>
+
+            <article class="legal-content">
+                <h2 id="limits">Usage limits</h2>
+                <ul>
+                    <li>Paid-mode usage resets on the 1st of each month at midnight Korea time. After using it up, you can keep asking in the free mode.</li>
+                    <li>Paid tables show the first 100 rows, and you can load the full result from there. Very large results may take a while to load.</li>
+                </ul>
+
+                <h2 id="billing">Billing and cancellation</h2>
+                <ul>
+                    <li>Your subscription runs in one-month periods from your first payment and renews automatically on the same day each month until you cancel (<a href="/en/terms/#recurring">Terms, Article 9</a>).</li>
+                    <li>Payments in USD are processed by Paddle, our Merchant of Record, which adds any applicable taxes at checkout. Customers in Korea pay ₩9,900 per month (VAT included) through Toss Payments (<a href="/en/terms/#fees">Article 8</a>).</li>
+                    <li>You can cancel anytime from the subscription settings and keep paid features until the end of the period you have paid for (<a href="/en/terms/#cancellation">Article 11</a>).</li>
+                    <li>You can withdraw within 7 days of a payment. If you used the paid mode during that period, withdrawal is limited (<a href="/en/terms/#refund">Article 12</a>).</li>
+                </ul>
+                <p>Contact: <a href="mailto:contact@ollarai.com">contact@ollarai.com</a></p>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5">
+        <div class="container mx-auto px-6 max-w-4xl flex flex-col md:flex-row md:items-center gap-4 text-slate-500 text-sm">
+            <span class="text-xl text-white tracking-tighter ollarai-brand">Ollarai</span>
+            <div class="flex flex-wrap gap-x-6 gap-y-2 md:ml-8">
+                    <a href="/en/pricing/" class="hover:text-primary transition text-slate-300">Pricing</a>
+                    <a href="/en/terms/" class="hover:text-primary transition">Terms of Service</a>
+                    <a href="/en/terms/#refund" class="hover:text-primary transition">Refund Policy</a>
+                    <a href="/en/privacy/" class="hover:text-primary transition">Privacy Policy</a>
+            </div>
+            <div class="md:ml-auto">&copy; <span id="footer-year"></span> Ollarai. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>
