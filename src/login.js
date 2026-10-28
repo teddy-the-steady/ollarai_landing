@@ -15,6 +15,10 @@ const consentInput = document.getElementById('auth-consent');
 const submitBtn = document.getElementById('auth-submit');
 const errorEl = document.getElementById('auth-error');
 const noticeEl = document.getElementById('auth-notice');
+const resendBtn = document.getElementById('auth-resend');
+const googleBtn = document.getElementById('auth-google');
+// Email the verification link was last sent to (or a login was refused for), for "resend"
+let unverifiedEmail = '';
 
 const MODES = {
     login: { title: t('login.title'), subtitle: t('login.subtitle'), submit: t('login.submit') },
@@ -40,6 +44,7 @@ function setMode(next) {
     passwordInput.autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
     showError('');
     showNotice('');
+    showResend('');
 }
 
 document.querySelectorAll('.auth-tab').forEach(tab => {
@@ -55,6 +60,48 @@ function showNotice(message) {
     noticeEl.textContent = message;
     noticeEl.classList.toggle('hidden', !message);
 }
+
+function showResend(email) {
+    unverifiedEmail = email;
+    resendBtn.classList.toggle('hidden', !email);
+}
+
+const redirectTo = () => window.location.origin + APP_PATH;
+
+// Google accounts come back verified, so Supabase links them to an email sign-up with the same
+// (verified) address: one auth user id, one row in our users table, same approval status.
+googleBtn.addEventListener('click', async () => {
+    showError('');
+    showNotice('');
+    googleBtn.disabled = true;
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: redirectTo() },
+    });
+    if (error) {
+        console.error(error);
+        showError(authErrorMessage(error));
+        googleBtn.disabled = false;
+    }
+});
+
+resendBtn.addEventListener('click', async () => {
+    showError('');
+    resendBtn.disabled = true;
+    const email = unverifiedEmail;
+    const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: redirectTo() },
+    });
+    resendBtn.disabled = false;
+    if (error) {
+        console.error(error);
+        showError(authErrorMessage(error));
+        return;
+    }
+    showNotice(t('auth.confirm-sent', { email }));
+});
 
 // Supabase auth error codes -> user-facing messages
 function authErrorMessage(error) {
@@ -86,6 +133,7 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     showError('');
     showNotice('');
+    showResend('');
 
     const invalid = validate();
     if (invalid) {
@@ -108,7 +156,7 @@ form.addEventListener('submit', async (e) => {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: window.location.origin + APP_PATH },
+            options: { emailRedirectTo: redirectTo() },
         });
         if (error) throw error;
         // With email confirmation on, Supabase answers an existing email with a user that has no identities
@@ -122,10 +170,12 @@ form.addEventListener('submit', async (e) => {
         }
         // Email confirmation is on: no session until the link is clicked
         showNotice(t('auth.confirm-sent', { email }));
+        showResend(email);
         form.reset();
     } catch (error) {
         console.error(error);
         showError(authErrorMessage(error));
+        if (error.code === 'email_not_confirmed') showResend(email);
     } finally {
         submitBtn.disabled = false;
     }
