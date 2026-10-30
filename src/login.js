@@ -225,7 +225,8 @@ form.addEventListener('submit', async (e) => {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: redirectTo() },
+            // lang ends up in user_metadata, where the email templates read it as .Data.lang
+            options: { emailRedirectTo: redirectTo(), data: { lang } },
         });
         if (error) throw error;
         // With email confirmation on, Supabase answers an existing email with a user that has no identities
