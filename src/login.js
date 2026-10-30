@@ -1,5 +1,5 @@
 import './style.css';
-import { supabase, APP_PATH } from './beta/api.js';
+import { supabase, APP_PATH, LOGIN_PATH } from './beta/api.js';
 import { lang, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 document.title = t('login.page-title');
@@ -17,33 +17,46 @@ const errorEl = document.getElementById('auth-error');
 const noticeEl = document.getElementById('auth-notice');
 const resendBtn = document.getElementById('auth-resend');
 const googleBtn = document.getElementById('auth-google');
+const passwordLabel = document.getElementById('auth-password-label');
 // Email the verification link was last sent to (or a login was refused for), for "resend"
 let unverifiedEmail = '';
 
+// forgot: ask for a reset email. reset: set a new password after following that email's link.
 const MODES = {
     login: { title: t('login.title'), subtitle: t('login.subtitle'), submit: t('login.submit') },
     signup: { title: t('signup.title'), subtitle: t('signup.subtitle'), submit: t('signup.submit') },
+    forgot: { title: t('forgot.title'), subtitle: t('forgot.subtitle'), submit: t('forgot.submit') },
+    reset: { title: t('reset.title'), subtitle: t('reset.subtitle'), submit: t('reset.submit') },
 };
 let mode = 'login';
+const isNewPassword = () => mode === 'signup' || mode === 'reset';
 
-// Already signed in -> straight to the app
+// The reset email's link comes back here with a recovery session in the hash (type=recovery),
+// or with error_code=otp_expired etc. when the link is stale. Read it before supabase-js clears it.
+const hashParams = new URLSearchParams(window.location.hash.slice(1));
+const recovering = hashParams.get('type') === 'recovery';
+
+// Already signed in -> straight to the app (except a recovery session, which still needs the new password)
 supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.replace(APP_PATH);
+    if (session && !recovering && mode !== 'reset') window.location.replace(APP_PATH);
+});
+supabase.auth.onAuthStateChange(event => {
+    if (event === 'PASSWORD_RECOVERY' && mode !== 'reset') setMode('reset');
 });
 
 function setMode(next) {
     mode = next;
     document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.toggle('is-active', tab.dataset.mode === mode));
-    document.querySelectorAll('[data-signup-only]').forEach(el => {
-        el.classList.toggle('hidden', mode !== 'signup');
-        el.classList.toggle('flex', mode === 'signup');
+    document.querySelectorAll('[data-modes]').forEach(el => {
+        el.classList.toggle('hidden', !el.dataset.modes.split(' ').includes(mode));
     });
     document.getElementById('auth-title').textContent = MODES[mode].title;
     document.getElementById('auth-subtitle').textContent = MODES[mode].subtitle;
     submitBtn.textContent = MODES[mode].submit;
-    passwordInput.autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
+    passwordLabel.textContent = t(mode === 'reset' ? 'auth.new-password' : 'auth.password');
+    passwordInput.autocomplete = isNewPassword() ? 'new-password' : 'current-password';
     // The rule is only shown (and checked) for new passwords; older accounts may predate it
-    passwordInput.placeholder = mode === 'signup' ? t('auth.password-placeholder') : '';
+    passwordInput.placeholder = isNewPassword() ? t('auth.password-placeholder') : '';
     showError('');
     showNotice('');
     showResend('');
@@ -52,6 +65,15 @@ function setMode(next) {
 document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => setMode(tab.dataset.mode));
 });
+document.getElementById('auth-forgot').addEventListener('click', () => setMode('forgot'));
+document.getElementById('auth-back').addEventListener('click', () => setMode('login'));
+
+if (recovering) {
+    setMode('reset');
+} else if (hashParams.get('error_code')) {
+    setMode('forgot');
+    showError(t('auth.error.link-expired'));
+}
 
 function showError(message) {
     errorEl.textContent = message;
@@ -170,7 +192,12 @@ resendBtn.addEventListener('click', async () => {
 
 // Supabase auth error codes -> user-facing messages
 function authErrorMessage(error) {
+    // updateUser without a (still valid) recovery session
+    if (error.name === 'AuthSessionMissingError') return t('auth.error.link-expired');
     switch (error.code) {
+        case 'same_password': return t('auth.error.same-password');
+        case 'session_not_found':
+        case 'session_expired': return t('auth.error.link-expired');
         case 'invalid_credentials': return t('auth.error.invalid-credentials');
         case 'email_not_confirmed': return t('auth.error.email-not-confirmed');
         case 'user_already_exists':
@@ -188,13 +215,14 @@ const PASSWORD_RULE = [/[A-Z]/, /[a-z]/, /[0-9]/, /[^A-Za-z0-9\s]/];
 function validate() {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return t('auth.invalid.email');
+    if (mode !== 'reset' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return t('auth.invalid.email');
+    if (mode === 'forgot') return '';
     if (password.length < 8) return t('auth.invalid.password');
-    if (mode === 'signup') {
+    if (isNewPassword()) {
         if (!PASSWORD_RULE.every(re => re.test(password))) return t('auth.invalid.password-rule');
         if (password !== confirmInput.value) return t('auth.invalid.mismatch');
-        if (!consentInput.checked) return t('auth.invalid.consent');
     }
+    if (mode === 'signup' && !consentInput.checked) return t('auth.invalid.consent');
     return '';
 }
 
@@ -219,6 +247,25 @@ form.addEventListener('submit', async (e) => {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
             window.location.replace(APP_PATH);
+            return;
+        }
+
+        if (mode === 'forgot') {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + LOGIN_PATH,
+            });
+            if (error) throw error;
+            // Same answer whether or not the address has an account (Supabase doesn't say either)
+            showNotice(t('auth.reset-sent', { email }));
+            return;
+        }
+
+        if (mode === 'reset') {
+            const { error } = await supabase.auth.updateUser({ password });
+            if (error) throw error;
+            form.reset();
+            showNotice(t('auth.reset-done'));
+            setTimeout(() => window.location.replace(APP_PATH), 1500);
             return;
         }
 

@@ -35,43 +35,46 @@
             <h1 id="auth-title" class="text-2xl md:text-3xl font-bold text-white mb-2" data-i18n="login.title">로그인</h1>
             <p id="auth-subtitle" class="text-slate-400 text-sm mb-8" data-i18n="login.subtitle">베타 테스트에 참여하려면 로그인해 주세요.</p>
 
-            <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-white/5 mb-6 text-sm font-medium">
+            <div data-modes="login signup" class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-white/5 mb-6 text-sm font-medium">
                 <button type="button" data-mode="login" class="auth-tab is-active py-2 rounded-lg transition" data-i18n="login.title">로그인</button>
                 <button type="button" data-mode="signup" class="auth-tab py-2 rounded-lg transition" data-i18n="signup.title">회원가입</button>
             </div>
 
-            <div id="auth-google-gis" class="w-full flex justify-center min-h-[44px]"></div>
-            <button id="auth-google" type="button" class="hidden w-full flex items-center justify-center gap-3 bg-white text-slate-800 py-3.5 rounded-xl font-bold transition hover:bg-slate-100 disabled:opacity-60">
-                <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
-                    <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
-                    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-                    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
-                    <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/>
-                </svg>
-                <span data-i18n="auth.google">Google로 계속하기</span>
-            </button>
-            <p class="text-xs text-slate-500 leading-relaxed mt-3" data-i18n-html="auth.google-consent"></p>
+            <div data-modes="login signup">
+                <div id="auth-google-gis" class="w-full flex justify-center min-h-[44px]"></div>
+                <button id="auth-google" type="button" class="hidden w-full flex items-center justify-center gap-3 bg-white text-slate-800 py-3.5 rounded-xl font-bold transition hover:bg-slate-100 disabled:opacity-60">
+                    <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
+                        <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+                    </svg>
+                    <span data-i18n="auth.google">Google로 계속하기</span>
+                </button>
+                <p class="text-xs text-slate-500 leading-relaxed mt-3" data-i18n-html="auth.google-consent"></p>
 
-            <div class="flex items-center gap-3 my-6 text-xs text-slate-500">
-                <span class="flex-1 h-px bg-white/10"></span>
-                <span data-i18n="auth.or">또는 이메일로</span>
-                <span class="flex-1 h-px bg-white/10"></span>
+                <div class="flex items-center gap-3 my-6 text-xs text-slate-500">
+                    <span class="flex-1 h-px bg-white/10"></span>
+                    <span data-i18n="auth.or">또는 이메일로</span>
+                    <span class="flex-1 h-px bg-white/10"></span>
+                </div>
             </div>
 
             <form id="auth-form" class="flex flex-col gap-4" novalidate>
-                <label class="flex flex-col gap-1.5">
+                <label data-modes="login signup forgot" class="flex flex-col gap-1.5">
                     <span class="text-sm text-slate-400" data-i18n="auth.email">이메일</span>
                     <input id="auth-email" type="email" autocomplete="email" required class="beta-input" placeholder="you@example.com">
                 </label>
-                <label class="flex flex-col gap-1.5">
-                    <span class="text-sm text-slate-400" data-i18n="auth.password">비밀번호</span>
+                <label data-modes="login signup reset" class="flex flex-col gap-1.5">
+                    <span id="auth-password-label" class="text-sm text-slate-400" data-i18n="auth.password">비밀번호</span>
                     <input id="auth-password" type="password" autocomplete="current-password" required minlength="8" class="beta-input">
                 </label>
-                <label data-signup-only class="hidden flex-col gap-1.5">
+                <button id="auth-forgot" data-modes="login" type="button" class="self-end -mt-2 text-sm text-slate-400 hover:text-white underline-offset-2 hover:underline" data-i18n="auth.forgot">비밀번호를 잊으셨나요?</button>
+                <label data-modes="signup reset" class="hidden flex flex-col gap-1.5">
                     <span class="text-sm text-slate-400" data-i18n="auth.password-confirm">비밀번호 확인</span>
                     <input id="auth-password-confirm" type="password" autocomplete="new-password" class="beta-input">
                 </label>
-                <label data-signup-only class="hidden items-start gap-2.5 text-sm text-slate-400 leading-relaxed cursor-pointer">
+                <label data-modes="signup" class="hidden flex items-start gap-2.5 text-sm text-slate-400 leading-relaxed cursor-pointer">
                     <input id="auth-consent" type="checkbox" class="mt-1 accent-[rgb(116,210,78)]">
                     <span data-i18n-html="auth.consent">만 14세 이상이며, <a href="/terms/" target="_blank" class="text-primary underline underline-offset-2">이용약관</a>과 <a href="/privacy/" target="_blank" class="text-primary underline underline-offset-2">개인정보처리방침</a>에 동의합니다.</span>
                 </label>
@@ -81,6 +84,7 @@
                 <button id="auth-resend" type="button" class="hidden self-start text-sm text-primary underline underline-offset-2 disabled:opacity-60" data-i18n="auth.resend">인증 메일 다시 보내기</button>
 
                 <button id="auth-submit" type="submit" class="bg-primary bg-primary-hover text-white py-3.5 rounded-xl font-bold transition mt-2 disabled:opacity-60" data-i18n="login.submit">로그인</button>
+                <button id="auth-back" data-modes="forgot" type="button" class="hidden self-center text-sm text-slate-400 hover:text-white underline-offset-2 hover:underline" data-i18n="auth.back-to-login">로그인으로 돌아가기</button>
             </form>
         </div>
     </main>
