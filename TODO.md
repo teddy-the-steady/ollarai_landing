@@ -34,15 +34,21 @@
 - [ ] **수동 승인 걷어내기**: P0·P1 작업이 끝난 뒤 전환. 약관상 11/20부터는 자동 승인이므로 늦어도 그때까지
   - 서버는 준비 완료: `infra/env.sh AUTO_APPROVE_USERS=true`. 새 계정은 approved, 기존 pending 계정은 다음 요청 때 approved, blocked는 그대로
   - 앱 start/pending 화면 정리 (`src/app.js` `routeByStatus`, `src/beta/i18n.js` `app.start.*`, `app.pending.*`)
-  - 랜딩 CTA 문구 "베타 참여하기"(`src/main.js` `cta`, `hero-cta`)를 "무료로 시작하기"로. 버튼은 이미 `/app/?lang=…`로 연결돼 있음. 사전등록 폼을 남길지도 이때 결정
-  - 자동 승인 전에 P3 가입 CAPTCHA 검토
+  - [x] 랜딩 CTA 전부 "무료로 시작하기"/"지금 무료로 써보기" → `/app/`, 하단 사전등록 이메일 폼 제거, 로그인·가입 부제에서 "베타 신청" 문구 제거 (ko/en/ja)
+  - 앱 start/pending 화면은 자동 승인이면 새 유저에게 보이지 않아 그대로 둠
+  - 가입 CAPTCHA는 배포 후 가입 추이를 보고 결정 (P3)
+- [ ] **배포 후: 사전등록자 처리** (처리방침 제3조 "출시 안내 완료 시까지")
+  - DynamoDB `ollarai-email-subscribers-prod`의 사전등록자에게 출시 안내 메일 발송(`lang`별)
+  - 발송 후 테이블 데이터 삭제, 사전등록 Lambda(`mail_backend`, `serverless remove`) 내리기
+  - 다음 처리방침 개정 때 사전등록 항목(제1조, 제2조, 제3조, 제6조 AWS 업무) 삭제
 - [ ] **서버·프론트 변경 배포**
-  1. 앱 DB 마이그레이션: `python src/app_db/migrations/0005_free_daily_usage.py` (서버 코드 배포 **전에**)
-  2. 내부 계정 지정: `infra/env.sh INTERNAL_USER_IDS=<run_ai_beta 테스트 계정의 Supabase user id>[,운영자 id]`. 빠지면 `run_ai_beta.py`가 SQL·trace를 못 받음
-  3. 선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500), `HISTORY_RETENTION_DAYS`(기본 180). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
+  1. 앱 DB 마이그레이션: `0005_free_daily_usage.py`, `0006_users_is_internal.py` (`python src/app_db/migrations/<파일>`, 서버 코드 배포 **전에**)
+  2. 내부 계정 지정: 앱 DB에서 `UPDATE users SET is_internal = true WHERE email IN ('<run_ai_beta 테스트 계정>', '<운영자>');`. 빠지면 `run_ai_beta.py`가 SQL·trace를 못 받고 무료 일일 한도에 걸림
+  3. 자동 승인: `infra/env.sh --no-apply AUTO_APPROVE_USERS=true` (4번 deploy에서 적용)
+     선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500), `HISTORY_RETENTION_DAYS`(기본 180). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
   4. `infra/deploy.sh` (180일 삭제 타이머 `ollarai-purge-expired`도 설치) → 프론트 배포
-  5. 사전등록 Lambda: `mail_backend/.env`에 `ALLOWED_ORIGIN=https://ollarai.com` 넣고 재배포
-- [x] **API 응답에서 내부 정보 빼기** (서버): 내부 계정(`INTERNAL_USER_IDS`)이 아니면 `/query`·`/history` 본문을 화면이 쓰는 필드만 남김 (`server.py` `_public_body`). history에는 전체 본문 저장. `debug`/`trace`도 내부 계정만, 503 detail과 history의 error는 `message`만
+  5. ~~사전등록 Lambda `ALLOWED_ORIGIN`~~: 폼을 없앴으므로 대신 배포 후 Lambda를 내림 (아래 "사전등록자 처리")
+- [x] **API 응답에서 내부 정보 빼기** (서버): 내부 계정(`users.is_internal`)이 아니면 `/query`·`/history` 본문을 화면이 쓰는 필드만 남김 (`server.py` `_public_body`). history에는 전체 본문 저장. `debug`/`trace`도 내부 계정만, 503 detail과 history의 error는 `message`만
 - [x] **화면에서 SQL 보기·요청 ID 제거** (프론트): `src/app.js`, 관련 문구·CSS, 요금 안내 무료 플랜의 "생성된 SQL 보기"(ko/en/ja), 약관 제7조
 - [x] **500 에러에 예외 원문 노출** (서버): 응답은 "Internal server error", 원문은 로그와 history에만
 - [x] ~~**랜딩에서 앱으로 가는 진입점 만들기**~~: 점검 오류. 상단·히어로 버튼이 JS로 `/app/`에 연결돼 있었음. 문구 변경은 "수동 승인 걷어내기"로 옮김

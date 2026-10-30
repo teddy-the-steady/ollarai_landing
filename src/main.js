@@ -29,27 +29,16 @@ function closeDialog() {
 document.getElementById('dialog-close').addEventListener('click', closeDialog);
 document.getElementById('dialog-backdrop').addEventListener('click', closeDialog);
 
-document.querySelectorAll('button.bg-primary:not(#dialog-close):not(#cta-register-btn):not(#screening-cta-btn):not(#nav-cta-btn):not(#hero-cta-btn)').forEach(btn => {
+document.querySelectorAll('button.bg-primary:not(#dialog-close):not(#cta-start-btn):not(#screening-cta-btn):not(#nav-cta-btn):not(#hero-cta-btn)').forEach(btn => {
     btn.addEventListener('click', () => openDialog());
 });
 
-// Beta CTAs: the app opens in the site's language (src/beta/i18n.js; /app/ redirects to /login/ when signed out)
-['nav-cta-btn', 'hero-cta-btn'].forEach(id => {
+// Start CTAs: the app opens in the site's language (src/beta/i18n.js; /app/ redirects to /login/ when signed out)
+['nav-cta-btn', 'hero-cta-btn', 'screening-cta-btn', 'cta-start-btn'].forEach(id => {
     document.getElementById(id).addEventListener('click', () => {
         window.location.href = `/app/?lang=${currentLang}`;
     });
 });
-
-// Screening early-access CTA: scroll to the real email capture instead of the generic "coming soon" dialog
-const screeningCtaBtn = document.getElementById('screening-cta-btn');
-if (screeningCtaBtn) {
-    screeningCtaBtn.addEventListener('click', () => {
-        const emailInput = document.getElementById('cta-email-input');
-        if (!emailInput) return;
-        emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => emailInput.focus(), 500);
-    });
-}
 
 // Tooltip positioning
 function positionAndShow(wrapper) {
@@ -95,65 +84,6 @@ document.querySelectorAll('.tooltip-wrapper').forEach(tip => {
 document.addEventListener('touchstart', closeAll);
 document.addEventListener('click', closeAll);
 
-// Email registration
-const API_URL = 'https://flpyq9u80g.execute-api.ap-northeast-2.amazonaws.com/prod/subscribe';
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SPINNER = '<span class="flex items-center justify-center"><span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>';
-
-document.getElementById('cta-register-btn').addEventListener('click', async () => {
-    const input = document.getElementById('cta-email-input');
-    const email = input.value.trim();
-
-    const errorEl = document.getElementById('cta-email-error');
-    const showError = (msg) => {
-        input.classList.add('border-red-500');
-        errorEl.textContent = msg;
-        errorEl.classList.remove('hidden');
-        setTimeout(() => {
-            input.classList.remove('border-red-500');
-            errorEl.classList.add('hidden');
-        }, 2500);
-    };
-
-    if (!email) {
-        showError(i18n[currentLang]['error-empty']);
-        input.focus();
-        return;
-    }
-
-    if (!EMAIL_RE.test(email)) {
-        showError(i18n[currentLang]['error-invalid']);
-        return;
-    }
-
-    const btn = document.getElementById('cta-register-btn');
-    btn.disabled = true;
-    btn.innerHTML = SPINNER;
-
-    const [res] = await Promise.all([
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, lang: currentLang }),
-        }).catch(() => null),
-        new Promise(r => setTimeout(r, 800)),
-    ]);
-
-    if (!res) {
-        openDialog(i18n[currentLang]['error-network']);
-    } else {
-        input.value = '';
-        openDialog(res.status === 201
-            ? i18n[currentLang]['success-registered']
-            : i18n[currentLang]['already-registered']
-        );
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = i18n[currentLang]['cta-register'];
-});
-
-
 // i18n data
 const i18n = {
     ko: {
@@ -161,11 +91,11 @@ const i18n = {
         'nav-roadmap': '로드맵',
         'nav-screening': 'AI 스크리닝',
         'nav-features': '주요 기능',
-        'cta': '베타 참여하기',
+        'cta': '무료로 시작하기',
         'hero-kicker': '공시 데이터 기반 AI 투자 리서치 어시스턴트',
         'hero-title': '투자의 <span class="gradient-text">본질</span>은<br/>거짓말하지 않는 숫자에 있습니다.',
         'hero-subtitle': '그럴듯한 문장에 현혹되지 마세요.<br/><span class="ollarai-brand">Ollarai</span>는 환각(Hallucination) 없이 공시 데이터 그대로의<br/><span class="text-primary font-semibold">진실된 숫자</span>를 인출합니다.',
-        'hero-cta': '베타 참여하기',
+        'hero-cta': '무료로 시작하기',
         'problem-title': '데이터가 없는 분석은 가설일 뿐입니다.',
         'problem-desc': '시장의 소음과 AI가 지어내는 거짓 숫자들 사이에서 개인 투자자는 고립되어 있습니다.<br/>전문가들의 모델은 강력하지만, 그 모델을 지탱하는 \'정밀한 데이터\'는 너무나 비싸고 어렵습니다.',
         'problem-card1-title': 'AI의 거짓말',
@@ -183,7 +113,7 @@ const i18n = {
         'screening-badge': '스크리닝 화면 준비 중입니다',
         'screening-badge-desc': '정확한 데이터 위에 세워질 다음 기능을 곧 만나보세요.',
         'screening-launch-badge': '출시 예정',
-        'screening-cta': '얼리액세스 신청하기',
+        'screening-cta': '지금 무료로 써보기',
         'screening-preview-tag': '미리보기',
         'screening-query-caption': '예시 화면입니다 · 표의 수치는 실제 데이터가 아닙니다',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>의 진화',
@@ -218,9 +148,8 @@ const i18n = {
         'feat3-card4-title': '수익률 증명',
         'feat3-card4-desc': '누적된 백테스팅과 실전 성과를 통한 신뢰 확보',
         'cta-title': '모든 위대한 투자는<br/>확신을 주는 데이터로부터 시작됩니다.',
-        'cta-desc': '<span class="ollarai-brand">Ollarai</span>의 초기 테스터가 되어 가장 먼저 미래의 투자 환경을 경험하세요.',
-        'email-placeholder': '이메일을 입력하고 알림 받기',
-        'cta-register': '지금 등록하기',
+        'cta-desc': '지금 가입하고 공시 데이터에 바로 질문해 보세요.',
+        'cta-note': '결제 정보 없이 가입만 하면 돼요 · 하루 100회까지 무료',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>는 현재 열심히 준비중입니다.<br/>조금만 기다려주세요!',
         'dialog-close': '확인',
         'pricing-href': '/pricing/',
@@ -233,22 +162,17 @@ const i18n = {
         'footer-privacy': '개인정보처리방침',
         'footer-company': '상호: Nexora · 대표자: 전태호 · 사업자등록번호: 226-23-07642 <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2262307642" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-primary transition">사업자정보 확인</a><br>통신판매업 신고번호: 신고 진행 중 · 주소: 강원특별자치도 강릉시 관대길 26, 203호<br>전화: <a href="tel:+821079023085" class="underline underline-offset-2 hover:text-primary transition">010-7902-3085</a> · 이메일: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai (올라라이). All rights reserved.`,
-        'error-empty': '이메일을 입력해주세요.',
-        'error-invalid': '올바른 이메일 형식이 아닙니다.',
-        'error-network': '오류가 발생했습니다. 다시 시도해주세요.',
-        'success-registered': '등록되었습니다! 새로운 소식으로 인사드릴게요.',
-        'already-registered': '이미 등록된 이메일입니다.',
     },
     en: {
         title: 'Ollarai - When Data Becomes the Answer to Investment',
         'nav-roadmap': 'Roadmap',
         'nav-screening': 'AI Screening',
         'nav-features': 'Features',
-        'cta': 'Join Beta',
+        'cta': 'Start for Free',
         'hero-kicker': '',
         'hero-title': 'The <span class="gradient-text">truth</span> of investing<br/>lies in numbers that don\'t lie.',
         'hero-subtitle': 'Don\'t be misled by plausible-sounding text.<br/><span class="ollarai-brand">Ollarai</span> retrieves the exact numbers from real data<br/><span class="text-primary font-semibold">without hallucination.</span>',
-        'hero-cta': 'Join Beta',
+        'hero-cta': 'Start for Free',
         'problem-title': 'Analysis without data is just a hypothesis.',
         'problem-desc': 'Individual investors are isolated amid market noise and numbers fabricated by AI.<br/>Expert models are powerful, but the "precise data" underpinning them is prohibitively expensive and inaccessible.',
         'problem-card1-title': 'AI Hallucinations',
@@ -266,7 +190,7 @@ const i18n = {
         'screening-badge': 'Screening Dashboard Coming Soon',
         'screening-badge-desc': 'The next feature, built on accurate data, is on its way.',
         'screening-launch-badge': 'Coming Soon',
-        'screening-cta': 'Request Early Access',
+        'screening-cta': 'Try It Free Now',
         'screening-preview-tag': 'Preview',
         'screening-query-caption': 'Example screen · the figures are not real data',
         'vision-title': 'The Evolution of <span class="ollarai-brand">Ollarai</span>',
@@ -301,9 +225,8 @@ const i18n = {
         'feat3-card4-title': 'Proven Returns',
         'feat3-card4-desc': 'Building trust through accumulated backtesting and real-world results',
         'cta-title': 'Every great investment<br/>starts with data that gives you conviction.',
-        'cta-desc': 'Be an early tester for <span class="ollarai-brand">Ollarai</span> and experience the future of investing first.',
-        'email-placeholder': 'Enter your email to get notified',
-        'cta-register': 'Register Now',
+        'cta-desc': 'Sign up and start asking questions about filing data right away.',
+        'cta-note': 'No payment details needed · Up to 100 free questions a day',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span> is currently hard at work.<br/>Please wait a little longer!',
         'dialog-close': 'OK',
         'pricing-href': '/en/pricing/',
@@ -316,22 +239,17 @@ const i18n = {
         'footer-privacy': 'Privacy Policy',
         'footer-company': 'Trade name: Nexora · Representative: Taeho Jeon · Business registration number: 226-23-07642 <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2262307642" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-primary transition">Verify (KFTC)</a><br>Mail-order business registration number: registration in progress · Address: 26 Gwandae-gil, Room 203, Gangneung-si, Gangwon State, Republic of Korea<br>Phone: <a href="tel:+821079023085" class="underline underline-offset-2 hover:text-primary transition">+82-10-7902-3085</a> · Email: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai. All rights reserved.`,
-        'error-empty': 'Please enter your email.',
-        'error-invalid': 'Please enter a valid email address.',
-        'error-network': 'Something went wrong. Please try again.',
-        'success-registered': 'Registered! Stay tuned.',
-        'already-registered': 'Already registered.',
     },
     ja: {
         title: 'Ollarai - データが投資の答えになる瞬間',
         'nav-roadmap': 'ロードマップ',
         'nav-screening': 'AIスクリーニング',
         'nav-features': '主な機能',
-        'cta': 'ベータに参加',
+        'cta': '無料で始める',
         'hero-kicker': '',
         'hero-title': '投資の<span class="gradient-text">本質</span>は<br/>嘘をつかない数字にあります。',
         'hero-subtitle': 'もっともらしい文章に惑わされないでください。<br/><span class="ollarai-brand">Ollarai</span>は開示データそのままの<br/><span class="text-primary font-semibold">真実の数字</span>をハルシネーションなしで引き出します。',
-        'hero-cta': 'ベータに参加',
+        'hero-cta': '無料で始める',
         'problem-title': 'データのない分析は、仮説に過ぎません。',
         'problem-desc': '市場のノイズとAIが作り出す虚偽の数字の中で、個人投資家は孤立しています。<br/>専門家のモデルは強力ですが、それを支える「精密なデータ」は高価で入手困難です。',
         'problem-card1-title': 'AIのハルシネーション',
@@ -349,7 +267,7 @@ const i18n = {
         'screening-badge': 'スクリーニング画面、準備中です',
         'screening-badge-desc': '正確なデータの上に築かれる次の機能に、もうすぐ出会えます。',
         'screening-launch-badge': '公開予定',
-        'screening-cta': '早期アクセスを申請',
+        'screening-cta': '今すぐ無料で試す',
         'screening-preview-tag': 'プレビュー',
         'screening-query-caption': '例示画面です ・ 表の数値は実際のデータではありません',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>の進化',
@@ -384,9 +302,8 @@ const i18n = {
         'feat3-card4-title': '収益率証明',
         'feat3-card4-desc': '蓄積されたバックテストと実戦成果による信頼確保',
         'cta-title': 'すべての偉大な投資は<br/>確信を与えるデータから始まります。',
-        'cta-desc': '<span class="ollarai-brand">Ollarai</span>の初期テスターになり、誰よりも先に未来の投資環境を体験してください。',
-        'email-placeholder': 'メールアドレスを入力して通知を受け取る',
-        'cta-register': '今すぐ登録',
+        'cta-desc': '今すぐ登録して、開示データにそのまま質問してみてください。',
+        'cta-note': 'お支払い情報は不要 · 1日100回まで無料',
         'dialog-default': '<span class="ollarai-brand">Ollarai</span>は現在準備中です。<br/>もう少しお待ちください!',
         'dialog-close': '確認',
         'pricing-href': '/ja/pricing/',
@@ -399,11 +316,6 @@ const i18n = {
         'footer-privacy': 'プライバシーポリシー',
         'footer-company': '商号：Nexora · 代表者：Taeho Jeon · 事業者登録番号：226-23-07642 <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2262307642" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-primary transition">事業者情報の確認</a><br>通信販売業申告番号：申告手続中 · 所在地：大韓民国 江原特別自治道 江陵市 冠大キル26、203号<br>電話：<a href="tel:+821079023085" class="underline underline-offset-2 hover:text-primary transition">+82-10-7902-3085</a> · メール：<a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai. All rights reserved.`,
-        'error-empty': 'メールアドレスを入力してください。',
-        'error-invalid': '有効なメールアドレスを入力してください。',
-        'error-network': 'エラーが発生しました。もう一度お試しください。',
-        'success-registered': '登録されました! 新しいニュースでお会いしましょう。',
-        'already-registered': 'すでに登録されているメールアドレスです。',
     }
 };
 
