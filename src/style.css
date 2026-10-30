@@ -491,6 +491,9 @@ html[lang="ja"] body {
 
 /* Result table amounts: KRW / USD toggle, amounts left in their own currency */
 .currency-toggle button { padding: 0.2rem 0.65rem; font-size: 0.7rem; }
+@media (max-width: 767px) {
+    .currency-toggle button { padding: 0.2rem 0.5rem; }
+}
 .result-table td.is-unconverted { color: rgb(148, 163, 184); }
 .result-table .cell-currency {
     margin-left: 0.35rem;
