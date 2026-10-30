@@ -36,23 +36,32 @@ function storageSet(key, value) {
 
 // ---------- account ----------
 
+// Free accounts see how many questions are left today from 80% of the daily cap on
+const FREE_WARN_RATIO = 0.8;
+
 function renderAccount() {
     document.getElementById('account').classList.replace('hidden', 'flex');
     const emailEl = document.getElementById('account-email');
     emailEl.textContent = me.email || '';
     emailEl.classList.toggle('md:inline', !!me.email);
 
-    // Only paid-tier queries are counted, per calendar month (free is unlimited, monthly_limit is null)
+    // Paid accounts: this month's paid count, always shown. Free accounts: the daily cap
+    // (free_daily_limit), shown only once FREE_WARN_RATIO of it is used.
     const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
-    const showBadge = isPaid && me.monthly_limit != null;
-    badge.classList.toggle('hidden', !showBadge);
-    if (showBadge) {
-        badge.textContent = t('app.usage', {
+    let badgeText = null;
+    if (isPaid && me.monthly_limit != null) {
+        badgeText = t('app.usage', {
             used: (me.used_this_month ?? 0).toLocaleString(locale),
             limit: me.monthly_limit.toLocaleString(locale),
         });
+    } else if (me.status === 'approved' && me.free_daily_limit != null
+        && me.free_used_today >= me.free_daily_limit * FREE_WARN_RATIO) {
+        const left = Math.max(0, me.free_daily_limit - me.free_used_today);
+        badgeText = left ? t('app.usage.free-left', { n: left.toLocaleString(locale) }) : t('app.usage.free-none');
     }
+    badge.classList.toggle('hidden', !badgeText);
+    if (badgeText) badge.textContent = badgeText;
 
     document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
     document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
@@ -192,8 +201,7 @@ function historyCard(item) {
     const card = createResultCard(item.question, item.created_at);
     if (item.status === 200 && item.response) card.showResponse(item.response, item.id);
     else {
-        const error = new ApiError(item.status, item.error);
-        card.showError(errorMessage(error), error.requestId);
+        card.showError(errorMessage(new ApiError(item.status, item.error)));
     }
     return card;
 }
@@ -209,9 +217,13 @@ function errorMessage(error) {
         case 0: return t('app.err.network');
         case 403: return t('app.err.paid-unavailable');
         case 429:
-            return error.detail?.monthly_limit
-                ? t('app.err.monthly-limit', { limit: error.detail.monthly_limit.toLocaleString(locale) })
-                : t('app.err.rate-limit');
+            if (error.detail?.monthly_limit) {
+                return t('app.err.monthly-limit', { limit: error.detail.monthly_limit.toLocaleString(locale) });
+            }
+            if (error.detail?.daily_limit) {
+                return t('app.err.daily-limit', { limit: error.detail.daily_limit.toLocaleString(locale) });
+            }
+            return t('app.err.rate-limit');
         case 503: return detailMessage || t('app.err.unavailable');
         default: return t('app.err.answer');
     }
@@ -267,7 +279,7 @@ queryForm.addEventListener('submit', async (e) => {
             return;
         }
         console.error(error);
-        card.showError(errorMessage(error), error instanceof ApiError ? error.requestId : null);
+        card.showError(errorMessage(error));
     } finally {
         setBusy(false);
         loadMe().catch(() => {});
@@ -313,31 +325,10 @@ function createResultCard(question, createdAt = new Date()) {
             : t(s < 15 ? 'result.loading.querying' : 'result.loading.waiting', { s });
     }, 1000);
 
-    // Beta users can quote this when reporting a problem (matches the server's req= log lines)
-    function showRequestId(requestId) {
-        if (!requestId) return;
-        const label = `ID ${requestId}`;
-        const btn = el('button', 'font-mono hover:text-slate-300 transition', label);
-        btn.type = 'button';
-        btn.title = t('result.request-id.copy');
-        btn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(requestId);
-                btn.textContent = t('result.copied');
-            } catch {
-                btn.textContent = t('result.copy-failed');
-            }
-            setTimeout(() => { btn.textContent = label; }, 1500);
-        });
-        meta.appendChild(el('span', null, '·'));
-        meta.appendChild(btn);
-    }
-
     return {
         el: root,
         showResponse(response, historyId = response.history_id) {
             clearInterval(timer);
-            showRequestId(response.request_id);
             // Paid accounts can switch tiers, so mark which path produced this answer
             if (me?.tier === 'paid' && TIER_LABEL[response.tier]) {
                 header.appendChild(el('span', `tier-badge tier-badge-${response.tier}`, TIER_LABEL[response.tier]));
@@ -350,9 +341,8 @@ function createResultCard(question, createdAt = new Date()) {
                 body.appendChild(renderPart(part, response.is_multi_query, loadAll));
             });
         },
-        showError(message, requestId) {
+        showError(message) {
             clearInterval(timer);
-            showRequestId(requestId);
             body.replaceChildren(notice(message, 'error'));
         },
     };
@@ -377,7 +367,7 @@ function renderPart(part, isMulti, loadAll) {
         wrap.appendChild(clarificationOptions(part.clarification));
     }
     if (part.result) {
-        wrap.appendChild(renderTable(part.result, part.sql, loadAll));
+        wrap.appendChild(renderTable(part.result, loadAll));
     } else if (!part.message) {
         wrap.appendChild(notice(t('result.not-found'), 'info'));
     }
@@ -490,7 +480,7 @@ function lockedPreview(cells, count, numericCols) {
 }
 
 // loadAll: fetches every row of a truncated table (paid accounts), or null
-function renderTable(result, sql, loadAll) {
+function renderTable(result, loadAll) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
     let view = toggleable ? selectedCurrency() : null;
@@ -527,20 +517,8 @@ function renderTable(result, sql, loadAll) {
         });
         actions.appendChild(copyBtn);
     }
-    let sqlBlock = null;
-    if (sql) {
-        const sqlBtn = el('button', 'hover:text-white transition', t('result.sql.show'));
-        sqlBtn.type = 'button';
-        sqlBlock = el('pre', 'result-sql hidden', sql);
-        sqlBtn.addEventListener('click', () => {
-            const hidden = sqlBlock.classList.toggle('hidden');
-            sqlBtn.textContent = t(hidden ? 'result.sql.show' : 'result.sql.hide');
-        });
-        actions.appendChild(sqlBtn);
-    }
     toolbar.appendChild(actions);
     card.appendChild(toolbar);
-    if (sqlBlock) card.appendChild(sqlBlock);
 
     if (!result.rows.length) {
         card.appendChild(el('p', 'px-4 py-8 text-center text-slate-500 text-sm', t('result.empty')));

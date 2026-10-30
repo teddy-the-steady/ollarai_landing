@@ -1,6 +1,6 @@
 # TODO
 
-우선순위: **P0** 무료 버전 배포 전 필수 → **P1** 배포 전 권장 → **P2** 결제 도입 전 → **P3** 이후 개선
+우선순위: **P-1** 토스·Paddle 신청 전 → **P0** 무료 버전 배포 전 필수 → **P1** 배포 전 권장 → **P2** 결제 도입 전 → **P3** 이후 개선
 
 서버 코드는 `../ollarai_backend` (API: `service_pipeline/server.py`)에 있습니다.
 
@@ -9,35 +9,52 @@
 - 통신판매업 신고 진행 중
 - 신고가 끝나면(2026-11-02 주 예정) 토스페이먼츠·Paddle 가입 신청
 
+## 결정 사항 (2026-10-30)
+
+- **승인 방식**: P0·P1 배포 준비가 끝나면 수동 승인을 걷어내고 자동 승인으로 전환. 약관·처리방침도 자동 승인 기준으로 수정
+- **약관·처리방침 시행일**: 결제판 2026-11-20 시행 유지. 결제가 밀려도 결제 버튼이 비활성이면 적용받는 회원이 없어 문제 되지 않고, 결제 시작 때 다시 공지할 필요가 없으며, PG 심사에도 게시본이 필요함. PG 심사에서 약관 수정을 요구하면 그때 재개정(공지 7일, 불리하면 30일)
+
+## P-1. 토스·Paddle 신청 전 (2026-11-02 주)
+
+- [x] **사이트 하단에 사업자 정보 표시** (전자상거래법 제10조, PG 심사 확인 항목): 상호, 대표자, 주소, 전화번호, 이메일, 사업자등록번호, 통신판매업 신고번호, 공정위 사업자정보 확인 링크 (ko/en/ja)
+  - 랜딩: `src/main.js`의 `footer-company`
+  - 요금 안내·약관·처리방침: 각 페이지 푸터의 `#footer-business`
+- [x] **전화번호 게시**: 위 푸터와 약관 제3조 사업자 정보(3개 언어)
+- [ ] **통신판매업 신고번호 게시**: 신고가 끝나면 "신고 진행 중"(en: registration in progress, ja: 申告手続中)을 번호로 바꾸기
+  - 약관 제3조: `terms/index.html`, `en/terms/index.html`, `ja/terms/index.html`
+  - 푸터: `src/main.js`의 `footer-company` 3개 언어, 6개 페이지(`pricing`, `terms`, `privacy` × ko/en/ja)의 `#footer-business`
+  - 바꾼 뒤 푸터의 공정위 "사업자정보 확인" 링크가 신고 정보를 제대로 보여주는지 확인
+
 ## P0. 무료 버전 배포 전 필수
 
-- [ ] **결정: 승인 방식**: 가입하면 바로 이용(자동 승인)할지, 운영자 수동 승인을 유지할지. 지금은 가입하면 `pending`이 되고, DB에서 직접 `approved`로 바꿔야 이용할 수 있음
-  - 자동 승인으로 가면 함께 바꿀 것
-    - users 기본값 또는 `upsert_user`
-    - 앱 start/pending 화면 문구 (`src/beta/i18n.js` `app.start.*`, `app.pending.*`)
-    - 약관 제5조 1항·3항, 처리방침 제1조·제11조의 "운영자 승인" 문구
-  - 자동 승인이면 아래 "무료 이용 한도"와 P3 가입 CAPTCHA의 중요도가 올라감
-- [ ] **결정: 약관·처리방침 시행일**: 지금 게시본은 결제 조항이 들어간 2026-11-20 시행판. 토스·Paddle 승인 일정상 11/20 결제 시작이 어려우면 결제판 시행일을 미루고, 무료 배포에 필요한 수정(아래 SQL 보기 삭제, 승인 방식, Google 로그인)만 반영해 게시하기
-- [ ] **API 응답에서 내부 정보 빼기** (서버): 화면에서 숨겨도 개발자도구에서 보이므로 서버에서 제거
-  - 일반 유저 응답에는 화면이 쓰는 필드만 남기기: `result`, `message`, `clarification`, `is_multi_query`, `queries[].question/result/message/clarification`, `tier`, `history_id`
-  - 빼야 할 필드: `sql`, `generation_schema_prompt`(DDL + 샘플 데이터 프롬프트 전체), `enriched_question`, `final_question`, `tables`, `attempts`, `verdict`, `request_id`
-  - `/query`와 `/history` 둘 다 적용 (history는 저장된 본문을 그대로 내려줌)
-  - `debug: true`(→ `trace`)를 아무 승인 유저나 보낼 수 있음. 환경변수로 지정한 내부 계정만 허용하기
-  - 로그 추적용 ID는 `X-Request-ID` 헤더와 서버 로그에 이미 있으니 본문에서는 빼도 됨
-- [ ] **화면에서 SQL 보기·요청 ID 제거** (프론트): `src/app.js`의 `showRequestId`, `renderTable`의 SQL 보기 버튼
-  - 문서도 함께 수정: 약관 제7조 1항 2호 "SQL 보기"(ko/en/ja), 요금 안내 무료 플랜의 "생성된 SQL 보기"(ko/en/ja)
-- [ ] **500 에러에 예외 원문 노출** (서버): `query()`의 `HTTPException(500, detail=str(e))`. 고정 문구로 바꾸고 원문은 로그에만 남기기 (history에도 저장되어 다시 내려감)
-- [ ] **랜딩에서 앱으로 가는 진입점 만들기**: `index.html`에는 사전등록 이메일 폼만 있고 `/login/`·`/app/` 링크가 없음 (진입점은 `/pricing/`의 "무료로 시작하기"뿐)
-  - 네비게이션과 메인 CTA를 "무료로 시작하기 → `/app/`"으로 바꾸기 (ko/en/ja)
-  - 사전등록 폼을 남길지 결정
-- [ ] **무료 이용 한도와 질문 길이 제한** (서버+프론트)
-  - 무료는 사용자별 한도가 없고 Caddy의 IP당 분당 20회뿐. 한 계정이 GPU를 계속 점유할 수 있고, 실패한 쿼리는 재작성 과정에서 Gemini도 호출함
-  - `QueryRequest.question`에 `max_length`(예: 500자), textarea에 `maxlength`
-  - 무료 일일 한도(예: 하루 100회). 약관 제7조 3항이 이미 허용함. 한도는 요금 안내 화면에도 게시
+- [ ] **약관·처리방침 11/20판에 무료 배포 수정 반영, 2026-11-13까지 게시** (시행 7일 전 공지, 약관 제3조 제3항)
+  - SQL 보기 삭제: 제7조를 "SQL 생성과 조회 결과 제공"처럼 결과 중심으로 쓰기 (기능 축소가 불리한 변경(30일 공지)으로 읽히지 않게)
+  - 자동 승인: 약관 제5조 1항·3항, 처리방침 제1조·제11조의 "운영자 승인" 문구
+  - Google 로그인: P1의 처리방침 Google 로그인 항목을 이때 함께 반영
+  - 처리방침의 토스·Paddle 기재는 계약 전이라 실제보다 앞서 있음. 결제가 많이 밀리면 해당 항목만 빼는 것도 검토
+- [ ] **수동 승인 걷어내기**: P0·P1 작업이 끝난 뒤 전환
+  - users 기본값 또는 `upsert_user`를 `approved`로
+  - 앱 start/pending 화면 정리 (`src/app.js` `routeByStatus`, `src/beta/i18n.js` `app.start.*`, `app.pending.*`)
+  - 랜딩 CTA 문구 "베타 참여하기"(`src/main.js` `cta`, `hero-cta`)를 "무료로 시작하기"로. 버튼은 이미 `/app/?lang=…`로 연결돼 있음. 사전등록 폼을 남길지도 이때 결정
+  - 자동 승인 전에 P3 가입 CAPTCHA 검토
+- [ ] **서버·프론트 변경 배포** (아래 완료 항목들, 코드는 커밋 전)
+  1. 앱 DB 마이그레이션: `python src/app_db/migrations/0005_free_daily_usage.py` (서버 코드 배포 **전에**)
+  2. 내부 계정 지정: `infra/env.sh INTERNAL_USER_IDS=<run_ai_beta 테스트 계정의 Supabase user id>[,운영자 id]`. 빠지면 `run_ai_beta.py`가 SQL·trace를 못 받음
+  3. 선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
+  4. `infra/deploy.sh` → 프론트 배포
+- [x] **API 응답에서 내부 정보 빼기** (서버): 내부 계정(`INTERNAL_USER_IDS`)이 아니면 `/query`·`/history` 본문을 화면이 쓰는 필드만 남김 (`server.py` `_public_body`). history에는 전체 본문 저장. `debug`/`trace`도 내부 계정만, 503 detail과 history의 error는 `message`만
+- [x] **화면에서 SQL 보기·요청 ID 제거** (프론트): `src/app.js`, 관련 문구·CSS, 요금 안내 무료 플랜의 "생성된 SQL 보기"(ko/en/ja)
+  - [ ] 약관 제7조 1항 2호 "SQL 보기"(ko/en/ja)는 위 약관 개정 항목에서 함께 수정
+- [x] **500 에러에 예외 원문 노출** (서버): 응답은 "Internal server error", 원문은 로그와 history에만
+- [x] ~~**랜딩에서 앱으로 가는 진입점 만들기**~~: 점검 오류. 상단·히어로 버튼이 JS로 `/app/`에 연결돼 있었음. 문구 변경은 "수동 승인 걷어내기"로 옮김
+- [x] **무료 이용 한도와 질문 길이 제한** (서버+프론트)
+  - 무료 계정 하루 100회(한국 시간 0시 초기화, `FREE_DAILY_QUERY_LIMIT`, 테이블 `free_query_usage`). 유료 계정의 무료 방식과 내부 계정은 제외, 결과가 없으면 환불. 초과 시 429 + 안내 문구(ko/en/ja)
+  - 질문 1~500자(`QUESTION_MAX_CHARS`), textarea `maxlength="500"`
+  - 요금 안내(ko/en/ja): 무료 플랜 "하루 100회까지 질문", 이용 한도 섹션에 무료 일일 한도 설명
 
 ## P1. 배포 전 권장
 
-- [ ] **FastAPI 문서 끄기** (서버): `/docs`, `/redoc`, `/openapi.json`이 공개돼 있음. 운영에서는 `docs_url=None, redoc_url=None, openapi_url=None`
+- [x] **FastAPI 문서 끄기** (서버): `/docs`, `/redoc`, `/openapi.json`은 `ENABLE_API_DOCS`를 설정했을 때만 열림
 - [ ] **생성 SQL의 시스템 카탈로그 접근 막기** (서버): 사용자 데이터(앱 DB)는 분리돼 있어 안전하지만, `ollarai_sql_check` 역할로 `pg_catalog`(`pg_stat_activity`, `pg_settings`, `pg_roles`)와 `information_schema`를 읽을 수 있음. `check_statement_is_safe`에 fin_data 테이블·뷰 허용 목록 추가
 - [ ] **질문 기록 180일 삭제 구현** (서버): 처리방침 제3조는 "질문, 조회 내역 180일"인데 `query_history`를 지우는 작업이 없음 (CloudWatch 로그는 180일 설정돼 있음). 삭제 cron 추가
 - [ ] **처리방침에 Google 로그인 반영** (ko/en/ja)
@@ -51,10 +68,7 @@
 
 ## P2. 결제 도입 전 (통신판매업 신고 → 토스·Paddle 가입 후)
 
-- [ ] **통신판매업 신고번호 게시**: 신고 후 3개 언어의 약관 제3조에 있는 "신고 진행 중" 문구를 번호로 바꾸기
-  - `terms/index.html`, `en/terms/index.html`, `ja/terms/index.html`
-- [ ] **전화번호 게시**: 전자상거래법상 통신판매업자는 전화번호를 공개해야 함. 약관 제3조 사업자 정보에 추가하기(3개 언어)
-- [ ] **결제판 약관·처리방침 시행일 다시 정하기**: 결제 시작일에 맞추고 시행 7일 전(이용자에게 불리하면 30일 전)부터 공지 (약관 제3조 제3항)
+- [ ] **결제 버튼 비활성 유지**: 결제 흐름과 아래 고지가 갖춰질 때까지 "결제 준비 중" 유지 (11/20 시행판이어도 결제가 없으면 적용받는 회원이 없음)
 - [ ] **결제 화면에 고지와 동의 넣기**: 약관에 "결제 화면에서 알리고 동의받는다"고 적었으므로 아래 항목이 화면에 실제로 있어야 함. 결제 버튼은 아직 "결제 준비 중"(비활성)이고, 토스페이먼츠·Paddle 결제 흐름을 붙일 때 함께 넣기
   - 요금, 결제 주기, 자동 갱신 사실, 해지 방법 (약관 제9조 제2항). 요금 안내 화면에는 있음, 결제 직전 화면에도 다시 보여 주기
   - 유료 방식을 이용하면 청약철회가 제한된다는 안내 (약관 제12조 제2항). 요금 안내·구독 관리 화면에는 있음, 결제 직전 화면에도 넣기
