@@ -22,20 +22,24 @@
 <body class="text-slate-200 min-h-screen min-h-dvh flex flex-col">
 
     <nav class="sticky top-0 w-full z-50 glass-morphism py-4">
-        <!-- Mobile: the usage badge wraps onto its own row and logout lives on /account/ -->
-        <div class="container mx-auto px-4 md:px-6 flex flex-wrap items-center gap-x-3 md:gap-x-4 gap-y-3">
-            <a id="home-link" href="/" class="flex items-center gap-2 cursor-pointer mr-auto">
+        <!-- Mobile: the usage badge shows its short text and logout lives on /account/ -->
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center gap-3 md:gap-4">
+            <a id="home-link" href="/" class="flex items-center gap-2 cursor-pointer shrink-0">
                 <span class="text-2xl md:text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: rgb(116, 210, 78);">Beta</span>
             </a>
-            <div id="lang-switch" class="tier-toggle currency-toggle md:order-1" role="radiogroup" aria-label="Language"></div>
-            <a id="usage-badge" class="hidden order-last md:order-2 w-full md:w-auto truncate text-center px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs tabular-nums"></a>
-            <div id="account" class="hidden md:order-3 items-center gap-3 md:gap-4 text-sm">
-                <a href="/account/" class="flex items-center gap-2 text-slate-400 hover:text-white transition" data-i18n-aria-label="account.nav">
-                    <i class="fas fa-circle-user text-xl md:hidden"></i>
-                    <span id="account-email" class="hidden md:inline truncate max-w-[220px]"></span>
+            <div class="flex items-center gap-2 md:gap-4 min-w-0">
+                <div id="lang-switch" class="relative"></div>
+                <a id="usage-badge" class="hidden truncate px-2.5 md:px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs tabular-nums">
+                    <span id="usage-badge-full" class="hidden md:inline"></span><span id="usage-badge-short" class="md:hidden"></span>
                 </a>
-                <button id="logout-btn" type="button" class="hidden md:block text-slate-400 hover:text-white transition" data-i18n="app.logout">로그아웃</button>
+                <div id="account" class="hidden items-center gap-3 md:gap-4 text-sm shrink-0">
+                    <a href="/account/" class="flex items-center gap-2 text-slate-400 hover:text-white transition" data-i18n-aria-label="account.nav">
+                        <i class="fas fa-circle-user text-xl md:hidden"></i>
+                        <span id="account-email" class="hidden md:inline truncate max-w-[220px]"></span>
+                    </a>
+                    <button id="logout-btn" type="button" class="hidden md:block text-slate-400 hover:text-white transition" data-i18n="app.logout">로그아웃</button>
+                </div>
             </div>
         </div>
     </nav>

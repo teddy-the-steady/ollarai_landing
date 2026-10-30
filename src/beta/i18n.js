@@ -91,6 +91,9 @@ const STRINGS = {
         'app.usage.free-left': '오늘 남은 무료 질문 {n}회',
         'app.usage.free-none': '오늘 무료 질문을 모두 사용했어요',
         'app.usage.event': '이벤트 · 정밀 답변 {n}회 남음 · {date}까지',
+        'app.usage.event.short': '정밀 {n}회',
+        'app.usage.free-left.short': '무료 {n}회',
+        'app.usage.short': '{used}/{limit}',
         'app.start.title': '베타 테스트에 오신 걸 환영해요',
         'app.start.desc': '공시 원본 데이터에 자연어로 질문하고,<br>SQL로 조회한 결과를 표로 바로 확인해 보세요.',
         'app.start.button': '베타 테스트 시작',
@@ -243,6 +246,9 @@ const STRINGS = {
         'app.usage.free-left': '{n} free questions left today',
         'app.usage.free-none': 'No free questions left today',
         'app.usage.event': 'Event · {n} precise answers left · until {date}',
+        'app.usage.event.short': '{n} Precise',
+        'app.usage.free-left.short': '{n} free',
+        'app.usage.short': '{used}/{limit}',
         'app.start.title': 'Welcome to the beta',
         'app.start.desc': 'Ask questions about original filing data in plain language,<br>and see the results of the SQL query as a table.',
         'app.start.button': 'Start the beta',
@@ -392,6 +398,9 @@ const STRINGS = {
         'app.usage.free-left': '本日の残り無料質問 {n}回',
         'app.usage.free-none': '本日の無料質問は上限に達しました',
         'app.usage.event': 'イベント · 精密回答 残り{n}回 · {date}まで',
+        'app.usage.event.short': '精密 {n}回',
+        'app.usage.free-left.short': '無料 {n}回',
+        'app.usage.short': '{used}/{limit}',
         'app.start.title': 'ベータテストへようこそ',
         'app.start.desc': '開示データの原本に自然な言葉で質問し、<br>SQLで取得した結果を表ですぐに確認できます。',
         'app.start.button': 'ベータテストを始める',
@@ -510,15 +519,35 @@ export function applyI18n(root = document, vars = {}) {
     root.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle, vars); });
 }
 
-// KO / EN / JA buttons; picking one reloads the page in that language
+// Globe button with a language menu, as on the landing page; picking one reloads the page in that language
+const LANG_NAMES = { ko: '한국어', en: 'English', ja: '日本語' };
+
 export function langSwitch(container) {
-    container.replaceChildren(...LANGS.map(code => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = code.toUpperCase();
-        btn.setAttribute('role', 'radio');
-        btn.setAttribute('aria-checked', String(code === lang));
-        btn.addEventListener('click', () => { if (code !== lang) setLang(code); });
-        return btn;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'flex items-center gap-1.5 text-slate-300 hover:text-white px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition text-sm font-medium';
+    btn.setAttribute('aria-label', 'Language');
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = `<i class="fas fa-globe text-base"></i><span class="lang-label-text">${lang.toUpperCase()}</span>`;
+
+    const menu = document.createElement('div');
+    menu.className = 'hidden absolute right-0 mt-2 w-32 glass-morphism rounded-xl overflow-hidden shadow-xl z-50';
+    const close = () => { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); };
+    menu.append(...LANGS.map(code => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = `w-full text-left px-4 py-2.5 text-sm hover:bg-white/10 transition${code === lang ? ' text-primary' : ''}`;
+        item.textContent = LANG_NAMES[code];
+        item.addEventListener('click', () => { if (code !== lang) setLang(code); else close(); });
+        return item;
     }));
+
+    btn.addEventListener('click', () => {
+        const open = !menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', e => { if (!container.contains(e.target)) close(); });
+
+    container.replaceChildren(btn, menu);
 }

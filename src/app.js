@@ -51,26 +51,34 @@ function renderAccount() {
     // (free_daily_limit), shown only once FREE_WARN_RATIO of it is used.
     const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
+    // Each badge has a full text (desktop, and the tooltip) and a short one for mobile
     let badgeText = null;
+    let badgeShort = null;
     let badgeLink = null;
     if (isPaid && me.paid_source === 'event' && me.event) {
-        badgeText = t('app.usage.event', {
-            n: Math.max(0, me.event.total - me.event.used).toLocaleString(locale),
-            date: shortDate.format(new Date(me.event.expires_at)),
-        });
+        const n = Math.max(0, me.event.total - me.event.used).toLocaleString(locale);
+        badgeText = t('app.usage.event', { n, date: shortDate.format(new Date(me.event.expires_at)) });
+        badgeShort = t('app.usage.event.short', { n });
         badgeLink = sitePath('/pricing/');
     } else if (isPaid && me.monthly_limit != null) {
-        badgeText = t('app.usage', {
+        const vars = {
             used: (me.used_this_month ?? 0).toLocaleString(locale),
             limit: me.monthly_limit.toLocaleString(locale),
-        });
+        };
+        badgeText = t('app.usage', vars);
+        badgeShort = t('app.usage.short', vars);
     } else if (me.status === 'approved' && me.free_daily_limit != null
         && me.free_used_today >= me.free_daily_limit * FREE_WARN_RATIO) {
-        const left = Math.max(0, me.free_daily_limit - me.free_used_today);
-        badgeText = left ? t('app.usage.free-left', { n: left.toLocaleString(locale) }) : t('app.usage.free-none');
+        const n = Math.max(0, me.free_daily_limit - me.free_used_today).toLocaleString(locale);
+        badgeText = n !== '0' ? t('app.usage.free-left', { n }) : t('app.usage.free-none');
+        badgeShort = t('app.usage.free-left.short', { n });
     }
     badge.classList.toggle('hidden', !badgeText);
-    if (badgeText) badge.textContent = badgeText;
+    if (badgeText) {
+        document.getElementById('usage-badge-full').textContent = badgeText;
+        document.getElementById('usage-badge-short').textContent = badgeShort;
+        badge.title = badgeText;
+    }
     if (badgeLink) badge.href = badgeLink;
     else badge.removeAttribute('href');
     badge.classList.toggle('hover:text-white', !!badgeLink);
