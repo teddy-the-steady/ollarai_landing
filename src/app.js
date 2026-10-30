@@ -38,6 +38,7 @@ function storageSet(key, value) {
 
 // Free accounts see how many questions are left today from 80% of the daily cap on
 const FREE_WARN_RATIO = 0.8;
+const shortDate = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' });
 
 function renderAccount() {
     document.getElementById('account').classList.replace('hidden', 'flex');
@@ -45,12 +46,20 @@ function renderAccount() {
     emailEl.textContent = me.email || '';
     emailEl.classList.toggle('md:inline', !!me.email);
 
+    // Launch event accounts: questions left and the end date, linking to the pricing page.
     // Paid accounts: this month's paid count, always shown. Free accounts: the daily cap
     // (free_daily_limit), shown only once FREE_WARN_RATIO of it is used.
     const isPaid = me.status === 'approved' && me.tier === 'paid';
     const badge = document.getElementById('usage-badge');
     let badgeText = null;
-    if (isPaid && me.monthly_limit != null) {
+    let badgeLink = null;
+    if (isPaid && me.paid_source === 'event' && me.event) {
+        badgeText = t('app.usage.event', {
+            n: Math.max(0, me.event.total - me.event.used).toLocaleString(locale),
+            date: shortDate.format(new Date(me.event.expires_at)),
+        });
+        badgeLink = sitePath('/pricing/');
+    } else if (isPaid && me.monthly_limit != null) {
         badgeText = t('app.usage', {
             used: (me.used_this_month ?? 0).toLocaleString(locale),
             limit: me.monthly_limit.toLocaleString(locale),
@@ -62,6 +71,9 @@ function renderAccount() {
     }
     badge.classList.toggle('hidden', !badgeText);
     if (badgeText) badge.textContent = badgeText;
+    if (badgeLink) badge.href = badgeLink;
+    else badge.removeAttribute('href');
+    badge.classList.toggle('hover:text-white', !!badgeLink);
 
     document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
     document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
@@ -219,6 +231,9 @@ function errorMessage(error) {
         case 429:
             if (error.detail?.monthly_limit) {
                 return t('app.err.monthly-limit', { limit: error.detail.monthly_limit.toLocaleString(locale) });
+            }
+            if (error.detail?.event_total) {
+                return t('app.err.event-limit', { limit: error.detail.event_total.toLocaleString(locale) });
             }
             if (error.detail?.daily_limit) {
                 return t('app.err.daily-limit', { limit: error.detail.daily_limit.toLocaleString(locale) });

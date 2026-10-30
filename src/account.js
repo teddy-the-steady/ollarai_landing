@@ -108,12 +108,34 @@ function grantCard() {
     return section;
 }
 
-function freeCard(previous) {
+// Launch event: paid features for a number of questions until a date, then free again
+function eventCard(event) {
+    const section = card(t('account.plan'));
+    section.appendChild(el('h2', 'text-xl font-bold text-white', t('account.plan.event')));
+    section.appendChild(details([
+        [t('account.event.left'), t('account.event.left.value', {
+            left: Math.max(0, event.total - event.used).toLocaleString(locale),
+            total: event.total.toLocaleString(locale),
+        })],
+        [t('account.event.until'), t('account.event.until.value', { date: formatDate(event.expires_at) })],
+    ]));
+    section.appendChild(el('p', 'account-note', t('account.plan.event.desc')));
+    const link = el('a', 'account-btn account-btn-primary', t('account.plan.see-pricing'));
+    link.href = sitePath('/pricing/');
+    const actions = el('div', 'account-actions');
+    actions.appendChild(link);
+    section.appendChild(actions);
+    return section;
+}
+
+function freeCard(previous, event) {
     const section = card(t('account.plan'));
     section.appendChild(el('h2', 'text-xl font-bold text-white', t('account.plan.free')));
     section.appendChild(el('p', 'account-note', t('account.plan.free.desc')));
     if (previous) {
         section.appendChild(el('p', 'account-note', t('account.plan.free.expired', { date: formatDate(previous.current_period_end) })));
+    } else if (event) {
+        section.appendChild(el('p', 'account-note', t('account.plan.event.ended')));
     }
     const link = el('a', 'account-btn account-btn-primary', t('account.plan.see-pricing'));
     link.href = sitePath('/pricing/');
@@ -133,7 +155,8 @@ function render(me) {
 
     if (sub?.active) nodes.push(subscriptionCard(sub));
     else if (me.paid_source === 'grant') nodes.push(grantCard());
-    else nodes.push(freeCard(sub));
+    else if (me.paid_source === 'event' && me.event) nodes.push(eventCard(me.event));
+    else nodes.push(freeCard(sub, me.event));
 
     if (me.monthly_limit != null) {
         const usage = card(t('account.usage'));
