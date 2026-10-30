@@ -75,15 +75,20 @@ function renderAccount() {
     else badge.removeAttribute('href');
     badge.classList.toggle('hover:text-white', !!badgeLink);
 
-    document.getElementById('tier-toggle').classList.toggle('hidden', !isPaid);
-    document.getElementById('query-hint').classList.toggle('max-sm:hidden', isPaid);
+    document.getElementById('tier-toggle').classList.toggle('hidden', me.status !== 'approved');
+    document.querySelector('#tier-toggle .tier-lock').classList.toggle('hidden', isPaid);
+    if (isPaid) tierUpsell.classList.add('hidden');
     renderTierToggle();
 }
 
-// ---------- tier toggle (paid accounts only) ----------
+// ---------- tier toggle ----------
+// Shown as Quick / Precise. Free accounts always ask in Quick: picking Precise
+// explains it and links to the pricing page instead.
 
 const TIER_KEY = 'ollarai-beta-tier';
 const TIER_LABEL = { free: t('app.tier.free'), paid: t('app.tier.paid') };
+const tierUpsell = document.getElementById('tier-upsell');
+document.getElementById('tier-upsell-link').href = sitePath('/pricing/');
 
 // The tier sent with /query: null lets the server use the account's tier
 function selectedTier() {
@@ -92,7 +97,7 @@ function selectedTier() {
 }
 
 function renderTierToggle() {
-    const tier = selectedTier();
+    const tier = selectedTier() || 'free';
     document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
         btn.setAttribute('aria-checked', String(btn.dataset.tier === tier));
     });
@@ -100,6 +105,10 @@ function renderTierToggle() {
 
 document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
     btn.addEventListener('click', () => {
+        if (!isPaidAccount()) {
+            tierUpsell.classList.toggle('hidden', btn.dataset.tier !== 'paid');
+            return;
+        }
         storageSet(TIER_KEY, btn.dataset.tier);
         renderTierToggle();
         queryInput.focus();
@@ -269,22 +278,28 @@ queryInput.addEventListener('keydown', (e) => {
     }
 });
 
-queryForm.addEventListener('submit', async (e) => {
+queryForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const question = queryInput.value.trim();
     if (!question || busy) return;
+    ask(question, selectedTier(), true);
+});
 
+// tier: null lets the server use the account's tier. fromInput clears the box on success.
+async function ask(question, tier, fromInput = false) {
     setBusy(true);
+    tierUpsell.classList.add('hidden');
     const card = createResultCard(question);
     resultsEl.prepend(card.el);
 
     try {
-        const tier = selectedTier();
         // auto: the server reads the language (any Hangul = ko) - 'ko' sent English / Japanese through Korean MT
         const response = await api('/query', { method: 'POST', body: { question, language: 'auto', ...(tier ? { tier } : {}) } });
-        card.showResponse(response);
-        queryInput.value = '';
-        autoResize();
+        card.showResponse(response, response.history_id, true);
+        if (fromInput) {
+            queryInput.value = '';
+            autoResize();
+        }
     } catch (error) {
         if (handleAuthError(error)) return;
         if (error instanceof ApiError && error.status === 403 && error.detail?.status) {
@@ -299,7 +314,7 @@ queryForm.addEventListener('submit', async (e) => {
         setBusy(false);
         loadMe().catch(() => {});
     }
-});
+}
 
 // ---------- result rendering ----------
 
@@ -342,10 +357,11 @@ function createResultCard(question, createdAt = new Date()) {
 
     return {
         el: root,
-        showResponse(response, historyId = response.history_id) {
+        // live: just asked on this page (not history), so it may offer a Precise retry
+        showResponse(response, historyId = response.history_id, live = false) {
             clearInterval(timer);
-            // Paid accounts can switch tiers, so mark which path produced this answer
-            if (me?.tier === 'paid' && TIER_LABEL[response.tier]) {
+            // Mark which path (Quick / Precise) produced this answer
+            if (TIER_LABEL[response.tier]) {
                 header.appendChild(el('span', `tier-badge tier-badge-${response.tier}`, TIER_LABEL[response.tier]));
             }
             body.replaceChildren();
@@ -355,12 +371,36 @@ function createResultCard(question, createdAt = new Date()) {
                     ? () => api(`/history/${historyId}/rows?part=${i}`) : null;
                 body.appendChild(renderPart(part, response.is_multi_query, loadAll));
             });
+            if (live && response.tier === 'free') body.appendChild(retryPrecise(question));
         },
         showError(message) {
             clearInterval(timer);
             body.replaceChildren(notice(message, 'error'));
         },
     };
+}
+
+// Under a Quick answer: paid accounts ask the same question again in Precise,
+// free accounts get a link to the pricing page
+function retryPrecise(question) {
+    if (!isPaidAccount()) {
+        const link = el('a', 'result-retry');
+        link.href = sitePath('/pricing/');
+        link.appendChild(el('i', 'fas fa-lock text-xs'));
+        link.appendChild(el('span', null, t('result.retry-precise.locked')));
+        link.appendChild(el('i', 'fas fa-arrow-right text-xs'));
+        return link;
+    }
+    const btn = el('button', 'result-retry');
+    btn.type = 'button';
+    btn.appendChild(el('i', 'fas fa-rotate-right text-xs'));
+    btn.appendChild(el('span', null, t('result.retry-precise')));
+    btn.addEventListener('click', () => {
+        if (busy) return;
+        ask(question, 'paid');
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return btn;
 }
 
 function notice(message, kind = 'info') {

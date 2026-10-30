@@ -397,6 +397,38 @@ html[lang="ja"] body {
     color: var(--primary-green-light);
 }
 
+.tier-lock { margin-right: 0.35rem; font-size: 0.65rem; }
+
+/* Free accounts picking Precise: what it is + pricing link */
+.tier-upsell {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: rgb(203, 213, 225);
+    background: rgba(116, 210, 78, 0.08);
+    border: 1px solid rgba(116, 210, 78, 0.25);
+}
+.tier-upsell.hidden { display: none; }
+.tier-upsell > i { color: var(--primary-green-light); }
+
+/* Under a Quick answer: ask again in Precise */
+.result-retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-green-light);
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+.result-retry:hover { opacity: 1; }
+
 .tier-badge {
     flex-shrink: 0;
     margin-top: 0.3rem;

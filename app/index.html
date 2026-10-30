@@ -97,18 +97,24 @@
                 <textarea id="query-input" rows="2" maxlength="500" class="w-full bg-transparent resize-none outline-none text-white placeholder-slate-500 text-base md:text-lg leading-relaxed px-2 pt-1" placeholder="예: 삼성전자 최근 4개 분기 영업이익 추이" data-i18n-placeholder="app.query.placeholder"></textarea>
                 <div class="flex items-center justify-between gap-3 pt-2">
                     <div class="flex items-center gap-3 min-w-0">
-                        <!-- Paid accounts only: pick the pipeline per request -->
+                        <!-- Every account: paid accounts pick the pipeline per request; free accounts see Precise locked -->
                         <div id="tier-toggle" class="tier-toggle hidden" role="radiogroup" aria-label="답변 방식" data-i18n-aria-label="app.tier.label">
-                            <button type="button" role="radio" data-tier="free" aria-checked="false" data-i18n="app.tier.free">무료</button>
-                            <button type="button" role="radio" data-tier="paid" aria-checked="false" data-i18n="app.tier.paid">유료</button>
+                            <button type="button" role="radio" data-tier="free" aria-checked="false" title="바로 답해요" data-i18n-title="app.tier.free.title" data-i18n="app.tier.free">빠른 답변</button>
+                            <button type="button" role="radio" data-tier="paid" aria-checked="false" title="생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요" data-i18n-title="app.tier.paid.title"><i class="fas fa-lock tier-lock hidden"></i><span data-i18n="app.tier.paid">정밀 답변</span></button>
                         </div>
-                        <span id="query-hint" class="text-slate-500 text-xs pl-2 truncate" data-i18n="app.query.hint">Enter로 전송 · Shift+Enter로 줄바꿈</span>
+                        <span id="query-hint" class="text-slate-500 text-xs pl-2 truncate max-sm:hidden" data-i18n="app.query.hint">Enter로 전송 · Shift+Enter로 줄바꿈</span>
                     </div>
                     <button id="query-submit" type="submit" aria-label="질문 보내기" data-i18n-aria-label="app.query.submit" class="w-10 h-10 shrink-0 rounded-xl bg-primary bg-primary-hover text-white flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed">
                         <i class="fas fa-arrow-up"></i>
                     </button>
                 </div>
             </form>
+            <!-- Free accounts: what Precise is, shown when they pick it -->
+            <div id="tier-upsell" class="tier-upsell hidden">
+                <i class="fas fa-circle-info mt-0.5"></i>
+                <p><span data-i18n="app.tier.locked">정밀 답변은 생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요. 유료 플랜에서 쓸 수 있어요.</span>
+                    <a id="tier-upsell-link" href="/pricing/" class="font-semibold text-primary whitespace-nowrap"><span data-i18n="app.tier.see-pricing">요금 보기</span> <i class="fas fa-arrow-right text-xs"></i></a></p>
+            </div>
 
             <div id="results" class="flex flex-col gap-10 mt-10"></div>
             <!-- Older questions from GET /history -->
