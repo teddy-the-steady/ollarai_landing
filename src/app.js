@@ -1,6 +1,7 @@
 import './style.css';
 import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
+import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 applyI18n();
@@ -403,20 +404,7 @@ function clarificationOptions(clarification) {
     return box;
 }
 
-// Columns whose integers are identifiers or periods, not amounts: no thousands separators
-const RAW_NUMBER_COLUMN = /(year|yr|quarter|qtr|month|period|code|ticker|corp_code|stock_code|^id$|_id$)/i;
-const numberFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 4 });
-const amountFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
-
-function formatCell(value, column) {
-    if (value === null || value === undefined) return { text: '—', numeric: false };
-    if (typeof value === 'number') {
-        const raw = Number.isInteger(value) && RAW_NUMBER_COLUMN.test(column);
-        return { text: raw ? String(value) : numberFormat.format(value), numeric: true };
-    }
-    if (typeof value === 'boolean') return { text: value ? 'true' : 'false', numeric: false };
-    return { text: String(value), numeric: false };
-}
+const cellFormat = createFormatter(lang, locale);
 
 // ---------- currency toggle (result tables with amounts) ----------
 
@@ -456,14 +444,24 @@ const UNCONVERTED_TITLE = {
     null: t('result.unconverted.unknown'),
 };
 
-// Shown values of `result` in `view`: [{ value, text, numeric, currency }] per cell; currency is set
-// on amount cells, and differs from `view` when the amount couldn't be converted.
-function viewCells(result, view) {
-    return result.rows.map((row, i) => row.map((value, j) => {
-        const cell = view ? moneyCell(value, result.columns[j], i, result.money, view) : null;
-        if (!cell) return { value, ...formatCell(value, result.columns[j]) };
+// Currency of an amount cell outside the toggle: won when the server converted it, else the row's own
+function amountCurrency(money, column, rowIndex) {
+    const col = money?.columns?.[column];
+    if (!col) return money?.row_currency?.[rowIndex] ?? null; // per-share prices of the same rows
+    return col.converted ? 'KRW' : (money.row_currency?.[rowIndex] ?? null);
+}
+
+// Shown cells of `result` in `view`, one per shown column (shownColumns): { value, text, numeric, title?, currency? };
+// currency is set on toggled amount cells, and differs from `view` when the amount couldn't be converted.
+function viewCells(result, view, cols) {
+    const companies = result.display?.companies;
+    return result.rows.map((row, i) => cols.map(col => {
+        const value = row[col.index];
+        if (col.format === 'period') return { value, text: cellFormat.period(value, row[col.end]), numeric: false };
+        const cell = view ? moneyCell(value, col.name, i, result.money, view) : null;
+        if (!cell) return { value, ...cellFormat.cell(value, col, amountCurrency(result.money, col.name, i), companies) };
         const shown = cell.currency === view ? Math.round(cell.value) : cell.value;
-        return { value: shown, text: amountFormat.format(shown), numeric: true, currency: cell.currency };
+        return { value: shown, ...cellFormat.cell(shown, col, cell.currency, companies), currency: cell.currency };
     }));
 }
 
@@ -554,30 +552,32 @@ function renderTable(result, sql, loadAll) {
     scroller.appendChild(table);
     card.appendChild(scroller);
 
+    const cols = shownColumns(result, lang);
     // Align a column right when all its non-null values are numbers
-    const numericColumns = () => result.columns.map((_, i) =>
-        result.rows.some(r => r[i] !== null) && result.rows.every(r => r[i] === null || typeof r[i] === 'number'));
+    const numericColumns = () => cols.map(col => col.format !== 'period' && result.rows.some(r => r[col.index] !== null)
+        && result.rows.every(r => r[col.index] === null || typeof r[col.index] === 'number'));
     let numericCols = numericColumns();
 
     function draw() {
         const thead = el('thead');
         const headRow = el('tr');
-        result.columns.forEach((c, i) => {
-            const label = view && result.money.columns[c] ? `${c} (${view})` : c;
-            headRow.appendChild(el('th', numericCols[i] ? 'is-num' : '', label));
+        cols.forEach((col, i) => {
+            const th = el('th', numericCols[i] ? 'is-num' : '', col.label);
+            if (col.label !== col.name && col.format !== 'period') th.title = col.name;
+            headRow.appendChild(th);
         });
         thead.appendChild(headRow);
 
         const tbody = el('tbody');
-        const cells = viewCells(result, view);
+        const cells = viewCells(result, view, cols);
         cells.slice(0, shown).forEach(row => {
             const tr = el('tr');
             row.forEach((cell, i) => {
                 const td = el('td', numericCols[i] ? 'is-num' : '', cell.text);
-                // An amount left in its own currency says which
+                if (cell.title) td.title = cell.title;
+                // An amount left in its own currency (its unit is in the text) is greyed, saying why
                 if (cell.currency !== undefined && cell.currency !== view) {
                     td.classList.add('is-unconverted');
-                    if (cell.currency && cell.currency !== 'MIXED') td.appendChild(el('span', 'cell-currency', cell.currency));
                     td.title = UNCONVERTED_TITLE[cell.currency] ?? t('result.unconverted.no-rate', { currency: cell.currency });
                 }
                 tr.appendChild(td);
@@ -616,7 +616,8 @@ function renderTable(result, sql, loadAll) {
         btn.textContent = t('result.load-all.loading');
         try {
             const full = await loadAll();
-            Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money });
+            Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money,
+                display: full.display ?? result.display });
             loadAll = null; // still truncated only under SQL_FULL_MAX_ROWS - nothing more to load
             numericCols = numericColumns();
             shown = result.rows.length;
@@ -660,15 +661,19 @@ function renderTable(result, sql, loadAll) {
     return card;
 }
 
-// The table as shown: amounts in the selected currency
+// The table as shown - labels, company names, periods - with whole numbers: amounts in the selected currency
 function toCsv(result, view) {
     const esc = (v) => {
         const s = v === null || v === undefined ? '' : String(v);
         return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
-    const header = result.columns.map(c => (view && result.money.columns[c] ? `${c} (${view})` : c));
-    const rows = viewCells(result, view).map(row => row.map(cell =>
-        cell.currency !== undefined && cell.currency !== view && cell.currency ? `${cell.value} ${cell.currency}` : cell.value));
+    const cols = shownColumns(result, lang);
+    const header = cols.map(col => (view && result.money?.columns?.[col.name] ? `${col.label} (${view})` : col.label));
+    const rows = viewCells(result, view, cols).map(row => row.map(cell => {
+        if (cell.value === null || cell.value === undefined) return '';
+        if (typeof cell.value !== 'number') return cell.text;
+        return cell.currency !== undefined && cell.currency !== view && cell.currency ? `${cell.value} ${cell.currency}` : cell.value;
+    }));
     return [header, ...rows].map(r => r.map(esc).join(',')).join('\n');
 }
 
