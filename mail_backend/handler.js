@@ -9,6 +9,7 @@ const CORS_HEADERS = {
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const LANGS = ['ko', 'en', 'ja'];
 
 export const saveEmail = async (event) => {
   let body;
@@ -19,7 +20,7 @@ export const saveEmail = async (event) => {
   }
 
   const email = (body.email || '').trim().toLowerCase();
-  if (!EMAIL_RE.test(email)) {
+  if (email.length > 254 || !EMAIL_RE.test(email)) {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ message: 'Invalid email address' }) };
   }
 
@@ -29,7 +30,8 @@ export const saveEmail = async (event) => {
       Item: {
         email: { S: email },
         subscribedAt: { S: new Date().toISOString() },
-        lang: { S: body.lang || 'ko' },
+        // Anything else (missing, made up) is stored as the default, not as sent
+        lang: { S: LANGS.includes(body.lang) ? body.lang : 'ko' },
       },
       ConditionExpression: 'attribute_not_exists(email)',
     }));

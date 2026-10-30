@@ -54,7 +54,7 @@
                 <div class="legal-summary">
                     <p class="legal-summary-title">한눈에 보기</p>
                     <dl>
-                        <div><dt>처리 항목</dt><dd>이메일, 비밀번호(암호화), 질문·조회 내역, 접속 기록, 결제·구독 정보(유료 서비스 이용 시)</dd></div>
+                        <div><dt>처리 항목</dt><dd>이메일, 비밀번호(암호화), Google 계정 정보(Google 로그인 시), 질문·조회 내역, 접속 기록, 결제·구독 정보(유료 서비스 이용 시)</dd></div>
                         <div><dt>처리 목적</dt><dd>회원 관리, 질문에 대한 답변 제공, 유료 서비스 결제, 서비스·AI 개선</dd></div>
                         <div><dt>제3자 제공</dt><dd>Paddle(해외 결제 이용자에 한함)</dd></div>
                         <div><dt>처리 위탁</dt><dd>Supabase, Amazon Web Services, Google, 토스페이먼츠</dd></div>
@@ -66,7 +66,7 @@
                 <h2 id="purpose">제1조 개인정보의 처리 목적</h2>
                 <p>운영자는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하는 개인정보는 다음 목적 이외의 용도로 이용하지 않으며, 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행합니다.</p>
                 <ol>
-                    <li><strong>회원 가입 및 관리:</strong> 회원 식별, 이메일 인증, 베타 이용 승인, 이용 한도 관리, 회원 탈퇴 처리</li>
+                    <li><strong>회원 가입 및 관리:</strong> 회원 식별, 이메일 인증, 이용 한도 관리, 회원 탈퇴 처리</li>
                     <li><strong>서비스 제공:</strong> 질문 분석, 데이터 조회문(SQL) 생성, 조회 결과 제공</li>
                     <li><strong>유료 서비스 결제 및 관리:</strong> 구독 요금 결제와 정기결제, 청약철회·환불 처리, 결제 관련 안내와 상담, 부정 결제 방지</li>
                     <li><strong>서비스 및 AI 품질 개선:</strong> 오류 분석, 검색 증강 생성(RAG) 데이터 개선, AI 모델의 학습 및 성능 평가(제8조에 따라 가명처리하여 이용)</li>
@@ -82,8 +82,9 @@
                             <tr><th>구분</th><th>항목</th><th>수집 방법</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>회원가입 (필수)</td><td>이메일 주소, 비밀번호</td><td>회원가입 화면</td></tr>
-                            <tr><td>서비스 이용 (필수)</td><td>입력한 질문, 질문으로 생성된 SQL과 조회 결과, 답변 방식(무료·유료), 일별 이용 횟수, 최근 접속 시각, 접속 IP 주소</td><td>서비스 이용 과정에서 생성·수집</td></tr>
+                            <tr><td>회원가입 (필수)</td><td>이메일 주소, 비밀번호, 화면 언어 설정</td><td>회원가입 화면</td></tr>
+                            <tr><td>Google 로그인 (선택 시 필수)</td><td>이메일 주소, 이름, 프로필 사진, Google 계정 식별자</td><td>Google로부터 전달받음</td></tr>
+                            <tr><td>서비스 이용 (필수)</td><td>입력한 질문, 질문으로 생성된 SQL과 조회 결과, 답변 방식(무료·유료), 이용 횟수(무료 방식은 일별, 유료 방식은 월별), 최근 접속 시각, 접속 IP 주소</td><td>서비스 이용 과정에서 생성·수집</td></tr>
                             <tr><td>국내 결제 (유료 서비스 이용 시 필수)</td><td>주문번호, 결제 금액·일시, 결제 상태, 카드사명, 일부를 가린 카드번호, 정기결제용 결제 키(빌링키), 구독 정보(요금제, 구독 시작일, 다음 결제일, 해지 일시)</td><td>결제 화면에서 토스페이먼츠를 통해 수집</td></tr>
                             <tr><td>해외 결제 (유료 서비스 이용 시 필수)</td><td>Paddle 고객·구독 식별자, 주문번호, 결제 금액·통화·일시, 결제 상태, 국가, 구독 정보(요금제, 구독 시작일, 다음 결제일, 해지 일시)</td><td>Paddle로부터 전달받음</td></tr>
                             <tr><td>사전등록 (선택)</td><td>이메일 주소, 등록 일시, 선택한 언어</td><td>웹사이트 사전등록 양식</td></tr>
@@ -148,7 +149,7 @@
                             <tr><th>수탁자</th><th>위탁 업무</th><th>처리 장소</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Supabase Inc.</td><td>회원 인증(가입, 로그인, 인증 메일 발송) 및 계정 정보 보관</td><td>일본</td></tr>
+                            <tr><td>Supabase Inc.</td><td>회원 인증(가입, 로그인, Google 로그인 연동, 인증·비밀번호 재설정 메일 발송) 및 계정 정보 보관</td><td>일본</td></tr>
                             <tr><td>Amazon Web Services, Inc.</td><td>서버 운영, 데이터 및 접속 기록 보관, 사전등록 정보 저장</td><td>대한민국(서울 리전)</td></tr>
                             <tr><td>토스페이먼츠 주식회사</td><td>국내 결제 처리 및 정기결제(빌링) 결제수단 관리</td><td>대한민국</td></tr>
                             <tr><td>Google LLC (Gemini API)</td><td>질문 분석 및 생성된 SQL의 검증·보완</td><td>미국</td></tr>
@@ -166,7 +167,7 @@
                             <tr><th>이전받는 자</th><th>국가</th><th>이전 항목</th><th>이전 목적</th><th>이전 시기·방법</th><th>보유·이용 기간</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>일본</td><td>이메일 주소, 암호화된 비밀번호, 계정 식별자</td><td>회원 인증</td><td>회원가입·로그인 시 네트워크를 통해 전송</td><td>회원 탈퇴 시까지</td></tr>
+                            <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>일본</td><td>이메일 주소, 암호화된 비밀번호, 계정 식별자, 화면 언어 설정, Google 로그인 시 이름·프로필 사진·Google 계정 식별자</td><td>회원 인증</td><td>회원가입·로그인 시 네트워크를 통해 전송</td><td>회원 탈퇴 시까지</td></tr>
                             <tr><td>Google LLC (Gemini API)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>미국</td><td>입력한 질문(번역·가공된 형태 포함)</td><td>질문 분석 및 SQL 검증·보완</td><td>질문 제출 시 네트워크를 통해 전송</td><td>Google API 서비스 약관에 따른 기간</td></tr>
                             <tr><td>Google LLC (Google Analytics)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>미국</td><td>쿠키 식별자, 방문 기록, 접속 IP 주소</td><td>웹사이트 이용 통계 분석</td><td>웹사이트 방문 시 네트워크를 통해 전송</td><td>수집일로부터 2개월</td></tr>
                             <tr><td>Paddle.com Market Limited<br><a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener">paddle.com/legal/privacy</a></td><td>영국</td><td>이메일 주소, 계정 식별자, 선택한 요금제</td><td>해외 결제(판매대행)</td><td>해외 결제 진행 시 네트워크를 통해 전송</td><td>Paddle의 개인정보처리방침과 관련 법령에 따른 기간</td></tr>
@@ -200,7 +201,8 @@
 
                 <h2 id="cookies">제10조 개인정보 자동 수집 장치의 설치·운영 및 거부</h2>
                 <ol>
-                    <li><strong>브라우저 저장소:</strong> 로그인 상태를 유지하기 위한 인증 정보와 화면 설정(베타 안내 표시 여부, 답변 방식 선택값)을 브라우저의 로컬 스토리지에 저장합니다. 인증 정보는 로그아웃하면 삭제됩니다.</li>
+                    <li><strong>브라우저 저장소:</strong> 로그인 상태를 유지하기 위한 인증 정보와 화면 설정(언어, 금액 표시 통화, 시작 안내 표시 여부, 답변 방식 선택값)을 브라우저의 로컬 스토리지에 저장합니다. 인증 정보는 로그아웃하면 삭제됩니다.</li>
+                    <li><strong>Google 로그인:</strong> 로그인 화면의 Google 로그인 버튼은 Google이 제공하며, 버튼을 표시하고 로그인을 처리하는 과정에서 Google이 쿠키 등을 사용할 수 있습니다. 이는 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a>에 따릅니다.</li>
                     <li><strong>분석용 쿠키:</strong> 웹사이트 이용 통계 분석을 위해 Google Analytics 쿠키를 사용합니다.</li>
                     <li><strong>결제 화면:</strong> 결제 화면에서는 결제 처리와 부정 결제 방지를 위해 토스페이먼츠 또는 Paddle이 쿠키 등을 사용할 수 있으며, 이는 각 사업자의 개인정보처리방침에 따릅니다.</li>
                     <li>운영자는 온라인 맞춤형 광고를 위한 행태정보를 수집·이용하지 않으며, 광고 목적의 쿠키를 사용하지 않습니다.</li>
@@ -216,7 +218,7 @@
                 <p>브라우저 저장소 사용을 막으면 로그인 상태가 유지되지 않아 회원 서비스를 이용할 수 없습니다. 분석용 쿠키를 거부해도 서비스 이용에는 영향이 없습니다.</p>
 
                 <h2 id="automated-decision">제11조 자동화된 결정에 관한 사항</h2>
-                <p>운영자는 「개인정보 보호법」 제37조의2에 따른 자동화된 결정을 하지 않습니다. 서비스의 AI는 이용자의 질문을 데이터 조회문(SQL)으로 바꾸고 결과를 보여주는 데 사용되며, 이용자의 권리나 의무에 영향을 미치는 결정을 하지 않습니다. 베타 이용 승인은 운영자가 직접 검토하여 결정하며, 일일 이용 한도는 서비스에 미리 안내된 기준에 따라 적용됩니다.</p>
+                <p>운영자는 「개인정보 보호법」 제37조의2에 따른 자동화된 결정을 하지 않습니다. 서비스의 AI는 이용자의 질문을 데이터 조회문(SQL)으로 바꾸고 결과를 보여주는 데 사용되며, 이용자의 권리나 의무에 영향을 미치는 결정을 하지 않습니다. 무료 방식의 일일 이용 한도와 유료 방식의 월간 이용 한도는 서비스에 미리 안내된 기준에 따라 모든 회원에게 똑같이 적용됩니다.</p>
 
                 <h2 id="children">제12조 만 14세 미만 아동의 개인정보</h2>
                 <p>만 14세 미만 아동은 서비스에 가입할 수 없으며, 운영자는 만 14세 미만 아동의 개인정보를 수집하지 않습니다. 만 14세 미만 아동이 가입한 사실을 알게 되면 해당 개인정보를 지체 없이 파기합니다.</p>
@@ -251,7 +253,7 @@
                 <ul>
                     <li>2026년 10월 3일 제정 (<a href="/privacy/2026-10-03/">이전 버전 보기</a>)</li>
                     <li>2026년 10월 19일 개정: 서비스·AI 개선을 위한 가명정보 처리(제8조) 추가, 국외 이전 정보 상세화, 제3자 제공·파기 절차·권익침해 구제 방법 등 법정 기재 사항 보완 (<a href="/privacy/2026-10-19/">이전 버전 보기</a>)</li>
-                    <li>2026년 11월 20일 개정: 유료 서비스 도입에 따라 결제·구독 정보의 처리 목적·항목·보유 기간 추가, 결제대행사(토스페이먼츠) 위탁과 해외 결제를 위한 Paddle 제공·국외 이전 추가</li>
+                    <li>2026년 11월 20일 개정: 유료 서비스 도입에 따라 결제·구독 정보의 처리 목적·항목·보유 기간 추가, 결제대행사(토스페이먼츠) 위탁과 해외 결제를 위한 Paddle 제공·국외 이전 추가, Google 로그인 시 처리 항목 추가, 이용 한도와 브라우저 저장소 항목 정비, 운영자 승인 절차 삭제</li>
                 </ul>
                 <p>이 개인정보 처리방침은 2026년 11월 20일부터 시행됩니다.</p>
             </article>

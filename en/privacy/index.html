@@ -56,7 +56,7 @@
                 <div class="legal-summary">
                     <p class="legal-summary-title">At a glance</p>
                     <dl>
-                        <div><dt>What we collect</dt><dd>Email, password (encrypted), questions and query history, access logs, payment and subscription information (if you use the Paid Service)</dd></div>
+                        <div><dt>What we collect</dt><dd>Email, password (encrypted), Google account information (if you sign in with Google), questions and query history, access logs, payment and subscription information (if you use the Paid Service)</dd></div>
                         <div><dt>Why</dt><dd>Account management, answering your questions, payments for the Paid Service, improving the Service and our AI</dd></div>
                         <div><dt>Sharing with third parties</dt><dd>Paddle (overseas payments only)</dd></div>
                         <div><dt>Processors</dt><dd>Supabase, Amazon Web Services, Google, Toss Payments</dd></div>
@@ -68,7 +68,7 @@
                 <h2 id="purpose">Article 1. Purposes of Processing</h2>
                 <p>The Operator processes personal information for the purposes below and does not use it for any other purpose. If a purpose changes, the Operator will take the necessary measures, such as obtaining separate consent under Article 18 of the PIPA.</p>
                 <ol>
-                    <li><strong>Account registration and management:</strong> identifying members, email verification, approving beta access, managing usage limits, and processing account closure</li>
+                    <li><strong>Account registration and management:</strong> identifying members, email verification, managing usage limits, and processing account closure</li>
                     <li><strong>Providing the Service:</strong> analyzing questions, generating data queries (SQL), and providing query results</li>
                     <li><strong>Payments for the Paid Service:</strong> subscription and recurring payments, handling withdrawals and refunds, payment-related notices and support, and preventing fraudulent payments</li>
                     <li><strong>Improving the Service and our AI:</strong> analyzing errors, improving retrieval-augmented generation (RAG) data, and training and evaluating AI models (using pseudonymized data under Article 8)</li>
@@ -84,8 +84,9 @@
                             <tr><th>Category</th><th>Items</th><th>How collected</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Sign-up (required)</td><td>Email address, password</td><td>Sign-up screen</td></tr>
-                            <tr><td>Using the Service (required)</td><td>Questions you enter, SQL and query results generated from them, answer mode (free/paid), daily usage count, last access time, IP address</td><td>Generated or collected while you use the Service</td></tr>
+                            <tr><td>Sign-up (required)</td><td>Email address, password, display language</td><td>Sign-up screen</td></tr>
+                            <tr><td>Google sign-in (required if chosen)</td><td>Email address, name, profile picture, Google account identifier</td><td>Received from Google</td></tr>
+                            <tr><td>Using the Service (required)</td><td>Questions you enter, SQL and query results generated from them, answer mode (free/paid), usage counts (daily for the free mode, monthly for the paid mode), last access time, IP address</td><td>Generated or collected while you use the Service</td></tr>
                             <tr><td>Domestic payments (required for the Paid Service)</td><td>Order number, payment amount and time, payment status, card issuer, partially masked card number, billing key for recurring payments, subscription information (plan, start date, next billing date, cancellation time)</td><td>Collected through Toss Payments on the checkout screen</td></tr>
                             <tr><td>Overseas payments (required for the Paid Service)</td><td>Paddle customer and subscription identifiers, order number, payment amount, currency and time, payment status, country, subscription information (plan, start date, next billing date, cancellation time)</td><td>Received from Paddle</td></tr>
                             <tr><td>Pre-registration (optional)</td><td>Email address, registration date and time, selected language</td><td>Pre-registration form on the website</td></tr>
@@ -150,7 +151,7 @@
                             <tr><th>Processor</th><th>Task</th><th>Location</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Supabase Inc.</td><td>Member authentication (sign-up, sign-in, verification emails) and storage of account information</td><td>Japan</td></tr>
+                            <tr><td>Supabase Inc.</td><td>Member authentication (sign-up, sign-in, Google sign-in, verification and password reset emails) and storage of account information</td><td>Japan</td></tr>
                             <tr><td>Amazon Web Services, Inc.</td><td>Server operation, storage of data and access logs, storage of pre-registration information</td><td>Republic of Korea (Seoul region)</td></tr>
                             <tr><td>Toss Payments Co., Ltd.</td><td>Processing domestic payments and managing payment methods for recurring billing</td><td>Republic of Korea</td></tr>
                             <tr><td>Google LLC (Gemini API)</td><td>Analyzing questions and verifying and refining generated SQL</td><td>United States</td></tr>
@@ -168,7 +169,7 @@
                             <tr><th>Recipient</th><th>Country</th><th>Items</th><th>Purpose</th><th>Timing and method</th><th>Retention</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>Japan</td><td>Email address, encrypted password, account identifier</td><td>Member authentication</td><td>Sent over the network at sign-up and sign-in</td><td>Until account closure</td></tr>
+                            <tr><td>Supabase Inc.<br><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td><td>Japan</td><td>Email address, encrypted password, account identifier, display language; with Google sign-in, name, profile picture and Google account identifier</td><td>Member authentication</td><td>Sent over the network at sign-up and sign-in</td><td>Until account closure</td></tr>
                             <tr><td>Google LLC (Gemini API)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>United States</td><td>Questions you enter (including translated or processed forms)</td><td>Analyzing questions and verifying and refining SQL</td><td>Sent over the network when you submit a question</td><td>As set out in Google's API terms of service</td></tr>
                             <tr><td>Google LLC (Google Analytics)<br><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td><td>United States</td><td>Cookie identifiers, visit records, IP address</td><td>Website analytics</td><td>Sent over the network when you visit the website</td><td>2 months from collection</td></tr>
                             <tr><td>Paddle.com Market Limited<br><a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener">paddle.com/legal/privacy</a></td><td>United Kingdom</td><td>Email address, account identifier, selected plan</td><td>Overseas payments (Merchant of Record)</td><td>Sent over the network when you proceed with an overseas payment</td><td>As set out in Paddle's Privacy Policy and applicable laws</td></tr>
@@ -202,7 +203,8 @@
 
                 <h2 id="cookies">Article 10. Automatic Collection Tools and How to Refuse Them</h2>
                 <ol>
-                    <li><strong>Browser storage:</strong> authentication information that keeps you signed in, and display settings (whether the beta introduction was shown, your answer mode selection), are stored in your browser's local storage. Authentication information is deleted when you sign out.</li>
+                    <li><strong>Browser storage:</strong> authentication information that keeps you signed in, and display settings (language, display currency for amounts, whether the introduction was shown, your answer mode selection), are stored in your browser's local storage. Authentication information is deleted when you sign out.</li>
+                    <li><strong>Google sign-in:</strong> the Google sign-in button on the sign-in screen is provided by Google, which may use cookies and similar technologies to show the button and process the sign-in, under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
                     <li><strong>Analytics cookies:</strong> Google Analytics cookies are used for website analytics.</li>
                     <li><strong>Checkout screen:</strong> on the checkout screen, Toss Payments or Paddle may use cookies and similar technologies for payment processing and fraud prevention, under their own privacy policies.</li>
                     <li>The Operator does not collect or use behavioral information for online targeted advertising and does not use advertising cookies.</li>
@@ -218,7 +220,7 @@
                 <p>If you block browser storage, you will not stay signed in and cannot use the member service. Refusing analytics cookies does not affect your use of the Service.</p>
 
                 <h2 id="automated-decision">Article 11. Automated Decisions</h2>
-                <p>The Operator does not make automated decisions within the meaning of Article 37-2 of the PIPA. The AI in the Service is used to turn your questions into data queries (SQL) and show the results, and it does not make decisions that affect your rights or obligations. Beta access is reviewed and approved by the Operator directly, and daily usage limits are applied according to criteria announced in the Service.</p>
+                <p>The Operator does not make automated decisions within the meaning of Article 37-2 of the PIPA. The AI in the Service is used to turn your questions into data queries (SQL) and show the results, and it does not make decisions that affect your rights or obligations. Daily usage limits for the free mode and monthly limits for the paid mode are applied equally to all members according to criteria announced in the Service.</p>
 
                 <h2 id="children">Article 12. Children's Personal Information</h2>
                 <p>Children under 14 may not sign up for the Service, and the Operator does not collect personal information from children under 14. If the Operator learns that a child under 14 has signed up, it will destroy that personal information without delay.</p>
@@ -253,7 +255,7 @@
                 <ul>
                     <li>October 3, 2026: Established</li>
                     <li>October 19, 2026: Added processing of pseudonymized information to improve the Service and AI (Article 8), detailed international transfer information, and supplemented required disclosures such as provision to third parties, destruction procedures, and remedies for infringement</li>
-                    <li>November 20, 2026: With the introduction of the Paid Service, added purposes, items, and retention periods for payment and subscription information, entrustment to our payment service provider (Toss Payments), and provision and international transfer to Paddle for overseas payments</li>
+                    <li>November 20, 2026: With the introduction of the Paid Service, added purposes, items, and retention periods for payment and subscription information, entrustment to our payment service provider (Toss Payments), and provision and international transfer to Paddle for overseas payments; added the items processed for Google sign-in, updated the usage limit and browser storage items, and removed the operator approval step</li>
                 </ul>
                 <p>This Privacy Policy takes effect on November 20, 2026.</p>
             </article>

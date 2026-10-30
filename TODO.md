@@ -27,24 +27,23 @@
 
 ## P0. 무료 버전 배포 전 필수
 
-- [ ] **약관·처리방침 11/20판에 무료 배포 수정 반영, 2026-11-13까지 게시** (시행 7일 전 공지, 약관 제3조 제3항)
-  - SQL 보기 삭제: 제7조를 "SQL 생성과 조회 결과 제공"처럼 결과 중심으로 쓰기 (기능 축소가 불리한 변경(30일 공지)으로 읽히지 않게)
-  - 자동 승인: 약관 제5조 1항·3항, 처리방침 제1조·제11조의 "운영자 승인" 문구
-  - Google 로그인: P1의 처리방침 Google 로그인 항목을 이때 함께 반영
+- [ ] **약관·처리방침 11/20판 게시: 2026-11-13까지 배포** (시행 7일 전 공지, 약관 제3조 제3항). 수정은 반영 완료 (ko/en/ja)
+  - 약관: 제2조 회원·계정에 Google 계정 포함, 결과물에서 SQL 제외 / 제5조 운영자 승인 삭제(이메일 또는 Google 인증으로 성립), 승인 인원·시기 조항 삭제 / 제7조 "SQL 보기" 삭제 / 제16조 계정에 Google 계정 / 개정 이력
+  - 처리방침: 한눈에 보기·제2조 Google 로그인 항목과 화면 언어 / 제1조 "베타 이용 승인" 삭제 / 제2조 이용 횟수(무료 일별, 유료 월별) / 제6조·제7조 Supabase 업무·이전 항목 / 제10조 로컬 스토리지 항목과 Google 로그인 쿠키 / 제11조 한도 문구 / 개정 이력
   - 처리방침의 토스·Paddle 기재는 계약 전이라 실제보다 앞서 있음. 결제가 많이 밀리면 해당 항목만 빼는 것도 검토
-- [ ] **수동 승인 걷어내기**: P0·P1 작업이 끝난 뒤 전환
-  - users 기본값 또는 `upsert_user`를 `approved`로
+- [ ] **수동 승인 걷어내기**: P0·P1 작업이 끝난 뒤 전환. 약관상 11/20부터는 자동 승인이므로 늦어도 그때까지
+  - 서버는 준비 완료: `infra/env.sh AUTO_APPROVE_USERS=true`. 새 계정은 approved, 기존 pending 계정은 다음 요청 때 approved, blocked는 그대로
   - 앱 start/pending 화면 정리 (`src/app.js` `routeByStatus`, `src/beta/i18n.js` `app.start.*`, `app.pending.*`)
   - 랜딩 CTA 문구 "베타 참여하기"(`src/main.js` `cta`, `hero-cta`)를 "무료로 시작하기"로. 버튼은 이미 `/app/?lang=…`로 연결돼 있음. 사전등록 폼을 남길지도 이때 결정
   - 자동 승인 전에 P3 가입 CAPTCHA 검토
-- [ ] **서버·프론트 변경 배포** (아래 완료 항목들, 코드는 커밋 전)
+- [ ] **서버·프론트 변경 배포**
   1. 앱 DB 마이그레이션: `python src/app_db/migrations/0005_free_daily_usage.py` (서버 코드 배포 **전에**)
   2. 내부 계정 지정: `infra/env.sh INTERNAL_USER_IDS=<run_ai_beta 테스트 계정의 Supabase user id>[,운영자 id]`. 빠지면 `run_ai_beta.py`가 SQL·trace를 못 받음
-  3. 선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
-  4. `infra/deploy.sh` → 프론트 배포
+  3. 선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500), `HISTORY_RETENTION_DAYS`(기본 180). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
+  4. `infra/deploy.sh` (180일 삭제 타이머 `ollarai-purge-expired`도 설치) → 프론트 배포
+  5. 사전등록 Lambda: `mail_backend/.env`에 `ALLOWED_ORIGIN=https://ollarai.com` 넣고 재배포
 - [x] **API 응답에서 내부 정보 빼기** (서버): 내부 계정(`INTERNAL_USER_IDS`)이 아니면 `/query`·`/history` 본문을 화면이 쓰는 필드만 남김 (`server.py` `_public_body`). history에는 전체 본문 저장. `debug`/`trace`도 내부 계정만, 503 detail과 history의 error는 `message`만
-- [x] **화면에서 SQL 보기·요청 ID 제거** (프론트): `src/app.js`, 관련 문구·CSS, 요금 안내 무료 플랜의 "생성된 SQL 보기"(ko/en/ja)
-  - [ ] 약관 제7조 1항 2호 "SQL 보기"(ko/en/ja)는 위 약관 개정 항목에서 함께 수정
+- [x] **화면에서 SQL 보기·요청 ID 제거** (프론트): `src/app.js`, 관련 문구·CSS, 요금 안내 무료 플랜의 "생성된 SQL 보기"(ko/en/ja), 약관 제7조
 - [x] **500 에러에 예외 원문 노출** (서버): 응답은 "Internal server error", 원문은 로그와 history에만
 - [x] ~~**랜딩에서 앱으로 가는 진입점 만들기**~~: 점검 오류. 상단·히어로 버튼이 JS로 `/app/`에 연결돼 있었음. 문구 변경은 "수동 승인 걷어내기"로 옮김
 - [x] **무료 이용 한도와 질문 길이 제한** (서버+프론트)
@@ -55,15 +54,10 @@
 ## P1. 배포 전 권장
 
 - [x] **FastAPI 문서 끄기** (서버): `/docs`, `/redoc`, `/openapi.json`은 `ENABLE_API_DOCS`를 설정했을 때만 열림
-- [ ] **생성 SQL의 시스템 카탈로그 접근 막기** (서버): 사용자 데이터(앱 DB)는 분리돼 있어 안전하지만, `ollarai_sql_check` 역할로 `pg_catalog`(`pg_stat_activity`, `pg_settings`, `pg_roles`)와 `information_schema`를 읽을 수 있음. `check_statement_is_safe`에 fin_data 테이블·뷰 허용 목록 추가
-- [ ] **질문 기록 180일 삭제 구현** (서버): 처리방침 제3조는 "질문, 조회 내역 180일"인데 `query_history`를 지우는 작업이 없음 (CloudWatch 로그는 180일 설정돼 있음). 삭제 cron 추가
-- [ ] **처리방침에 Google 로그인 반영** (ko/en/ja)
-  - 제2조: Google 로그인 시 이메일, 이름, 프로필 사진, Google 계정 식별자(Google로부터 전달)와 언어 설정(가입 시 저장, `user_metadata.lang`)
-  - 제7조 Supabase 이전 항목도 같이 수정
-  - 약관 제2조의 "회원"·"계정" 정의(이메일+비밀번호)에 Google 계정 포함
-- [ ] **처리방침 세부를 실제와 맞추기** (ko/en/ja)
-  - 제2조 "일별 이용 횟수", 제11조 "일일 이용 한도" → 실제는 유료 월 한도 (P0에서 무료 일일 한도를 넣으면 그에 맞게)
-  - 제10조 로컬 스토리지 항목에 언어·통화 선택값 추가
+- [x] **생성 SQL의 시스템 카탈로그 접근 막기** (서버): `check_statement_is_safe`가 `pg_catalog`·`information_schema`·`pg_` 이름 테이블과 `current_setting`·`version` 등 서버 정보 함수를 거부 (허용 목록 대신 거부 방식: 새 테이블이 생겨도 유지할 목록이 없음)
+- [x] **질문 기록 180일 삭제 구현** (서버): `common/purge_expired_records.py` + `infra/purge_expired.sh` + systemd 타이머(매일 03:00 KST). 지난 무료 일일 카운트도 함께 삭제
+- [x] **처리방침에 Google 로그인 반영** (ko/en/ja): P0 약관·처리방침 11/20판 항목에 포함
+- [x] **처리방침 세부를 실제와 맞추기** (ko/en/ja): P0 약관·처리방침 11/20판 항목에 포함
 - [ ] **무료 결과의 잠금 안내 문구**: 20행 초과분 "유료 플랜에서 볼 수 있어요"를 누르면 `/pricing/`으로 가는데 버튼이 "결제 준비 중". 결제 전까지 문구를 바꾸거나 CTA 숨기기
 
 ## P2. 결제 도입 전 (통신판매업 신고 → 토스·Paddle 가입 후)
@@ -89,7 +83,7 @@
   - public 스키마에 테이블이 있다면 RLS 켜져 있는지 (anon key는 번들에 공개됨)
   - 가입 CAPTCHA(Turnstile): 자동 승인으로 가면 우선순위 올리기
   - 이메일 발송 rate limit
-- [ ] **사전등록 Lambda**: `mail_backend/.env`에 `ALLOWED_ORIGIN`이 없어 `*`로 동작. `lang` 값 검증 추가
+- [x] **사전등록 Lambda**: `lang`은 ko/en/ja만 저장(그 외는 ko), 이메일 254자 제한. `ALLOWED_ORIGIN` 설정은 P0 배포 단계 5번
 - [ ] **API 도메인 확인**: 프로덕션 빌드가 `api-dev.ollarai.com`을 사용 중. 의도한 것인지 확인
 - [ ] **결과 표 컬럼명**: `net_income` 같은 DB 컬럼명이 그대로 보임. 사용자용 이름으로 바꾸기 (UX)
 
