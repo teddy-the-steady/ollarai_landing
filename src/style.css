@@ -498,6 +498,43 @@ html[lang="ja"] body {
     color: rgb(100, 116, 139);
 }
 
+/* Example questions under the question box: a click fills the box */
+.query-examples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.query-examples.hidden { display: none; }
+.query-examples-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: rgb(100, 116, 139);
+}
+.query-examples-label > i { color: var(--primary-green-light); }
+.query-example {
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    color: rgb(203, 213, 225);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.query-example:hover {
+    color: #fff;
+    background: rgba(116, 210, 78, 0.12);
+    border-color: rgba(116, 210, 78, 0.35);
+}
+@media (max-width: 640px) {
+    .query-examples { justify-content: flex-start; }
+    .query-examples-label { width: 100%; }
+}
+
 /* Ask-back options: each sends the question rewritten with that company / item */
 .clarify-options {
     display: flex;

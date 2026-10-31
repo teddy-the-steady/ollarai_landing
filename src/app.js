@@ -3,6 +3,7 @@ import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+import { exampleQuestions } from './beta/examples.js';
 
 applyI18n();
 langSwitch(document.getElementById('lang-switch'));
@@ -286,6 +287,20 @@ queryInput.addEventListener('keydown', (e) => {
     }
 });
 
+const queryExamples = document.getElementById('query-examples');
+exampleQuestions(lang).forEach(question => {
+    const btn = el('button', 'query-example', question);
+    btn.type = 'button';
+    queryExamples.appendChild(btn);
+    btn.addEventListener('click', () => {
+        if (busy) return;
+        queryInput.value = btn.textContent.trim();
+        autoResize();
+        querySubmit.disabled = false;
+        queryInput.focus();
+    });
+});
+
 queryForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const question = queryInput.value.trim();
@@ -297,6 +312,7 @@ queryForm.addEventListener('submit', (e) => {
 async function ask(question, tier, fromInput = false) {
     setBusy(true);
     tierUpsell.classList.add('hidden');
+    queryExamples.classList.add('hidden');
     const card = createResultCard(question);
     resultsEl.prepend(card.el);
 
