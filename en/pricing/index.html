@@ -31,9 +31,17 @@
             </a>
             <div class="flex items-center gap-1 text-sm font-medium">
                 <a href="/app/" class="hidden sm:inline px-3 py-2 mr-2 text-slate-300 hover:text-white transition">Open app</a>
-                <a href="/pricing/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">KO</a>
-                <a href="/en/pricing/" class="px-3 py-2 rounded-full text-white bg-white/10">EN</a>
-                <a href="/ja/pricing/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">JA</a>
+                <div class="relative" data-lang-menu>
+                    <button type="button" class="flex items-center gap-1.5 text-slate-300 hover:text-white px-3 py-2 rounded-full hover:bg-white/10 transition" aria-label="Language" aria-haspopup="true" aria-expanded="false">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span class="lang-label-text">EN</span>
+                    </button>
+                    <div class="hidden absolute right-0 mt-2 w-32 glass-morphism rounded-xl overflow-hidden shadow-xl z-50">
+                        <a href="/pricing/" class="block px-4 py-2.5 text-sm hover:bg-white/10 transition">한국어</a>
+                        <a href="/en/pricing/" class="block px-4 py-2.5 text-sm hover:bg-white/10 transition text-primary">English</a>
+                        <a href="/ja/pricing/" class="block px-4 py-2.5 text-sm hover:bg-white/10 transition">日本語</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -46,6 +54,8 @@
             <!-- Launch event: numbers must match the server (EVENT_CREDITS, EVENT_CREDIT_DAYS); remove when the event ends -->
             <p class="pricing-event mb-10 rounded-2xl px-5 py-4 text-sm leading-relaxed text-slate-300" style="background-color: rgba(116, 210, 78, 0.1); border: 1px solid rgba(116, 210, 78, 0.3);">
                 <strong class="text-white">Launch event</strong> · Sign up and try every paid feature free for 30 days, including 100 precise answers. No payment details needed, and nothing is charged when it ends.
+                <!-- Filled from ?event_until= (the app's event badge links here) -->
+                <span id="event-until" class="hidden mt-2 font-semibold" style="color: rgb(116, 210, 78);" data-text="Your event runs until {date}"></span>
             </p>
 
             <!-- Plans: limits must match the server (FREE_MAX_ROWS, PAID_MONTHLY_QUERY_LIMIT) and stay the same in

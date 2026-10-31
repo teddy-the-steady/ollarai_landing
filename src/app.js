@@ -59,7 +59,7 @@ function renderAccount() {
         const n = Math.max(0, me.event.total - me.event.used).toLocaleString(locale);
         badgeText = t('app.usage.event', { n, date: shortDate.format(new Date(me.event.expires_at)) });
         badgeShort = t('app.usage.event.short', { n });
-        badgeLink = sitePath('/pricing/');
+        badgeLink = `${sitePath('/pricing/')}?event_until=${encodeURIComponent(me.event.expires_at)}`;
     } else if (isPaid && me.monthly_limit != null) {
         const vars = {
             used: (me.used_this_month ?? 0).toLocaleString(locale),
