@@ -327,7 +327,23 @@ function getLangFromURL() {
     return null;
 }
 
-let currentLang = getLangFromURL() || 'ko';
+// Shared with the beta pages (src/beta/i18n.js); only set when the user picks a language.
+const LANG_KEY = 'ollarai-lang';
+const LANGS = ['ko', 'en', 'ja'];
+
+// At the root (no /en, /ja, /ko in the path): the remembered choice, else the browser language.
+// Crawlers stay on Korean so the root page keeps being indexed as Korean.
+function detectLang() {
+    try {
+        const stored = localStorage.getItem(LANG_KEY);
+        if (LANGS.includes(stored)) return stored;
+    } catch (e) {}
+    if (/bot|crawl|spider|slurp|facebookexternalhit/i.test(navigator.userAgent)) return 'ko';
+    const browser = (navigator.language || '').slice(0, 2).toLowerCase();
+    return LANGS.includes(browser) ? browser : 'ko';
+}
+
+let currentLang = getLangFromURL() || detectLang();
 
 window.toggleLangMenu = function() {
     document.getElementById('lang-menu').classList.toggle('hidden');
@@ -351,7 +367,13 @@ const simData = {
     }
 };
 
+// Language menu: remember the choice, then apply it
 window.setLang = function(lang) {
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    applyLang(lang);
+}
+
+function applyLang(lang) {
     currentLang = lang;
     try { history.replaceState(null, '', '/' + lang); } catch (e) {}
     document.documentElement.lang = lang;
@@ -400,16 +422,16 @@ document.addEventListener('click', function(e) {
 });
 
 window.addEventListener('popstate', function() {
-    setLang(getLangFromURL() || 'ko');
+    applyLang(getLangFromURL() || detectLang());
 });
 
 // Initialize language immediately to prevent flash of wrong language
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-        setLang(currentLang);
+        applyLang(currentLang);
     });
 } else {
-    setLang(currentLang);
+    applyLang(currentLang);
 }
 
 // Screening demo: types a sample query, then reveals results row by row (illustrative sample data).
