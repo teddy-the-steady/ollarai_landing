@@ -4,6 +4,9 @@
 // EBITDA / FCF / segment questions (newdata sets) were rechecked on 2026-10-31: their SQL with the current
 // rewrites ran under the 10s statement timeout with sensible rows. Ownership questions stay out until the
 // ollarai_backend ownership_latest_year fix ("기아 최대주주랑 지분율" timed out on Quick) is deployed.
+// results / statement are answered by the backend statement_overview template (one company, no metric or
+// period named -> newest year + quarter), so they don't depend on the Quick model; the detail ones need the
+// words statement_detail.py reads (상세/자세한/전부, 詳細/全項目, detailed/full).
 const EXAMPLES = {
     ko: {
         company: [
@@ -15,6 +18,20 @@ const EXAMPLES = {
             '삼성전자 EBITDA 4년치 알려줘',
             '삼성전자 2025년 잉여현금흐름',
             '현대차 최근 3년 FCF 추이',
+        ],
+        results: [
+            '금양 최근 실적',
+            '삼성전자 최근 실적 알려줘',
+            '카카오 최근 실적',
+            'LG전자 최근 실적',
+            '농심 최근 실적 보여줘',
+        ],
+        statement: [
+            '삼성전자 자세한 손익계산서',
+            'SK하이닉스 상세 재무제표',
+            '현대차 재무상태표',
+            '카카오 현금흐름표',
+            '네이버 손익계산서 전부 보여줘',
         ],
         compare: [
             '삼성전자랑 SK하이닉스 최근 3년간 매출액 알려줘',
@@ -51,6 +68,20 @@ const EXAMPLES = {
             "Samsung Electronics free cash flow in 2025",
             "Hyundai Motor FCF trend over the last 3 years",
         ],
+        results: [
+            "Kumyang recent results",
+            "Samsung Electronics latest results",
+            "Kakao recent performance",
+            "LG Electronics recent results",
+            "Nongshim latest results",
+        ],
+        statement: [
+            "Samsung Electronics detailed income statement",
+            "SK hynix detailed financial statements",
+            "Hyundai Motor balance sheet",
+            "Kakao cash flow statement",
+            "NAVER full income statement",
+        ],
         compare: [
             "Samsung Electronics vs SK hynix revenue over the last 3 years",
             "Compare Samsung Electronics and SK hynix intangible assets over 3 years",
@@ -86,6 +117,20 @@ const EXAMPLES = {
             'サムスン電子の2025年フリーキャッシュフロー',
             '現代自動車の直近3年のFCFの推移',
         ],
+        results: [
+            'SKハイニックスの最近の業績',
+            'サムスン電子の最近の業績',
+            'カカオの最近の業績',
+            'LG電子の最近の業績',
+            '農心の最近の業績',
+        ],
+        statement: [
+            'サムスン電子の詳細な損益計算書',
+            'SKハイニックスの詳細な財務諸表',
+            '現代自動車の貸借対照表',
+            'カカオのキャッシュフロー計算書',
+            'NAVERの損益計算書の全項目',
+        ],
         compare: [
             'サムスン電子とSKハイニックスの直近3年間の売上高',
             'サムスン電子とSKハイニックスの無形資産を3年分比較して',
@@ -114,7 +159,12 @@ const EXAMPLES = {
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
-// One question per group, in group order
+// Chips under the question box - fewer than the groups, so each load shows a different mix
+const SHOWN = 4;
+
+// One question from each of SHOWN random groups, in group order
 export function exampleQuestions(lang) {
-    return Object.values(EXAMPLES[lang] || EXAMPLES.ko).map(pick);
+    const groups = Object.values(EXAMPLES[lang] || EXAMPLES.ko);
+    while (groups.length > SHOWN) groups.splice(Math.floor(Math.random() * groups.length), 1);
+    return groups.map(pick);
 }
