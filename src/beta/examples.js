@@ -1,3 +1,5 @@
+import { api } from './api.js';
+
 // Example questions under the question box, one per group picked at random on each page load.
 // Korean ones are worded as in ollarai_backend pipeline_test_logs/ai_beta runs where Quick passed every time
 // (graded sets or judge 85+ on real questions); en/ja are translations of the same questions.
@@ -7,6 +9,7 @@
 // results / statement are answered by the backend statement_overview template (one company, no metric or
 // period named -> newest year + quarter), so they don't depend on the Quick model; the detail ones need the
 // words statement_detail.py reads (상세/자세한/전부, 詳細/全項目, detailed/full).
+// These are the fallback: groups GET /examples has questions for (freshExamples) replace them.
 const EXAMPLES = {
     ko: {
         company: [
@@ -162,9 +165,25 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
 // Chips under the question box - fewer than the groups, so each load shows a different mix
 const SHOWN = 4;
 
-// One question from each of SHOWN random groups, in group order
-export function exampleQuestions(lang) {
-    const groups = Object.values(EXAMPLES[lang] || EXAMPLES.ko);
-    while (groups.length > SHOWN) groups.splice(Math.floor(Math.random() * groups.length), 1);
-    return groups.map(pick);
+// How long the chips wait for GET /examples before showing the list above
+const FRESH_TIMEOUT_MS = 1500;
+
+// Questions the backend worded from the newest filings and checked on Quick the night before
+// (ollarai_backend common/example_questions.py): {group: [question, ...]}, {} when unavailable.
+export async function freshExamples(lang) {
+    const timeout = new Promise(resolve => setTimeout(() => resolve({}), FRESH_TIMEOUT_MS));
+    const fetched = api(`/examples?lang=${lang}`).then(data => data?.groups || {}).catch(() => ({}));
+    return Promise.race([fetched, timeout]);
+}
+
+// One question from each of SHOWN random groups, in group order; a group the backend has fresh
+// questions for uses those instead of the list above
+export function exampleQuestions(lang, fresh = {}) {
+    const groups = { ...(EXAMPLES[lang] || EXAMPLES.ko) };
+    for (const [group, questions] of Object.entries(fresh)) {
+        if (questions?.length) groups[group] = questions;
+    }
+    const lists = Object.values(groups);
+    while (lists.length > SHOWN) lists.splice(Math.floor(Math.random() * lists.length), 1);
+    return lists.map(pick);
 }

@@ -3,7 +3,7 @@ import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
-import { exampleQuestions } from './beta/examples.js';
+import { exampleQuestions, freshExamples } from './beta/examples.js';
 
 applyI18n();
 langSwitch(document.getElementById('lang-switch'));
@@ -288,7 +288,7 @@ queryInput.addEventListener('keydown', (e) => {
 });
 
 const queryExamples = document.getElementById('query-examples');
-exampleQuestions(lang).forEach(question => {
+freshExamples(lang).then(fresh => exampleQuestions(lang, fresh).forEach(question => {
     const btn = el('button', 'query-example', question);
     btn.type = 'button';
     queryExamples.appendChild(btn);
@@ -299,7 +299,7 @@ exampleQuestions(lang).forEach(question => {
         querySubmit.disabled = false;
         queryInput.focus();
     });
-});
+}));
 
 queryForm.addEventListener('submit', (e) => {
     e.preventDefault();
