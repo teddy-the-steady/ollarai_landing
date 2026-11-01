@@ -534,6 +534,18 @@ function viewCells(result, view, cols) {
     }));
 }
 
+// display.transpose (a few rows of many figures, read down): the columns heading each original row,
+// and the figure columns that become rows. null: shown as is - also with held-back rows to preview.
+function turnedColumns(result, cols) {
+    const header = result.display?.transpose?.header;
+    if (!header || result.locked_rows) return null;
+    const heads = new Set(header);
+    return { header: cols.filter(col => heads.has(col.index)), figures: cols.filter(col => !heads.has(col.index)) };
+}
+
+// One original row's column title: its header cells' text ("2025.01 ~ 2025.12 · 연간 · 연결")
+const turnedTitle = (row, cols, header) => header.map(col => row[cols.indexOf(col)].text).filter(Boolean).join(' · ');
+
 // ---------- rows by account tier ----------
 
 // Paid tables open with this many rows; "more" shows the rest of what /query sent (SQL_EXEC_MAX_ROWS),
@@ -610,12 +622,51 @@ function renderTable(result, loadAll) {
     card.appendChild(scroller);
 
     const cols = shownColumns(result, lang);
+    const turned = turnedColumns(result, cols);
+    if (turned) {
+        table.classList.add('is-turned');
+        rowCount.textContent = t('result.rows', { n: turned.figures.length });
+    }
     // Align a column right when all its non-null values are numbers
     const numericColumns = () => cols.map(col => col.format !== 'period' && result.rows.some(r => r[col.index] !== null)
         && result.rows.every(r => r[col.index] === null || typeof r[col.index] === 'number'));
     let numericCols = numericColumns();
 
+    // A cell, greyed with the reason when its amount is left in its own currency
+    function cellTd(cell, numeric) {
+        const td = el('td', numeric ? 'is-num' : '', cell.text);
+        if (cell.title) td.title = cell.title;
+        if (cell.currency !== undefined && cell.currency !== view) {
+            td.classList.add('is-unconverted');
+            td.title = UNCONVERTED_TITLE[cell.currency] ?? t('result.unconverted.no-rate', { currency: cell.currency });
+        }
+        return td;
+    }
+
+    // Turned: one column per original row, one row per figure, labelled
+    function drawTurned() {
+        const cells = viewCells(result, view, cols);
+        const headRow = el('tr');
+        headRow.appendChild(el('th', null, t('result.item')));
+        cells.forEach(row => headRow.appendChild(el('th', 'is-num', turnedTitle(row, cols, turned.header))));
+        const thead = el('thead');
+        thead.appendChild(headRow);
+        const tbody = el('tbody');
+        turned.figures.forEach(col => {
+            const j = cols.indexOf(col);
+            const tr = el('tr');
+            const th = el('th', null, col.label);
+            th.scope = 'row';
+            if (col.label !== col.name) th.title = col.name;
+            tr.appendChild(th);
+            cells.forEach(row => tr.appendChild(cellTd(row[j], numericCols[j])));
+            tbody.appendChild(tr);
+        });
+        table.replaceChildren(thead, tbody);
+    }
+
     function draw() {
+        if (turned) return drawTurned();
         const thead = el('thead');
         const headRow = el('tr');
         cols.forEach((col, i) => {
@@ -629,16 +680,7 @@ function renderTable(result, loadAll) {
         const cells = viewCells(result, view, cols);
         cells.slice(0, shown).forEach(row => {
             const tr = el('tr');
-            row.forEach((cell, i) => {
-                const td = el('td', numericCols[i] ? 'is-num' : '', cell.text);
-                if (cell.title) td.title = cell.title;
-                // An amount left in its own currency (its unit is in the text) is greyed, saying why
-                if (cell.currency !== undefined && cell.currency !== view) {
-                    td.classList.add('is-unconverted');
-                    td.title = UNCONVERTED_TITLE[cell.currency] ?? t('result.unconverted.no-rate', { currency: cell.currency });
-                }
-                tr.appendChild(td);
-            });
+            row.forEach((cell, i) => tr.appendChild(cellTd(cell, numericCols[i])));
             tbody.appendChild(tr);
         });
         if (locked) tbody.append(...lockedPreview(cells, Math.min(locked, LOCKED_PREVIEW_ROWS), numericCols));
@@ -725,13 +767,19 @@ function toCsv(result, view) {
         return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const cols = shownColumns(result, lang);
-    const header = cols.map(col => (view && result.money?.columns?.[col.name] ? `${col.label} (${view})` : col.label));
-    const rows = viewCells(result, view, cols).map(row => row.map(cell => {
+    const label = (col) => (view && result.money?.columns?.[col.name] ? `${col.label} (${view})` : col.label);
+    const cells = viewCells(result, view, cols);
+    const rows = cells.map(row => row.map(cell => {
         if (cell.value === null || cell.value === undefined) return '';
         if (typeof cell.value !== 'number') return cell.text;
         return cell.currency !== undefined && cell.currency !== view && cell.currency ? `${cell.value} ${cell.currency}` : cell.value;
     }));
-    return [header, ...rows].map(r => r.map(esc).join(',')).join('\n');
+    const turned = turnedColumns(result, cols);
+    const table = turned  // as shown: one line per figure, one column per original row
+        ? [[t('result.item'), ...cells.map(row => turnedTitle(row, cols, turned.header))],
+            ...turned.figures.map(col => [label(col), ...rows.map(row => row[cols.indexOf(col)])])]
+        : [cols.map(label), ...rows];
+    return table.map(r => r.map(esc).join(',')).join('\n');
 }
 
 init();
