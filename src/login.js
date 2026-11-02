@@ -35,6 +35,10 @@ const isNewPassword = () => mode === 'signup' || mode === 'reset';
 // or with error_code=otp_expired etc. when the link is stale. Read it before supabase-js clears it.
 const hashParams = new URLSearchParams(window.location.hash.slice(1));
 const recovering = hashParams.get('type') === 'recovery';
+// GIS redirect mode (mobile) comes back as /login/#google_credential=<ID token> (cloudfront/google-login-redirect.js).
+// Drop it from the address bar right away.
+const googleCredential = hashParams.get('google_credential');
+if (googleCredential !== null) history.replaceState(null, '', window.location.pathname + window.location.search);
 
 // Already signed in -> straight to the app (except a recovery session, which still needs the new password)
 supabase.auth.getSession().then(({ data: { session } }) => {
@@ -124,23 +128,49 @@ async function makeNonce() {
     return { nonce, hashed };
 }
 
+async function signInWithGoogle(credential, nonce) {
+    showError('');
+    showNotice('');
+    const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: credential, nonce });
+    if (error) {
+        console.error(error);
+        showError(authErrorMessage(error));
+        return;
+    }
+    window.location.replace(APP_PATH);
+}
+
+// On mobile the popup flow hands the credential back through a second account sheet (iOS Chrome) or
+// gets stuck in it, so mobile uses GIS redirect mode: Google POSTs the ID token to /auth/google,
+// which bounces it back here in the hash. The raw nonce waits in sessionStorage (same tab).
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS reports as Mac
+const NONCE_KEY = 'ollarai-google-nonce';
+
+function finishGoogleRedirect() {
+    let nonce = null;
+    try {
+        nonce = sessionStorage.getItem(NONCE_KEY);
+        sessionStorage.removeItem(NONCE_KEY);
+    } catch { /* storage blocked */ }
+    if (!googleCredential || !nonce) {
+        showError(t('auth.error.generic'));
+        return;
+    }
+    signInWithGoogle(googleCredential, nonce);
+}
+
 async function setUpGis() {
     if (!GOOGLE_CLIENT_ID) throw new Error('VITE_GOOGLE_CLIENT_ID is not set');
     const [{ nonce, hashed }] = await Promise.all([makeNonce(), loadGis()]);
+    // Without storage the redirect can't be finished; the catch below falls back to the Supabase redirect
+    if (isMobile) sessionStorage.setItem(NONCE_KEY, nonce);
     google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         nonce: hashed,
-        callback: async ({ credential }) => {
-            showError('');
-            showNotice('');
-            const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: credential, nonce });
-            if (error) {
-                console.error(error);
-                showError(authErrorMessage(error));
-                return;
-            }
-            window.location.replace(APP_PATH);
-        },
+        ...(isMobile
+            ? { ux_mode: 'redirect', login_uri: window.location.origin + '/auth/google' }
+            : { callback: ({ credential }) => signInWithGoogle(credential, nonce) }),
     });
     google.accounts.id.renderButton(gisContainer, {
         theme: 'outline',
@@ -151,6 +181,9 @@ async function setUpGis() {
         width: Math.min(400, gisContainer.offsetWidth),
     });
 }
+
+// Read the returned credential's nonce before setUpGis stores a fresh one
+if (googleCredential !== null) finishGoogleRedirect();
 
 setUpGis().catch(error => {
     console.error(error);
