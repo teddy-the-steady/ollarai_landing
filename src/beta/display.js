@@ -24,11 +24,23 @@ const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})/;
 
 const isCurrencyCode = (c) => typeof c === 'string' && /^[A-Z]{3}$/.test(c);
 
+// 'KR' -> 🇰🇷 (regional indicator letters); display.companies carries country only when a result mixes them
+const flagEmoji = (c) => (typeof c === 'string' && /^[A-Z]{2}$/.test(c)
+    ? String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65)) : null);
+
 export function createFormatter(lang, locale) {
     const number = (digits) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits });
     const int = number(0);
     const dec2 = number(2);
     const dec4 = number(4);
+    let regions = null;
+    // The country's name for the flag's tooltip (대한민국, United States)
+    const regionName = (code) => {
+        try {
+            regions ??= new Intl.DisplayNames([locale], { type: 'region' });
+            return regions.of(code);
+        } catch { return code; }
+    };
 
     // 원 glued, 달러 spaced (ko); 円 / ドル glued (ja)
     function currencyWord(code) {
@@ -115,7 +127,9 @@ export function createFormatter(lang, locale) {
         if (mapped) return { text: mapped[lang] ?? String(value), numeric: false };
         if (col.format === 'company') {
             const names = companies?.[value];
-            return { text: (lang === 'ko' ? names?.ko : names?.en) ?? names?.en ?? String(value), numeric: false };
+            const text = (lang === 'ko' ? names?.ko : names?.en) ?? names?.en ?? String(value);
+            const flag = flagEmoji(names?.country);
+            return flag ? { text, numeric: false, flag, flagTitle: regionName(names.country) } : { text, numeric: false };
         }
         if (typeof value === 'string' && col.format !== 'text' && col.format !== 'legacy' && ISO_DATE.test(value)) {
             return { text: date(value), numeric: false };

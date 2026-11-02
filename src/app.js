@@ -1,9 +1,14 @@
 import './style.css';
+import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
+import flagFontUrl from 'country-flag-emoji-polyfill/dist/TwemojiCountryFlags.woff2?url';
 import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 import { exampleQuestions, freshExamples } from './beta/examples.js';
+
+// Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
+polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
 
 applyI18n();
 langSwitch(document.getElementById('lang-switch'));
@@ -636,6 +641,12 @@ function renderTable(result, loadAll) {
     function cellTd(cell, numeric) {
         const td = el('td', numeric ? 'is-num' : '', cell.text);
         if (cell.title) td.title = cell.title;
+        if (cell.flag) {  // companies of more than one country: each one's flag (the CSV keeps the name alone)
+            const flag = el('span', 'flag', cell.flag);
+            flag.title = cell.flagTitle;
+            flag.setAttribute('aria-label', cell.flagTitle);
+            td.prepend(flag);
+        }
         if (cell.currency !== undefined && cell.currency !== view) {
             td.classList.add('is-unconverted');
             td.title = UNCONVERTED_TITLE[cell.currency] ?? t('result.unconverted.no-rate', { currency: cell.currency });
