@@ -323,6 +323,10 @@ html[lang="ja"] body {
     font-size: 0.9rem;
     line-height: 1.6;
 }
+/* How the question was read (interpretationLine) - quiet, above the notice and table */
+.result-read { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8125rem; color: rgb(148, 163, 184); }
+.result-read-label { color: rgb(100, 116, 139); }
+.result-read-label::after { content: ':'; }
 .result-notice-info { background: rgba(255, 255, 255, 0.04); color: rgb(203, 213, 225); }
 .result-notice-warn { background: rgba(245, 158, 11, 0.1); color: rgb(252, 211, 77); }
 .result-notice-error { background: rgba(239, 68, 68, 0.1); color: rgb(252, 165, 165); }

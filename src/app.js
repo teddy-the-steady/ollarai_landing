@@ -280,7 +280,13 @@ function autoResize() {
     queryInput.style.height = Math.min(queryInput.scrollHeight, 240) + 'px';
 }
 
+// Where the question in the box came from, sent as /query `source` (the server's
+// notice_report.py counts how often a suggestion is picked): an example chip or a
+// suggestion button sets it, typing in the box makes it 'typed' again.
+let questionSource = 'typed';
+
 queryInput.addEventListener('input', () => {
+    questionSource = 'typed';
     autoResize();
     querySubmit.disabled = busy || !queryInput.value.trim();
 });
@@ -303,6 +309,7 @@ exampleQuestions(lang).then(questions => {
         btn.addEventListener('click', () => {
             if (busy) return;
             queryInput.value = btn.textContent.trim();
+            questionSource = 'example';
             autoResize();
             querySubmit.disabled = false;
             queryInput.focus();
@@ -315,11 +322,13 @@ queryForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const question = queryInput.value.trim();
     if (!question || busy) return;
-    ask(question, selectedTier(), true);
+    const source = questionSource;
+    questionSource = 'typed';
+    ask(question, selectedTier(), true, source);
 });
 
 // tier: null lets the server use the account's tier. fromInput clears the box on success.
-async function ask(question, tier, fromInput = false) {
+async function ask(question, tier, fromInput = false, source = 'typed') {
     setBusy(true);
     tierUpsell.classList.add('hidden');
     examplesDismissed = true;
@@ -329,7 +338,7 @@ async function ask(question, tier, fromInput = false) {
 
     try {
         // auto: the server reads the language (any Hangul = ko) - 'ko' sent English / Japanese through Korean MT
-        const response = await api('/query', { method: 'POST', body: { question, language: 'auto', ...(tier ? { tier } : {}) } });
+        const response = await api('/query', { method: 'POST', body: { question, language: 'auto', source, ...(tier ? { tier } : {}) } });
         card.showResponse(response, response.history_id, true);
         if (fromInput) {
             queryInput.value = '';
@@ -450,6 +459,9 @@ function renderPart(part, isMulti, loadAll) {
     if (isMulti && part.question) {
         wrap.appendChild(el('h3', 'text-sm font-semibold text-slate-300', part.question));
     }
+    if (part.interpretation) {
+        wrap.appendChild(interpretationLine(part.interpretation));
+    }
     if (part.message) {
         wrap.appendChild(notice(part.message, part.result ? 'warn' : 'info'));
     }
@@ -464,6 +476,19 @@ function renderPart(part, isMulti, loadAll) {
     return wrap;
 }
 
+// How the server read the question ("이렇게 이해했어요: 삼성전자 · 영업이익 · 2025년"): a misread
+// company, item or period is plain to see, and that part is what the user changes.
+function interpretationLine(read) {
+    const companies = [...(read.companies || [])];
+    if (read.more_companies) companies.push(t('result.more-companies', { n: read.more_companies }));
+    const parts = [companies.join(', '), ...(read.groups || []), ...(read.items || []), ...(read.periods || [])]
+        .filter(Boolean);
+    const line = el('p', 'result-read');
+    line.appendChild(el('span', 'result-read-label', t('result.read')));
+    line.appendChild(el('span', null, parts.join(' · ')));
+    return line;
+}
+
 // An ask-back ("디와이키" could be 디와이씨 or 디와이): requests are one-shot, so each option is
 // the whole question rewritten - picking one sends it as a new question, like typing it.
 function clarificationOptions(clarification) {
@@ -475,6 +500,7 @@ function clarificationOptions(clarification) {
         btn.addEventListener('click', () => {
             if (busy) return;
             queryInput.value = option.question;
+            questionSource = 'suggestion';
             autoResize();
             queryForm.requestSubmit();
             resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
