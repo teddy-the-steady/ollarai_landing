@@ -80,10 +80,15 @@
   - 만 19세 미만 법정대리인 동의 안내 (약관 제13조)
 - [x] **Paddle 결제 링크 페이지 `/checkout/`**: Default payment link용. `?_ptxn=`이 있으면 Paddle.js가 결제창을 열고(언어는 화면 언어 ko/en/ja), 없으면 요금 안내로 이동. 완료 시 `/account/`. 토큰은 `VITE_PADDLE_CLIENT_TOKEN`(`test_`면 sandbox)
   - [ ] 라이브 승인 후 `.env.local`의 토큰을 `live_` 토큰으로 바꿔 배포, 라이브 대시보드 Default payment link에 `https://ollarai.com/checkout/`
+- [x] **Paddle 웹훅·해지 연동** (서버): `POST /webhooks/paddle`(서명 검증, `subscription.*` 이벤트로 `subscriptions` 행 생성·갱신, `occurred_at`으로 순서 보장), `billing.py` `_Paddle` 해지·해지 취소. Caddy IP 허용 목록에서 웹훅 경로 제외
+  - [ ] 배포: 마이그레이션 `0009_subscription_provider_updated_at.py` → `infra/env.sh --no-apply PADDLE_WEBHOOK_SECRET PADDLE_API_KEY` → `infra/deploy.sh`
+  - [ ] Simulations로 created → updated(해지 예약·취소) → canceled, past_due 확인
+- [ ] **Paddle 결제 버튼** (프론트): 요금 안내·앱에서 로그인 회원에게 `Paddle.Checkout.open({ items: [{ priceId }], customer: { email }, customData: { user_id } })`. `user_id`가 없으면 웹훅이 회원을 못 찾음. 이미 구독 중이면 버튼 숨기기(두 번째 구독은 서버가 반영하지 않고 에러 로그만 남김)
+  - 토스/Paddle 나누는 기준 정하기 (예: 한국어 화면은 토스, en/ja는 Paddle)
+  - 결제 실패(past_due) 시 `/account/`에서 결제 수단 변경 링크 (Paddle `GET /subscriptions/{id}/update-payment-method-transaction` → `/checkout/?_ptxn=`)
 - [ ] **Paddle 가입 시 확인할 것**
   - 데이터를 처리하는 국가: 처리방침에는 우선 영국으로 적어 둠
   - 환불 정책과 구매자 약관 URL(`https://www.paddle.com/legal/checkout-buyer-terms`)이 약관 제8조, 제12조와 맞는지
-  - Paddle 구독 해지 연동: 서버 `billing.py`의 `_Paddle`은 아직 미구현(503)
 - [ ] **운영 수치 검토**: 장애 보상(연속 4시간 이상 장애 시 이용 기간 3배 연장, 약관 제15조)과 7일 환불(약관 제12조)은 업계에서 흔히 쓰는 기준으로 넣은 값. 운영 방침에 맞게 조정하기
 - [ ] **법률 전문가 검토**: 결제를 시작하기 전에 약관과 처리방침 받아보기
 
