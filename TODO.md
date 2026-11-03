@@ -78,6 +78,8 @@
   - 유료 방식을 이용하면 청약철회가 제한된다는 안내 (약관 제12조 제2항). 요금 안내·구독 관리 화면에는 있음, 결제 직전 화면에도 넣기
   - 해외 결제 시 Paddle 제공·국외 이전 동의 체크박스 (처리방침 제5조, 제7조)
   - 만 19세 미만 법정대리인 동의 안내 (약관 제13조)
+- [x] **Paddle 결제 링크 페이지 `/checkout/`**: Default payment link용. `?_ptxn=`이 있으면 Paddle.js가 결제창을 열고(언어는 화면 언어 ko/en/ja), 없으면 요금 안내로 이동. 완료 시 `/account/`. 토큰은 `VITE_PADDLE_CLIENT_TOKEN`(`test_`면 sandbox)
+  - [ ] 라이브 승인 후 `.env.local`의 토큰을 `live_` 토큰으로 바꿔 배포, 라이브 대시보드 Default payment link에 `https://ollarai.com/checkout/`
 - [ ] **Paddle 가입 시 확인할 것**
   - 데이터를 처리하는 국가: 처리방침에는 우선 영국으로 적어 둠
   - 환불 정책과 구매자 약관 URL(`https://www.paddle.com/legal/checkout-buyer-terms`)이 약관 제8조, 제12조와 맞는지

@@ -199,6 +199,14 @@ const STRINGS = {
         'account.action-failed': '처리하지 못했어요. 잠시 후 다시 시도하거나 contact@ollarai.com으로 알려 주세요.',
         'account.refund': '결제일부터 7일 안이고 그 기간에 정밀 답변을 쓰지 않았다면 청약을 철회(환불)할 수 있어요. <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a>으로 요청해 주세요 (<a href="{refund}" class="text-primary underline underline-offset-2">이용약관 제12조</a>).',
         'account.load-failed': '구독 정보를 불러오지 못했어요.',
+
+        // checkout: Paddle default payment link (/checkout/)
+        'checkout.page-title': '결제 - Ollarai',
+        'checkout.opening': '결제창을 여는 중이에요…',
+        'checkout.closed': '결제창을 닫았어요. 결제는 완료되지 않았어요.',
+        'checkout.reopen': '결제창 다시 열기',
+        'checkout.pricing': '요금 안내 보기',
+        'checkout.failed': '결제창을 열지 못했어요. 잠시 후 다시 시도하거나 contact@ollarai.com으로 알려 주세요.',
     },
     en: {
         'login.page-title': 'Log in - Ollarai',
@@ -353,6 +361,14 @@ const STRINGS = {
         'account.action-failed': 'Couldn\'t complete this. Please try again shortly or let us know at contact@ollarai.com.',
         'account.refund': 'Within 7 days of a payment, if you haven\'t used precise answers in that period, you can withdraw and get a refund. Email <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a> (<a href="{refund}" class="text-primary underline underline-offset-2">Terms, Article 12</a>).',
         'account.load-failed': 'Couldn\'t load your subscription.',
+
+        // checkout: Paddle default payment link (/checkout/)
+        'checkout.page-title': 'Checkout - Ollarai',
+        'checkout.opening': 'Opening checkout…',
+        'checkout.closed': 'You closed the checkout. Your payment was not completed.',
+        'checkout.reopen': 'Reopen checkout',
+        'checkout.pricing': 'See pricing',
+        'checkout.failed': 'We couldn\'t open the checkout. Please try again later or let us know at contact@ollarai.com.',
     },
     ja: {
         'login.page-title': 'ログイン - Ollarai',
@@ -507,6 +523,14 @@ const STRINGS = {
         'account.action-failed': '処理できませんでした。しばらくしてからもう一度お試しいただくか、contact@ollarai.com までお知らせください。',
         'account.refund': '決済日から7日以内で、その期間に精密回答を利用していない場合は、申込みを撤回（返金）できます。<a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a> までご連絡ください（<a href="{refund}" class="text-primary underline underline-offset-2">利用規約 第12条</a>）。',
         'account.load-failed': 'サブスクリプション情報を読み込めませんでした。',
+
+        // checkout: Paddle default payment link (/checkout/)
+        'checkout.page-title': 'お支払い - Ollarai',
+        'checkout.opening': '決済画面を開いています…',
+        'checkout.closed': '決済画面を閉じました。お支払いは完了していません。',
+        'checkout.reopen': '決済画面をもう一度開く',
+        'checkout.pricing': '料金案内を見る',
+        'checkout.failed': '決済画面を開けませんでした。しばらくしてからもう一度お試しいただくか、contact@ollarai.com までお知らせください。',
     },
 };
 

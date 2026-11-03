@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="robots" content="noindex">
+    <title>결제 - Ollarai</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKE2BBMBGT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NKE2BBMBGT');
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script type="module" src="/src/checkout.js"></script>
+</head>
+<body class="text-slate-200 min-h-screen min-h-dvh flex flex-col">
+
+    <nav class="sticky top-0 w-full z-50 glass-morphism py-4">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center gap-4">
+            <a href="/" id="home-link" class="flex items-center gap-2 cursor-pointer">
+                <span class="text-2xl md:text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
+            </a>
+            <div id="lang-switch" class="relative text-sm"></div>
+        </div>
+    </nav>
+
+    <!-- Default payment link for Paddle: payment links and payment-method update emails land here with ?_ptxn= -->
+    <main class="flex-1 w-full container mx-auto px-4 md:px-6 pt-16 md:pt-24 pb-24 max-w-md text-center">
+        <div id="checkout-loading" class="flex flex-col items-center gap-4">
+            <span class="beta-spinner"></span>
+            <p class="text-slate-400" data-i18n="checkout.opening">결제창을 여는 중이에요…</p>
+        </div>
+
+        <div id="checkout-closed" class="hidden glass-morphism rounded-2xl p-6">
+            <p class="text-slate-300 mb-6" data-i18n="checkout.closed">결제창을 닫았어요. 결제는 완료되지 않았어요.</p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <button id="checkout-reopen" type="button" class="account-btn account-btn-primary" data-i18n="checkout.reopen">결제창 다시 열기</button>
+                <a id="checkout-pricing" href="/pricing/" class="account-btn" data-i18n="checkout.pricing">요금 안내 보기</a>
+            </div>
+        </div>
+
+        <div id="checkout-error" class="hidden glass-morphism rounded-2xl p-6">
+            <p class="text-slate-400" data-i18n="checkout.failed">결제창을 열지 못했어요. 잠시 후 다시 시도하거나 contact@ollarai.com으로 알려 주세요.</p>
+        </div>
+    </main>
+</body>
+</html>
