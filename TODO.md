@@ -83,9 +83,10 @@
 - [x] **Paddle 웹훅·해지 연동** (서버): `POST /webhooks/paddle`(서명 검증, `subscription.*` 이벤트로 `subscriptions` 행 생성·갱신, `occurred_at`으로 순서 보장), `billing.py` `_Paddle` 해지·해지 취소. Caddy IP 허용 목록에서 웹훅 경로 제외
   - [ ] 배포: 마이그레이션 `0009_subscription_provider_updated_at.py` → `infra/env.sh --no-apply PADDLE_WEBHOOK_SECRET PADDLE_API_KEY` → `infra/deploy.sh`
   - [ ] Simulations로 created → updated(해지 예약·취소) → canceled, past_due 확인
-- [ ] **Paddle 결제 버튼** (프론트): 요금 안내·앱에서 로그인 회원에게 `Paddle.Checkout.open({ items: [{ priceId }], customer: { email }, customData: { user_id } })`. `user_id`가 없으면 웹훅이 회원을 못 찾음. 이미 구독 중이면 버튼 숨기기(두 번째 구독은 서버가 반영하지 않고 에러 로그만 남김)
-  - 토스/Paddle 나누는 기준 정하기 (예: 한국어 화면은 토스, en/ja는 Paddle)
-  - 결제 실패(past_due) 시 `/account/`에서 결제 수단 변경 링크 (Paddle `GET /subscriptions/{id}/update-payment-method-transaction` → `/checkout/?_ptxn=`)
+- [x] **Paddle 결제 버튼** (프론트, en/ja 요금 안내): "Subscribe"/"申し込む" → 로그인 확인(안 했으면 `/login/`) → 이미 구독·베타 제공이면 안내 → 고지·동의 대화상자(요금·자동 갱신·해지, 청약철회 제한, 미성년자, 필수 동의 3개: 결제, Paddle 제3자 제공, 국외 이전) → Paddle 결제창(`customData.user_id`). 한국어 요금 안내는 토스 연동 때까지 "결제 준비 중"
+  - [ ] `.env.local`에 `VITE_PADDLE_PRICE_ID`(sandbox `pri_…`) 채우기. 라이브 전환 때 라이브 가격 ID로
+  - [ ] 로그인 후 요금 안내로 돌아오기: 지금은 로그인하면 `/app/`으로 감
+  - [ ] 결제 실패(past_due) 시 `/account/`에서 결제 수단 변경 링크 (Paddle `GET /subscriptions/{id}/update-payment-method-transaction` → `/checkout/?_ptxn=`)
 - [ ] **Paddle 가입 시 확인할 것**
   - 데이터를 처리하는 국가: 처리방침에는 우선 영국으로 적어 둠
   - 환불 정책과 구매자 약관 URL(`https://www.paddle.com/legal/checkout-buyer-terms`)이 약관 제8조, 제12조와 맞는지

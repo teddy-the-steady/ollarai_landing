@@ -19,7 +19,7 @@
       gtag('config', 'G-NKE2BBMBGT');
     </script>
 
-    <script type="module" src="/src/legal.js"></script>
+    <script type="module" src="/src/pricing.js"></script>
 </head>
 <body class="text-slate-200">
 
@@ -83,7 +83,7 @@
                         <li>結果表をすべて表示</li>
                         <li>結果をCSVでコピー</li>
                     </ul>
-                    <button type="button" class="pricing-cta pricing-cta-primary" disabled>決済準備中</button>
+                    <button type="button" id="subscribe-btn" class="pricing-cta pricing-cta-primary">申し込む</button>
                 </section>
             </div>
 
@@ -106,6 +106,56 @@
             </article>
         </div>
     </main>
+
+    <!-- Proの決済 (src/pricing.js): 規約が「決済画面で」と約束した告知と同意 (第5条, 第9条第2項, 第12条第2項, 第13条;
+         プライバシーポリシー 第5条, 第7条) の後に Paddle のオーバーレイ。/en/pricing/ と同じ内容 -->
+    <dialog id="subscribe-dialog" class="subscribe-dialog" aria-labelledby="subscribe-title">
+        <div data-state="loading" class="flex justify-center py-12"><span class="beta-spinner"></span></div>
+
+        <form data-state="consent" method="dialog" class="hidden">
+            <h2 id="subscribe-title" class="text-xl font-bold text-white">Proプランに申し込む</h2>
+            <dl class="subscribe-summary">
+                <dt>料金</dt><dd>月$7.99（税金は地域により別途、決済画面に表示）</dd>
+                <dt>決済</dt><dd>本日決済され、解約しない限り毎月同じ日に自動で決済されます</dd>
+                <dt>解約</dt><dd>サブスクリプション管理画面からいつでも解約でき、お支払い済みの期間が終わるまで有料機能を利用できます</dd>
+            </dl>
+            <ul class="subscribe-notes">
+                <li>決済日から7日以内であれば申込みを撤回できますが、<strong>その期間に精密回答を利用した場合は撤回できません</strong>。決済の前にFreeプランでお試しいただけます（<a href="/ja/terms/#refund" target="_blank" rel="noopener">利用規約 第12条</a>）。</li>
+                <li>19歳未満の方は、決済に法定代理人の同意が必要です（<a href="/ja/terms/#minors" target="_blank" rel="noopener">第13条</a>）。</li>
+                <li>販売代理人（Merchant of Record）であるPaddle.com Market Limitedがサブスクリプションを販売し、請求・税金・領収書を担当します。</li>
+            </ul>
+
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>（必須）</strong>上記の料金、自動更新、解約、申込みの撤回に関する内容と<a href="/ja/terms/" target="_blank" rel="noopener">利用規約</a>を確認し、決済に同意します。</span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>（必須）</strong>Paddleへの個人情報の第三者提供に同意します。
+                    <span class="subscribe-detail">提供先：Paddle.com Market Limited · 目的：販売代理人としてのサブスクリプション販売（請求・決済、税金の徴収・申告、返金、不正防止） · 項目：メールアドレス、アカウント識別子、選択したプラン · 保有期間：Paddleのプライバシーポリシーおよび関係法令（税法など）に定める期間。同意を拒否できますが、その場合はPaddleによる決済を利用できません（Freeプランには影響しません。<a href="/ja/privacy/#third-party" target="_blank" rel="noopener">プライバシーポリシー 第5条</a>）。</span></span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>（必須）</strong>個人情報の国外移転に同意します。
+                    <span class="subscribe-detail">移転先：Paddle.com Market Limited（英国） · 項目：メールアドレス、アカウント識別子、選択したプラン · 目的：海外決済 · 時期・方法：決済に進むときにネットワーク経由で送信 · 保有期間：Paddleのプライバシーポリシーおよび関係法令に定める期間。同意を拒否できますが、その場合はPaddleによる決済を利用できません（<a href="/ja/privacy/#transfer" target="_blank" rel="noopener">第7条</a>）。</span></span>
+            </label>
+
+            <div class="subscribe-actions">
+                <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary">キャンセル</button>
+                <button type="submit" class="pricing-cta pricing-cta-primary" disabled>決済に進む</button>
+            </div>
+        </form>
+
+        <div data-state="subscribed" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">すでにProプランをご利用中です。サブスクリプション管理画面で確認できます。</p>
+            <a href="/account/?lang=ja" class="pricing-cta pricing-cta-primary">サブスクリプション管理</a>
+        </div>
+
+        <div data-state="error" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">決済画面を開けませんでした。しばらくしてからもう一度お試しいただくか、<a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a> までお知らせください。</p>
+            <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary w-full">閉じる</button>
+        </div>
+    </dialog>
 
     <!-- Footer -->
     <footer class="py-12 border-t border-white/5">

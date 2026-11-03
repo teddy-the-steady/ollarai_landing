@@ -19,7 +19,7 @@
       gtag('config', 'G-NKE2BBMBGT');
     </script>
 
-    <script type="module" src="/src/legal.js"></script>
+    <script type="module" src="/src/pricing.js"></script>
 </head>
 <body class="text-slate-200">
 
@@ -83,7 +83,7 @@
                         <li>Full result tables</li>
                         <li>Copy results as CSV</li>
                     </ul>
-                    <button type="button" class="pricing-cta pricing-cta-primary" disabled>Coming soon</button>
+                    <button type="button" id="subscribe-btn" class="pricing-cta pricing-cta-primary">Subscribe</button>
                 </section>
             </div>
 
@@ -106,6 +106,56 @@
             </article>
         </div>
     </main>
+
+    <!-- Pro checkout (src/pricing.js): the notices and consents the terms promise "on the checkout screen"
+         (Art. 5, 9(2), 12(2), 13; privacy Art. 5, 7), then Paddle's overlay. Same content in /ja/pricing/. -->
+    <dialog id="subscribe-dialog" class="subscribe-dialog" aria-labelledby="subscribe-title">
+        <div data-state="loading" class="flex justify-center py-12"><span class="beta-spinner"></span></div>
+
+        <form data-state="consent" method="dialog" class="hidden">
+            <h2 id="subscribe-title" class="text-xl font-bold text-white">Subscribe to Pro</h2>
+            <dl class="subscribe-summary">
+                <dt>Price</dt><dd>$7.99 / month, plus applicable taxes shown at checkout</dd>
+                <dt>Billing</dt><dd>Charged today, then automatically on the same day each month until you cancel</dd>
+                <dt>Cancel</dt><dd>Anytime from Subscription settings; paid features stay until the end of the paid period</dd>
+            </dl>
+            <ul class="subscribe-notes">
+                <li>You can withdraw within 7 days of each payment, but <strong>not if you have used precise answers</strong> in that period. You can try Ollarai on the Free plan first (<a href="/en/terms/#refund" target="_blank" rel="noopener">Terms, Article 12</a>).</li>
+                <li>If you are under 19, you need your legal representative's consent to pay (<a href="/en/terms/#minors" target="_blank" rel="noopener">Article 13</a>).</li>
+                <li>Paddle.com Market Limited sells the subscription as Merchant of Record and handles billing, taxes and receipts.</li>
+            </ul>
+
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>(Required)</strong> I have read the price, automatic renewal, cancellation and withdrawal terms above and the <a href="/en/terms/" target="_blank" rel="noopener">Terms of Service</a>, and agree to pay.</span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>(Required)</strong> I consent to the provision of personal information to Paddle.
+                    <span class="subscribe-detail">Recipient: Paddle.com Market Limited · Purpose: selling the subscription as Merchant of Record (billing and payment, tax collection and filing, refunds, fraud prevention) · Items: email address, account identifier, selected plan · Retention: as set out in Paddle's Privacy Policy and applicable laws (such as tax laws). You may refuse, but then you cannot pay through Paddle; the Free plan is not affected (<a href="/en/privacy/#third-party" target="_blank" rel="noopener">Privacy Policy, Article 5</a>).</span></span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>(Required)</strong> I consent to the international transfer of personal information.
+                    <span class="subscribe-detail">Recipient: Paddle.com Market Limited (United Kingdom) · Items: email address, account identifier, selected plan · Purpose: overseas payments · Timing and method: sent over the network when you continue to payment · Retention: as set out in Paddle's Privacy Policy and applicable laws. You may refuse, but then you cannot pay through Paddle (<a href="/en/privacy/#transfer" target="_blank" rel="noopener">Article 7</a>).</span></span>
+            </label>
+
+            <div class="subscribe-actions">
+                <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary">Cancel</button>
+                <button type="submit" class="pricing-cta pricing-cta-primary" disabled>Continue to payment</button>
+            </div>
+        </form>
+
+        <div data-state="subscribed" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">You already have Pro. You can check it in Subscription settings.</p>
+            <a href="/account/?lang=en" class="pricing-cta pricing-cta-primary">Subscription settings</a>
+        </div>
+
+        <div data-state="error" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">We couldn't open the checkout. Please try again later or let us know at <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a>.</p>
+            <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary w-full">Close</button>
+        </div>
+    </dialog>
 
     <!-- Footer -->
     <footer class="py-12 border-t border-white/5">
