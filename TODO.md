@@ -81,12 +81,14 @@
 - [x] **Paddle 결제 링크 페이지 `/checkout/`**: Default payment link용. `?_ptxn=`이 있으면 Paddle.js가 결제창을 열고(언어는 화면 언어 ko/en/ja), 없으면 요금 안내로 이동. 완료 시 `/account/`. 토큰은 `VITE_PADDLE_CLIENT_TOKEN`(`test_`면 sandbox)
   - [ ] 라이브 승인 후 `.env.local`의 토큰을 `live_` 토큰으로 바꿔 배포, 라이브 대시보드 Default payment link에 `https://ollarai.com/checkout/`
 - [x] **Paddle 웹훅·해지 연동** (서버): `POST /webhooks/paddle`(서명 검증, `subscription.*` 이벤트로 `subscriptions` 행 생성·갱신, `occurred_at`으로 순서 보장), `billing.py` `_Paddle` 해지·해지 취소. Caddy IP 허용 목록에서 웹훅 경로 제외
-  - [ ] 배포: 마이그레이션 `0009_subscription_provider_updated_at.py` → `infra/env.sh --no-apply PADDLE_WEBHOOK_SECRET PADDLE_API_KEY` → `infra/deploy.sh`
-  - [ ] Simulations로 created → updated(해지 예약·취소) → canceled, past_due 확인
+  - [x] 배포: 마이그레이션 `0009_subscription_provider_updated_at.py` → `infra/env.sh --no-apply PADDLE_WEBHOOK_SECRET PADDLE_API_KEY` → `infra/deploy.sh`
+  - [x] sandbox 실결제로 created → `/account/` 해지·해지 취소(updated) → 대시보드 즉시 해지(canceled) 확인 (2026-11-03). past_due는 미확인(실제로 만들기 어려움, 같은 코드 경로)
 - [x] **Paddle 결제 버튼** (프론트, en/ja 요금 안내): "Subscribe"/"申し込む" → 로그인 확인(안 했으면 `/login/`) → 이미 구독·베타 제공이면 안내 → 고지·동의 대화상자(요금·자동 갱신·해지, 청약철회 제한, 미성년자, 필수 동의 3개: 결제, Paddle 제3자 제공, 국외 이전) → Paddle 결제창(`customData.user_id`). 한국어 요금 안내는 토스 연동 때까지 "결제 준비 중"
-  - [ ] `.env.local`에 `VITE_PADDLE_PRICE_ID`(sandbox `pri_…`) 채우기. 라이브 전환 때 라이브 가격 ID로
+  - [x] `.env.local`에 `VITE_PADDLE_PRICE_ID`(sandbox `pri_…`) 채우기
   - [ ] 로그인 후 요금 안내로 돌아오기: 지금은 로그인하면 `/app/`으로 감
-  - [ ] 결제 실패(past_due) 시 `/account/`에서 결제 수단 변경 링크 (Paddle `GET /subscriptions/{id}/update-payment-method-transaction` → `/checkout/?_ptxn=`)
+  - [x] `/account/` "결제 수단 변경" 버튼(Paddle 구독, past_due면 강조): `POST /subscription/payment-method`가 Paddle `update-payment-method-transaction`의 `/checkout/?_ptxn=` 링크를 매번 새로 받아옴. past_due면 실패한 갱신 결제도 함께 처리
+    - [ ] 서버 배포 후 sandbox에서 확인
+- [ ] **Paddle 라이브 전환** (라이브 계정 인증·도메인 승인 후): 라이브에서 상품·가격($7.99, 세금 별도), Default payment link `https://ollarai.com/checkout/`, 웹훅 등록(`/webhooks/paddle`, `subscription.*`) 다시 만들기 → 프론트 `VITE_PADDLE_CLIENT_TOKEN`(live_)·`VITE_PADDLE_PRICE_ID`, 서버 `PADDLE_API_KEY`(pdl_live_)·`PADDLE_WEBHOOK_SECRET` 교체 후 배포 → 실제 카드로 1건 결제·환불해서 확인
 - [ ] **Paddle 가입 시 확인할 것**
   - 데이터를 처리하는 국가: 처리방침에는 우선 영국으로 적어 둠
   - 환불 정책과 구매자 약관 URL(`https://www.paddle.com/legal/checkout-buyer-terms`)이 약관 제8조, 제12조와 맞는지
