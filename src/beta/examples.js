@@ -1,189 +1,19 @@
 import { api } from './api.js';
 
-// Example questions under the question box, one per group picked at random on each page load.
-// Korean ones are worded as in ollarai_backend pipeline_test_logs/ai_beta runs where Quick passed every time
-// (graded sets or judge 85+ on real questions); en/ja are translations of the same questions.
-// EBITDA / FCF / segment questions (newdata sets) were rechecked on 2026-10-31: their SQL with the current
-// rewrites ran under the 10s statement timeout with sensible rows. Ownership questions stay out until the
-// ollarai_backend ownership_latest_year fix ("기아 최대주주랑 지분율" timed out on Quick) is deployed.
-// results / statement are answered by the backend statement_overview template (one company, no metric or
-// period named -> newest year + quarter), so they don't depend on the Quick model; the detail ones need the
-// words statement_detail.py reads (상세/자세한/전부, 詳細/全項目, detailed/full).
-// These are the fallback: groups GET /examples has questions for (freshExamples) replace them.
-const EXAMPLES = {
-    ko: {
-        company: [
-            'SK하이닉스 작년 4분기 영업이익 알려줘',
-            '삼성전자 3년간 capex 추이',
-            '카카오 작년 영업활동현금흐름 얼마임?',
-            '삼성SDI가 자기주식을 얼마나 가지고 있어?',
-            '삼성전자 2025년 EBITDA',
-            '삼성전자 EBITDA 4년치 알려줘',
-            '삼성전자 2025년 잉여현금흐름',
-            '현대차 최근 3년 FCF 추이',
-        ],
-        results: [
-            '금양 최근 실적',
-            '삼성전자 최근 실적 알려줘',
-            '카카오 최근 실적',
-            'LG전자 최근 실적',
-            '농심 최근 실적 보여줘',
-        ],
-        statement: [
-            '삼성전자 자세한 손익계산서',
-            'SK하이닉스 상세 재무제표',
-            '현대차 재무상태표',
-            '카카오 현금흐름표',
-            '네이버 손익계산서 전부 보여줘',
-        ],
-        compare: [
-            '삼성전자랑 SK하이닉스 최근 3년간 매출액 알려줘',
-            '삼성전자랑 SK하이닉스 무형자산 3년치 비교해줘',
-            '삼성전자랑 SK하이닉스 2025년 EBITDA 비교',
-            '애플 작년 판매비와관리비 전년 대비 증감률',
-        ],
-        rank: [
-            '2025년 매출이 높은 유통회사 5개 알려줘',
-            '국내 증권사 2025년 순이익 상위 5곳',
-            '게임회사 2025년 EBITDA 높은 순으로 상위 5곳',
-            '2025년 연말 기준 현금을 제일 많이 들고 있는 회사 top 10',
-            '코스닥 반도체 및 장비 작년 ROE 상위 5곳',
-            '화장품 회사 중에서 매출액 대비 연구개발비 비율이 높은 회사 10개',
-            '코스닥에서 작년 대비 매출성장률 높은 회사 5개 알려줘',
-        ],
-        breakdown: [
-            '삼성전자 부문별 매출',
-            '현대차 2025년 사업부문별 영업이익',
-            'SK텔레콤 2025년 사업부문별 영업이익',
-            'LG전자 지역별 매출',
-            '농심 제품별 매출 알려줘',
-            '네이버 2025년 일본 매출',
-        ],
-    },
-    en: {
-        company: [
-            "SK hynix operating income in Q4 last year",
-            "Samsung Electronics capex over the last 3 years",
-            "Kakao operating cash flow last year",
-            "How much treasury stock does Samsung SDI hold?",
-            "Samsung Electronics EBITDA in 2025",
-            "Samsung Electronics EBITDA for the last 4 years",
-            "Samsung Electronics free cash flow in 2025",
-            "Hyundai Motor FCF trend over the last 3 years",
-        ],
-        results: [
-            "Kumyang recent results",
-            "Samsung Electronics latest results",
-            "Kakao recent performance",
-            "LG Electronics recent results",
-            "Nongshim latest results",
-        ],
-        statement: [
-            "Samsung Electronics detailed income statement",
-            "SK hynix detailed financial statements",
-            "Hyundai Motor balance sheet",
-            "Kakao cash flow statement",
-            "NAVER full income statement",
-        ],
-        compare: [
-            "Samsung Electronics vs SK hynix revenue over the last 3 years",
-            "Compare Samsung Electronics and SK hynix intangible assets over 3 years",
-            "Compare 2025 EBITDA of Samsung Electronics and SK hynix",
-            "Apple SG&A change vs the previous year, last year",
-        ],
-        rank: [
-            "Top 5 retailers by revenue in 2025",
-            "Top 5 Korean securities firms by net income in 2025",
-            "Top 5 game companies by EBITDA in 2025",
-            "Top 10 companies by cash at the end of 2025",
-            "Top 5 KOSDAQ semiconductor & equipment companies by ROE last year",
-            "Top 10 cosmetics companies by R&D to revenue ratio",
-            "Top 5 KOSDAQ companies by revenue growth vs last year",
-        ],
-        breakdown: [
-            "Samsung Electronics revenue by segment",
-            "Hyundai Motor 2025 operating income by business segment",
-            "SK Telecom 2025 operating income by business segment",
-            "LG Electronics revenue by region",
-            "Nongshim revenue by product",
-            "NAVER revenue from Japan in 2025",
-        ],
-    },
-    ja: {
-        company: [
-            'SKハイニックスの昨年第4四半期の営業利益',
-            'サムスン電子の3年間の設備投資(capex)の推移',
-            'カカオの昨年の営業キャッシュフロー',
-            'サムスンSDIは自己株式をどれくらい持っている？',
-            'サムスン電子の2025年EBITDA',
-            'サムスン電子のEBITDAを4年分',
-            'サムスン電子の2025年フリーキャッシュフロー',
-            '現代自動車の直近3年のFCFの推移',
-        ],
-        results: [
-            'SKハイニックスの最近の業績',
-            'サムスン電子の最近の業績',
-            'カカオの最近の業績',
-            'LG電子の最近の業績',
-            '農心の最近の業績',
-        ],
-        statement: [
-            'サムスン電子の詳細な損益計算書',
-            'SKハイニックスの詳細な財務諸表',
-            '現代自動車の貸借対照表',
-            'カカオのキャッシュフロー計算書',
-            'NAVERの損益計算書の全項目',
-        ],
-        compare: [
-            'サムスン電子とSKハイニックスの直近3年間の売上高',
-            'サムスン電子とSKハイニックスの無形資産を3年分比較して',
-            'サムスン電子とSKハイニックスの2025年EBITDA比較',
-            'アップルの昨年の販管費の前年比増減率',
-        ],
-        rank: [
-            '2025年の売上高が多い小売企業5社',
-            '国内証券会社の2025年純利益上位5社',
-            'ゲーム会社の2025年EBITDA上位5社',
-            '2025年末時点で現金を最も多く持つ企業トップ10',
-            'KOSDAQ半導体・装置の昨年ROE上位5社',
-            '化粧品会社のうち売上高研究開発費比率が高い10社',
-            'KOSDAQで前年比売上成長率が高い5社',
-        ],
-        breakdown: [
-            'サムスン電子の部門別売上高',
-            '現代自動車の2025年事業部門別営業利益',
-            'SKテレコムの2025年事業部門別営業利益',
-            'LG電子の地域別売上高',
-            '農心の製品別売上高',
-            'NAVERの2025年日本売上高',
-        ],
-    },
-};
+// Example questions under the question box, one per group picked at random on each page load, all from
+// GET /examples: worded by the backend from the newest filings and checked on Quick the night before
+// (ollarai_backend common/example_questions.py), {group: [question, ...]}. No list of our own - when the
+// server has none or can't be reached, no chips are shown.
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 // Chips under the question box - fewer than the groups, so each load shows a different mix
 const SHOWN = 4;
 
-// How long the chips wait for GET /examples before showing the list above
-const FRESH_TIMEOUT_MS = 1500;
-
-// Questions the backend worded from the newest filings and checked on Quick the night before
-// (ollarai_backend common/example_questions.py): {group: [question, ...]}, {} when unavailable.
-export async function freshExamples(lang) {
-    const timeout = new Promise(resolve => setTimeout(() => resolve({}), FRESH_TIMEOUT_MS));
-    const fetched = api(`/examples?lang=${lang}`).then(data => data?.groups || {}).catch(() => ({}));
-    return Promise.race([fetched, timeout]);
-}
-
-// One question from each of SHOWN random groups, in group order; a group the backend has fresh
-// questions for uses those instead of the list above
-export function exampleQuestions(lang, fresh = {}) {
-    const groups = { ...(EXAMPLES[lang] || EXAMPLES.ko) };
-    for (const [group, questions] of Object.entries(fresh)) {
-        if (questions?.length) groups[group] = questions;
-    }
-    const lists = Object.values(groups);
+// One question from each of SHOWN random groups, in group order; [] when the server has none
+export async function exampleQuestions(lang) {
+    const groups = await api(`/examples?lang=${lang}`).then(data => data?.groups || {}).catch(() => ({}));
+    const lists = Object.values(groups).filter(questions => questions?.length);
     while (lists.length > SHOWN) lists.splice(Math.floor(Math.random() * lists.length), 1);
     return lists.map(pick);
 }

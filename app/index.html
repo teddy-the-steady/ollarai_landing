@@ -118,8 +118,8 @@
                 <p><span data-i18n="app.tier.locked">정밀 답변은 생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요. Pro 플랜에서 쓸 수 있어요.</span>
                     <a id="tier-upsell-link" href="/pricing/" class="font-semibold text-primary whitespace-nowrap"><span data-i18n="app.tier.see-pricing">요금 보기</span> <i class="fas fa-arrow-right text-xs"></i></a></p>
             </div>
-            <!-- Example questions (src/beta/examples.js, picked per page load): a click fills the box (no auto-send), hidden after the first question on this page -->
-            <div id="query-examples" class="query-examples">
+            <!-- Example questions (GET /examples via src/beta/examples.js, picked per page load): shown once the server sends some, a click fills the box (no auto-send), hidden after the first question on this page -->
+            <div id="query-examples" class="query-examples hidden">
                 <span class="query-examples-label"><i class="fas fa-lightbulb"></i><span data-i18n="app.examples.label">이렇게 물어보세요</span></span>
             </div>
 
