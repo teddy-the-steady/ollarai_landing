@@ -97,6 +97,8 @@
 
 ## P3. 이후 개선
 
+- [ ] **Pro 기획(스크리닝 중심)**: 방향, 구현 계획, 단계별 TODO는 [PRO_PLAN.md](PRO_PLAN.md)
+
 - [ ] **회원 탈퇴 버튼**: 지금은 이메일 요청으로만 탈퇴 가능(약관 제18조, 처리방침 제9조). `/account/`에 셀프 탈퇴 추가
 - [ ] **로그인 상태에서 비밀번호 변경**: `/account/`에 추가. Google 전용 계정 처리와 Supabase "Secure password change"(재인증) 여부 정하기
 - [ ] **Supabase 설정 점검**
