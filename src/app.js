@@ -413,7 +413,8 @@ function createResultCard(question, createdAt = new Date()) {
             parts.forEach((part, i) => {
                 const loadAll = historyId != null && isPaidAccount()
                     ? () => api(`/history/${historyId}/rows?part=${i}`) : null;
-                body.appendChild(renderPart(part, response.is_multi_query, loadAll));
+                const loadSummary = historyId != null ? () => api(`/history/${historyId}/summary?part=${i}`) : null;
+                body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary));
             });
             if (live && response.tier === 'free') body.appendChild(retryPrecise(question));
         },
@@ -454,7 +455,7 @@ function notice(message, kind = 'info') {
     return box;
 }
 
-function renderPart(part, isMulti, loadAll) {
+function renderPart(part, isMulti, loadAll, loadSummary) {
     const wrap = el('section', 'flex flex-col gap-3');
     if (isMulti && part.question) {
         wrap.appendChild(el('h3', 'text-sm font-semibold text-slate-300', part.question));
@@ -468,6 +469,8 @@ function renderPart(part, isMulti, loadAll) {
     if (part.clarification?.options?.length) {
         wrap.appendChild(clarificationOptions(part.clarification));
     }
+    const summary = part.result && summaryLine(part.summary, loadSummary);
+    if (summary) wrap.appendChild(summary);
     if (part.result) {
         wrap.appendChild(renderTable(part.result, loadAll));
     } else if (!part.message) {
@@ -486,6 +489,26 @@ function interpretationLine(read) {
     const line = el('p', 'result-read');
     line.appendChild(el('span', 'result-read-label', t('result.read')));
     line.appendChild(el('span', null, parts.join(' · ')));
+    return line;
+}
+
+// A few sentences above the table (server pipeline/result_summary.py): a larger table's count comes
+// with the answer; a small table's is made after it ({pending}) - the table is shown meanwhile, and
+// the line goes away when there is none (the summary didn't pass the server's checks, or failed).
+function summaryLine(summary, loadSummary) {
+    if (summary?.text) return el('p', 'result-summary', summary.text);
+    if (!summary?.pending || !loadSummary) return null;
+    const line = el('p', 'result-summary is-loading', t('result.summary-loading'));
+    loadSummary()
+        .then(made => {
+            if (made?.text) {
+                line.textContent = made.text;
+                line.classList.remove('is-loading');
+            } else {
+                line.remove();
+            }
+        })
+        .catch(() => line.remove());
     return line;
 }
 
