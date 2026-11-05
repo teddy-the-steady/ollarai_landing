@@ -6,6 +6,7 @@ import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 import { exampleQuestions } from './beta/examples.js';
+import { rowFilings, tableFilings, filingLabel, systemName } from './beta/sources.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
@@ -639,11 +640,68 @@ function priceNote(price) {
     return note;
 }
 
+// The filings the figures were read from (ResultTable.sources), listed when opened - so a table
+// whose rows grew (load all) lists theirs too
+const SOURCES_LISTED = 30;
+
+function sourcesNote(result) {
+    const box = el('details', 'result-sources');
+    const summary = el('summary', null);
+    const label = () => summary.replaceChildren(el('i', 'fas fa-file-lines'),
+        el('span', null, t('result.sources', { n: tableFilings(result.sources, result.rows.length).length })));
+    label();
+    const body = el('div', 'result-sources-body');
+    box.append(summary, body);
+    box.addEventListener('toggle', () => {
+        if (!box.open) return;
+        label();
+        const filings = tableFilings(result.sources, result.rows.length);
+        const list = el('ul');
+        filings.slice(0, SOURCES_LISTED).forEach(({ filing, roles }) => {
+            const li = el('li');
+            const a = el('a', null, filingLabel(filing, lang));
+            a.href = filing.url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            li.append(el('span', 'result-sources-system', systemName(filing)), a);
+            const kinds = [...roles].map(role => t(`result.sources.role.${role}`)).join(' · ');
+            if (kinds) li.appendChild(el('span', 'result-sources-role', kinds));
+            list.appendChild(li);
+        });
+        const children = [list];
+        if (filings.length > SOURCES_LISTED) {
+            children.push(el('p', null, t('result.sources.more', { n: filings.length - SOURCES_LISTED })));
+        }
+        children.push(el('p', 'result-sources-hint', t('result.sources.hint')));
+        body.replaceChildren(...children);
+    });
+    return box;
+}
+
 // loadAll: fetches every row of a truncated table (paid accounts), or null
 function renderTable(result, loadAll) {
     const card = renderTableCard(result, loadAll);
     if (result.price && result.rows.length) card.appendChild(priceNote(result.price));
+    if (result.sources && tableFilings(result.sources, result.rows.length).length) card.appendChild(sourcesNote(result));
     return card;
+}
+
+// The last cell of a row: a link to the row's own filing, every filing it was read from in the title
+function sourceTd(result, i) {
+    const td = el('td', 'result-source-cell');
+    const refs = rowFilings(result.sources, i);
+    if (!refs.length) return td;
+    const filings = refs.map(ref => result.sources.filings[ref.filing]);
+    const a = el('a', null);
+    a.appendChild(el('i', 'fas fa-file-lines'));
+    a.href = filings[0].url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    const lines = refs.map((ref, j) => `${filingLabel(filings[j], lang)} (${t(`result.sources.role.${ref.role}`)})`);
+    a.title = [t('result.sources.open'), ...new Set(lines)].join('\n');
+    a.setAttribute('aria-label', `${t('result.sources.open')}: ${filingLabel(filings[0], lang)}`);
+    td.appendChild(a);
+    return td;
 }
 
 function renderTableCard(result, loadAll) {
@@ -776,13 +834,20 @@ function renderTableCard(result, loadAll) {
             if (col.label !== col.name && col.format !== 'period') th.title = col.name;
             headRow.appendChild(th);
         });
+        const linked = Boolean(result.sources);
+        if (linked) {
+            const th = el('th', 'result-source-cell');
+            th.setAttribute('aria-label', t('result.sources.column'));
+            headRow.appendChild(th);
+        }
         thead.appendChild(headRow);
 
         const tbody = el('tbody');
         const cells = viewCells(result, view, cols);
-        cells.slice(0, shown).forEach(row => {
+        cells.slice(0, shown).forEach((row, r) => {
             const tr = el('tr');
             row.forEach((cell, i) => tr.appendChild(cellTd(cell, numericCols[i])));
+            if (linked) tr.appendChild(sourceTd(result, r));
             tbody.appendChild(tr);
         });
         if (locked) tbody.append(...lockedPreview(cells, Math.min(locked, LOCKED_PREVIEW_ROWS), numericCols));
@@ -818,7 +883,7 @@ function renderTableCard(result, loadAll) {
         try {
             const full = await loadAll();
             Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money,
-                display: full.display ?? result.display });
+                sources: full.sources, display: full.display ?? result.display });
             loadAll = null; // still truncated only under SQL_FULL_MAX_ROWS - nothing more to load
             numericCols = numericColumns();
             shown = result.rows.length;

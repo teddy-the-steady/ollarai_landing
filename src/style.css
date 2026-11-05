@@ -536,6 +536,22 @@ html[lang="ja"] body {
     color: rgb(100, 116, 139);
 }
 
+/* Source filings of a result table (ResultTable.sources): a link per row, the list under the table */
+.result-table .result-source-cell { width: 1%; padding-left: 0.25rem; padding-right: 0.75rem; text-align: center; }
+.result-table .result-source-cell a { color: rgb(100, 116, 139); transition: color 0.15s; }
+.result-table .result-source-cell a:hover,
+.result-table .result-source-cell a:focus-visible { color: rgb(252, 211, 77); }
+.result-sources { border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.75rem; color: rgb(100, 116, 139); }
+.result-sources summary { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; cursor: pointer; }
+.result-sources summary:hover { color: rgb(203, 213, 225); }
+.result-sources-body { padding: 0 1rem 0.75rem; }
+.result-sources-body ul { display: grid; gap: 0.4rem; }
+.result-sources-body li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.result-sources-body a { color: rgb(203, 213, 225); text-decoration: underline; text-underline-offset: 3px; }
+.result-sources-body a:hover { color: rgb(252, 211, 77); }
+.result-sources-system { font-size: 0.65rem; padding: 0.05rem 0.4rem; border-radius: 0.25rem; background: rgba(255, 255, 255, 0.06); }
+.result-sources-hint { margin-top: 0.6rem; }
+
 /* Example questions under the question box: a click fills the box */
 .query-examples {
     display: flex;
