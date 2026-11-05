@@ -2,7 +2,7 @@ import './legal.js';
 import { loadPaddle, PADDLE_PRICE_ID } from './beta/paddle.js';
 
 // Pro checkout on the en/ja pricing pages (overseas payments through Paddle; the Korean page will use
-// Toss Payments). The dialog shows the notices and takes the consents the terms promise on the checkout
+// a Korean PG through PortOne). The dialog shows the notices and takes the consents the terms promise on the checkout
 // screen, then opens Paddle's overlay with the member's id in customData - the webhook
 // (POST /webhooks/paddle) finds the member by it, so a signed-out visitor goes to sign in first.
 
