@@ -17,6 +17,9 @@ const LARGE_UNITS = {
 const SHARES_UNIT = { ko: '주', ja: '株', en: '' };
 const MULTIPLE_UNIT = { ko: '배', ja: '倍', en: 'x' };
 const HALF = { ko: ['상반기', '하반기'], en: ['H1', 'H2'], ja: ['上期', '下期'] };
+// A share-price figure the server rounded (display.columns[].approx, price_redaction.py): said to be approximate,
+// and shown with only the digits it has - Intl's maximumFractionDigits never pads, so 71,000 stays 71,000.
+const APPROX = { ko: '약 ', en: '~', ja: '約' };
 
 // Columns whose integers are identifiers or periods, not amounts: no thousands separators (tables without display)
 const RAW_NUMBER_COLUMN = /(year|yr|quarter|qtr|month|period|code|ticker|corp_code|stock_code|^id$|_id$)/i;
@@ -135,6 +138,11 @@ export function createFormatter(lang, locale) {
             return { text: date(value), numeric: false };
         }
         if (typeof value !== 'number') return { text: String(value), numeric: false };
+        if (col.approx) {
+            const shown = cell(value, { ...col, approx: null }, currency, companies);
+            // No exact figure to hover: the title of an amount / fraction would repeat the rounded one
+            return { text: `${APPROX[lang] ?? APPROX.en}${shown.text}`, numeric: true };
+        }
         const full = `${dec4.format(value)}${isCurrencyCode(currency) ? ` ${currency}` : ''}`;
         switch (col.format) {
             case 'amount': return { text: amount(value, currency), numeric: true, title: full };
@@ -171,7 +179,8 @@ export function shownColumns(result, lang) {
     display.columns.forEach((col, index) => {
         if (col.format === 'id' || skipped.has(index)) return;
         const name = result.columns[index];
-        const entry = { index, name, label: col.label?.[lang] ?? name, format: col.format, values: col.values };
+        const entry = { index, name, label: col.label?.[lang] ?? name, format: col.format, values: col.values,
+            approx: col.approx };
         if (ends.has(index)) {
             Object.assign(entry, { end: ends.get(index), label: PERIOD_LABEL[lang] ?? PERIOD_LABEL.en, format: 'period' });
         }

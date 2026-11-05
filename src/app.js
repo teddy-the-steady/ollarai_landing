@@ -607,8 +607,23 @@ function lockedPreview(cells, count, numericCols) {
     });
 }
 
+// Share prices (ResultTable.price): where they come from and that they are approximate, under the table
+function priceNote(price) {
+    const note = el('div', 'px-4 py-3 border-t border-white/5 text-xs text-slate-500 space-y-1');
+    (price.attribution || []).forEach(line => note.appendChild(el('p', null, line)));
+    const notice = price.notice?.[lang] ?? price.notice?.en;
+    if (notice) note.appendChild(el('p', null, notice));
+    return note;
+}
+
 // loadAll: fetches every row of a truncated table (paid accounts), or null
 function renderTable(result, loadAll) {
+    const card = renderTableCard(result, loadAll);
+    if (result.price && result.rows.length) card.appendChild(priceNote(result.price));
+    return card;
+}
+
+function renderTableCard(result, loadAll) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
     let view = toggleable ? selectedCurrency() : null;
@@ -631,7 +646,8 @@ function renderTable(result, loadAll) {
         toggle = currencyToggle(view);
         actions.appendChild(toggle.el);
     }
-    if (isPaidAccount()) {
+    // Share-price results (ResultTable.price): no CSV / copy-all - figures are not handed out in bulk
+    if (isPaidAccount() && !result.price?.restricted) {
         const copyBtn = el('button', 'hover:text-white transition', t('result.csv'));
         copyBtn.type = 'button';
         copyBtn.addEventListener('click', async () => {
