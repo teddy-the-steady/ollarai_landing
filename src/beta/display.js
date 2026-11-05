@@ -82,6 +82,20 @@ export function createFormatter(lang, locale) {
         return `${value < 0 ? '-' : ''}${text}${currencyWord(code)}`;
     }
 
+    // The same amount to the last unit: 97,146,712,345,678원 / ₩97,146,712,345,678 (a click on the cell shows it)
+    function exactAmount(value, currency) {
+        const code = isCurrencyCode(currency) ? currency : null;
+        const digits = Number.isInteger(value) || Math.abs(value) >= 100 ? 0 : 2;
+        if (lang === 'en' && code) {
+            try {
+                return new Intl.NumberFormat('en-US', { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol',
+                    maximumFractionDigits: digits }).format(value);
+            } catch { /* not a code Intl knows */ }
+        }
+        const text = number(digits).format(value);
+        return `${text}${lang === 'en' ? (code ? ` ${code}` : '') : currencyWord(code)}`;
+    }
+
     // 4,950원 / $123.45 - per-share amounts, never shortened
     function price(value, currency) {
         const code = isCurrencyCode(currency) ? currency : null;
@@ -123,7 +137,7 @@ export function createFormatter(lang, locale) {
         return same ? `${s[1]}.${s[2]}` : `${s[1]}.${s[2]} ~ ${e[1]}.${e[2]}`;
     }
 
-    // { text, numeric, title? } of one cell. currency: the amount's currency when known.
+    // { text, numeric, title?, exact? } of one cell. currency: the amount's currency when known.
     function cell(value, col, currency, companies) {
         if (value === null || value === undefined) return { text: '—', numeric: false };
         const mapped = col.values?.[String(value)];
@@ -145,7 +159,12 @@ export function createFormatter(lang, locale) {
         }
         const full = `${dec4.format(value)}${isCurrencyCode(currency) ? ` ${currency}` : ''}`;
         switch (col.format) {
-            case 'amount': return { text: amount(value, currency), numeric: true, title: full };
+            case 'amount': {
+                const text = amount(value, currency);
+                const exact = exactAmount(value, currency);
+                // exact: the cell switches to it and back on a click - left out when nothing was shortened
+                return exact === text ? { text, numeric: true } : { text, numeric: true, exact };
+            }
             case 'price': return { text: price(value, currency), numeric: true };
             case 'shares': return { text: `${int.format(value)}${SHARES_UNIT[lang] ?? ''}`, numeric: true };
             case 'percent': return { text: `${dec2.format(value)}%`, numeric: true };

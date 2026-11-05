@@ -712,6 +712,26 @@ function renderTableCard(result, loadAll) {
     function cellTd(cell, numeric) {
         const td = el('td', numeric ? 'is-num' : '', cell.text);
         if (cell.title) td.title = cell.title;
+        if (cell.exact) {  // 1,661억원 <-> 166,123,456,789원 on a click (or Enter / Space)
+            td.classList.add('is-expandable');
+            td.tabIndex = 0;
+            td.title = t('result.exact');
+            td.setAttribute('aria-pressed', 'false');
+            const flip = () => {
+                const open = td.getAttribute('aria-pressed') !== 'true';
+                td.textContent = open ? cell.exact : cell.text;
+                td.setAttribute('aria-pressed', String(open));
+            };
+            td.addEventListener('click', () => {
+                if (String(window.getSelection?.() ?? '')) return;  // selecting the figure to copy it, not flipping it
+                flip();
+            });
+            td.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                e.preventDefault();
+                flip();
+            });
+        }
         if (cell.flag) {  // companies of more than one country: each one's flag (the CSV keeps the name alone)
             const flag = el('span', 'flag', cell.flag);
             flag.title = cell.flagTitle;
