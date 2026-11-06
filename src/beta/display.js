@@ -36,6 +36,13 @@ export function createFormatter(lang, locale) {
     const int = number(0);
     const dec2 = number(2);
     const dec4 = number(4);
+    const sig3 = new Intl.NumberFormat(locale, { maximumSignificantDigits: 3 });
+    // 7.44% - a share too small for two decimals (an executive's 0.0008% stake) as <0.01%, not 0%,
+    // its own figure in the title
+    const percent = (pct) => {
+        if (pct === 0 || Math.abs(pct) >= 0.005) return { text: `${dec2.format(pct)}%`, numeric: true };
+        return { text: pct > 0 ? '<0.01%' : '>-0.01%', numeric: true, title: `${sig3.format(pct)}%` };
+    };
     let regions = null;
     // The country's name for the flag's tooltip (대한민국, United States)
     const regionName = (code) => {
@@ -167,8 +174,8 @@ export function createFormatter(lang, locale) {
             }
             case 'price': return { text: price(value, currency), numeric: true };
             case 'shares': return { text: `${int.format(value)}${SHARES_UNIT[lang] ?? ''}`, numeric: true };
-            case 'percent': return { text: `${dec2.format(value)}%`, numeric: true };
-            case 'fraction': return { text: `${dec2.format(value * 100)}%`, numeric: true, title: full };
+            case 'percent': return percent(value);
+            case 'fraction': return { title: full, ...percent(value * 100) };
             case 'multiple': return { text: `${dec2.format(value)}${MULTIPLE_UNIT[lang] ?? 'x'}`, numeric: true };
             case 'integer': return { text: int.format(value), numeric: true };
             case 'year': return { text: String(value), numeric: true };

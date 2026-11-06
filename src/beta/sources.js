@@ -3,10 +3,16 @@
 //   rows: [[{ filing, role: reported | comparative | derived, statements, sections? }], ...] } - rows line up
 //   with result.rows. sections: { is | bs | cf: { title, url } } - the statement's own page in the filing
 //   (filings whose table of contents was read, FilingSections), else the filing's cover (filing.url).
+//   statements may also name what beside the statements a row was read from (TOPICS: R&D, the
+//   segment / product / region sales, the shareholder / investment lists) - those open the filing.
 
 const ROLE_ORDER = { reported: 0, comparative: 1, derived: 2 };
 const SYSTEM = { dart: 'DART', edgar: 'SEC EDGAR' };
 export const STATEMENTS = ['is', 'bs', 'cf'];
+export const TOPICS = ['rd', 'seg', 'prod', 'reg', 'sh', 'inv'];
+
+// What of the filing a reference stands for beside the statements (first of TOPICS), or null
+export const refTopic = (ref) => TOPICS.find(tp => ref.statements?.includes(tp)) ?? null;
 
 export function filingCompany(filing, lang) {
     const names = filing.company_names;
@@ -35,16 +41,18 @@ export function refLink(sources, ref) {
 }
 
 // Every filing of the shown rows, once, with the roles it plays and the statement pages linked:
-// [{ id, filing, roles: Set, sections: Map(statement -> { title, url }) }]
+// [{ id, filing, roles: Set, sections: Map(statement -> { title, url }), topics: Set (of TOPICS) }]
 export function tableFilings(sources, rowCount) {
     const byId = new Map();
     for (let i = 0; i < rowCount; i++) {
         for (const ref of rowFilings(sources, i)) {
             if (!byId.has(ref.filing)) {
-                byId.set(ref.filing, { id: ref.filing, filing: sources.filings[ref.filing], roles: new Set(), sections: new Map() });
+                byId.set(ref.filing, { id: ref.filing, filing: sources.filings[ref.filing], roles: new Set(),
+                    sections: new Map(), topics: new Set() });
             }
             const entry = byId.get(ref.filing);
             entry.roles.add(ref.role);
+            for (const tp of ref.statements || []) if (TOPICS.includes(tp)) entry.topics.add(tp);
             for (const [st, section] of Object.entries(ref.sections || {})) {
                 if (!entry.sections.has(st)) entry.sections.set(st, section);
             }

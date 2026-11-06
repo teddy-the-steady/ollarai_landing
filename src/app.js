@@ -6,7 +6,7 @@ import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 import { exampleQuestions } from './beta/examples.js';
-import { rowFilings, tableFilings, filingLabel, systemName, refLink, STATEMENTS } from './beta/sources.js';
+import { rowFilings, tableFilings, filingLabel, systemName, refLink, refTopic, STATEMENTS, TOPICS } from './beta/sources.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
@@ -657,7 +657,7 @@ function sourcesNote(result) {
         label();
         const filings = tableFilings(result.sources, result.rows.length);
         const list = el('ul');
-        filings.slice(0, SOURCES_LISTED).forEach(({ filing, roles, sections }) => {
+        filings.slice(0, SOURCES_LISTED).forEach(({ filing, roles, sections, topics }) => {
             const li = el('li');
             const a = el('a', null, filingLabel(filing, lang));
             a.href = filing.url;
@@ -683,6 +683,9 @@ function sourcesNote(result) {
                 });
                 li.appendChild(links);
             }
+            // what else the rows read from it (R&D, sales by segment, the shareholder list): no page of its own
+            const read = TOPICS.filter(tp => topics.has(tp)).map(tp => t(`result.sources.topic.${tp}`));
+            if (read.length) li.appendChild(el('span', 'result-sources-statements', read.join(' · ')));
             const kinds = [...roles].map(role => t(`result.sources.role.${role}`)).join(' · ');
             if (kinds) li.appendChild(el('span', 'result-sources-role', kinds));
             list.appendChild(li);
@@ -719,7 +722,9 @@ function sourceTd(result, i) {
     a.rel = 'noopener noreferrer';
     const named = (j) => {
         const { statement } = refLink(result.sources, refs[j]);
+        const topic = statement ? null : refTopic(refs[j]);
         return statement ? `${filingLabel(filings[j], lang)} · ${t(`result.sources.statement.${statement}`)}`
+            : topic ? `${filingLabel(filings[j], lang)} · ${t(`result.sources.topic.${topic}`)}`
             : filingLabel(filings[j], lang);
     };
     const lines = refs.map((ref, j) => `${named(j)} (${t(`result.sources.role.${ref.role}`)})`);
