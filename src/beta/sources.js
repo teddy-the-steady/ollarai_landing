@@ -1,9 +1,12 @@
 // Source filings of a result table, from ResultTable.sources (backend pipeline/result_sources.py):
 // { filings: { id: { source: dart | edgar, company, company_names?, report, kind, period_end, filed, url } },
-//   rows: [[{ filing, role: reported | comparative | derived, statements }], ...] } - rows line up with result.rows.
+//   rows: [[{ filing, role: reported | comparative | derived, statements, sections? }], ...] } - rows line up
+//   with result.rows. sections: { is | bs | cf: { title, url } } - the statement's own page in the filing
+//   (filings whose table of contents was read, FilingSections), else the filing's cover (filing.url).
 
 const ROLE_ORDER = { reported: 0, comparative: 1, derived: 2 };
 const SYSTEM = { dart: 'DART', edgar: 'SEC EDGAR' };
+export const STATEMENTS = ['is', 'bs', 'cf'];
 
 export function filingCompany(filing, lang) {
     const names = filing.company_names;
@@ -23,13 +26,28 @@ export function rowFilings(sources, i) {
         .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9));
 }
 
-// Every filing of the shown rows, once, with the roles it plays: [{ id, filing, roles: Set }]
+// Where a reference opens: the page of the first statement it stands behind (income statement first)
+// that the filing has one for, else the filing - { url, statement: 'is' | 'bs' | 'cf' | null }
+export function refLink(sources, ref) {
+    const statement = STATEMENTS.find(st => ref.statements?.includes(st) && ref.sections?.[st]?.url);
+    return statement ? { url: ref.sections[statement].url, statement }
+        : { url: sources.filings[ref.filing].url, statement: null };
+}
+
+// Every filing of the shown rows, once, with the roles it plays and the statement pages linked:
+// [{ id, filing, roles: Set, sections: Map(statement -> { title, url }) }]
 export function tableFilings(sources, rowCount) {
     const byId = new Map();
     for (let i = 0; i < rowCount; i++) {
         for (const ref of rowFilings(sources, i)) {
-            if (!byId.has(ref.filing)) byId.set(ref.filing, { id: ref.filing, filing: sources.filings[ref.filing], roles: new Set() });
-            byId.get(ref.filing).roles.add(ref.role);
+            if (!byId.has(ref.filing)) {
+                byId.set(ref.filing, { id: ref.filing, filing: sources.filings[ref.filing], roles: new Set(), sections: new Map() });
+            }
+            const entry = byId.get(ref.filing);
+            entry.roles.add(ref.role);
+            for (const [st, section] of Object.entries(ref.sections || {})) {
+                if (!entry.sections.has(st)) entry.sections.set(st, section);
+            }
         }
     }
     const best = (entry) => Math.min(...[...entry.roles].map(r => ROLE_ORDER[r] ?? 9));

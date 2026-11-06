@@ -551,6 +551,8 @@ html[lang="ja"] body {
 .result-sources-body a:hover { color: rgb(252, 211, 77); }
 .result-sources-system { font-size: 0.65rem; padding: 0.05rem 0.4rem; border-radius: 0.25rem; background: rgba(255, 255, 255, 0.06); }
 .result-sources-hint { margin-top: 0.6rem; }
+.result-sources-statements a { color: rgb(148, 163, 184); text-decoration: underline; text-underline-offset: 3px; }
+.result-sources-statements a:hover { color: rgb(252, 211, 77); }
 
 /* Example questions under the question box: a click fills the box */
 .query-examples {

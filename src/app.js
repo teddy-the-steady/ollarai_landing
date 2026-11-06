@@ -6,7 +6,7 @@ import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 import { exampleQuestions } from './beta/examples.js';
-import { rowFilings, tableFilings, filingLabel, systemName } from './beta/sources.js';
+import { rowFilings, tableFilings, filingLabel, systemName, refLink, STATEMENTS } from './beta/sources.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
@@ -657,13 +657,32 @@ function sourcesNote(result) {
         label();
         const filings = tableFilings(result.sources, result.rows.length);
         const list = el('ul');
-        filings.slice(0, SOURCES_LISTED).forEach(({ filing, roles }) => {
+        filings.slice(0, SOURCES_LISTED).forEach(({ filing, roles, sections }) => {
             const li = el('li');
             const a = el('a', null, filingLabel(filing, lang));
             a.href = filing.url;
             a.target = '_blank';
             a.rel = 'noopener noreferrer';
             li.append(el('span', 'result-sources-system', systemName(filing)), a);
+            // the statements' own pages in the filing, each once (an older DART report has one page for all)
+            const pages = new Map();
+            STATEMENTS.filter(st => sections.has(st)).forEach(st => {
+                const { url } = sections.get(st);
+                if (!pages.has(url)) pages.set(url, []);
+                pages.get(url).push(t(`result.sources.statement.${st}`));
+            });
+            if (pages.size) {
+                const links = el('span', 'result-sources-statements');
+                [...pages].forEach(([url, names], k) => {
+                    if (k) links.appendChild(document.createTextNode(' · '));
+                    const page = el('a', null, names.join('·'));
+                    page.href = url;
+                    page.target = '_blank';
+                    page.rel = 'noopener noreferrer';
+                    links.appendChild(page);
+                });
+                li.appendChild(links);
+            }
             const kinds = [...roles].map(role => t(`result.sources.role.${role}`)).join(' · ');
             if (kinds) li.appendChild(el('span', 'result-sources-role', kinds));
             list.appendChild(li);
@@ -686,7 +705,8 @@ function renderTable(result, loadAll) {
     return card;
 }
 
-// The last cell of a row: a link to the row's own filing, every filing it was read from in the title
+// The last cell of a row: a link to the row's own filing - the statement's page in it when known -,
+// every filing it was read from in the title
 function sourceTd(result, i) {
     const td = el('td', 'result-source-cell');
     const refs = rowFilings(result.sources, i);
@@ -694,12 +714,17 @@ function sourceTd(result, i) {
     const filings = refs.map(ref => result.sources.filings[ref.filing]);
     const a = el('a', null);
     a.appendChild(el('i', 'fas fa-file-lines'));
-    a.href = filings[0].url;
+    a.href = refLink(result.sources, refs[0]).url;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
-    const lines = refs.map((ref, j) => `${filingLabel(filings[j], lang)} (${t(`result.sources.role.${ref.role}`)})`);
+    const named = (j) => {
+        const { statement } = refLink(result.sources, refs[j]);
+        return statement ? `${filingLabel(filings[j], lang)} · ${t(`result.sources.statement.${statement}`)}`
+            : filingLabel(filings[j], lang);
+    };
+    const lines = refs.map((ref, j) => `${named(j)} (${t(`result.sources.role.${ref.role}`)})`);
     a.title = [t('result.sources.open'), ...new Set(lines)].join('\n');
-    a.setAttribute('aria-label', `${t('result.sources.open')}: ${filingLabel(filings[0], lang)}`);
+    a.setAttribute('aria-label', `${t('result.sources.open')}: ${named(0)}`);
     td.appendChild(a);
     return td;
 }
