@@ -327,6 +327,7 @@ html[lang="ja"] body {
 .result-read { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8125rem; color: rgb(148, 163, 184); }
 .result-read-label { color: rgb(100, 116, 139); }
 .result-read-label::after { content: ':'; }
+.result-basis { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.75rem; color: rgb(100, 116, 139); }
 .result-summary { font-size: 0.9375rem; line-height: 1.6; color: rgb(226, 232, 240); }
 .result-summary.is-loading { font-size: 0.8125rem; color: rgb(100, 116, 139); animation: result-summary-pulse 1.4s ease-in-out infinite; }
 @keyframes result-summary-pulse { 50% { opacity: 0.45; } }

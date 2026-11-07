@@ -490,7 +490,19 @@ function interpretationLine(read) {
     const line = el('p', 'result-read');
     line.appendChild(el('span', 'result-read-label', t('result.read')));
     line.appendChild(el('span', null, parts.join(' · ')));
-    return line;
+    if (!read.basis?.length) return line;
+    // The knowledge graph's reasons (server pipeline/basis.py): which category a company set was
+    // drawn from ("현대자동차 경쟁사 = 완성차 (분류 규칙 + 부문 매출 84%)"), a ratio's formula, an
+    // industry's own definition of a line (US banks' revenue).
+    const box = el('div', 'flex flex-col gap-1');
+    box.appendChild(line);
+    read.basis.forEach(text => {
+        const row = el('p', 'result-basis');
+        row.appendChild(el('span', 'result-read-label', t('result.basis')));
+        row.appendChild(el('span', null, text));
+        box.appendChild(row);
+    });
+    return box;
 }
 
 // A few sentences above the table (server pipeline/result_summary.py): a larger table's count comes
