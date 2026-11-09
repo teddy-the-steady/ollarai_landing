@@ -211,7 +211,7 @@ const i18n = {
         'footer-terms': 'Terms of Service',
         'footer-refund': 'Refund Policy',
         'footer-privacy': 'Privacy Policy',
-        'footer-disclaimer': '<span class="ollarai-brand">Ollarai</span> is an information tool that retrieves and organizes publicly available filing and financial data. It does not solicit investment or provide investment advice. You are solely responsible for your investment decisions and their outcomes.',
+        'footer-disclaimer': '<span class="ollarai-brand">OllarAI</span> is a financial data search tool providing structured public filing information for research and informational purposes only. <span class="ollarai-brand">OllarAI</span> does not provide investment advice, trading signals, or broker-dealer services. All investment decisions are solely your responsibility.',
         'footer-company': 'Trade name: Nexora · Representative: Taeho Jeon · Business registration number: 226-23-07642 <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2262307642" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-primary transition">Verify (KFTC)</a><br>Mail-order business registration number: 2026-강원강릉-0425 · Address: 26 Gwandae-gil, Room 203, Gangneung-si, Gangwon State, Republic of Korea<br>Phone: <a href="tel:+821079023085" class="underline underline-offset-2 hover:text-primary transition">+82-10-7902-3085</a> · Email: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai. All rights reserved.`,
     },
