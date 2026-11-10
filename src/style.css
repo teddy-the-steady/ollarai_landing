@@ -42,11 +42,10 @@
     line-height: inherit;
 }
 
-/* Paint the canvas dark so iOS overscroll / area below short pages isn't white,
-   and stop the rubber-band bounce that makes the footer look like it keeps going */
+/* Paint the canvas dark so iOS overscroll / area below short pages isn't white.
+   (No overscroll-behavior: none — it also kills mobile pull-to-refresh.) */
 html {
     background-color: rgb(15, 23, 35);
-    overscroll-behavior-y: none;
 }
 
 body {
