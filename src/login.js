@@ -35,7 +35,7 @@ const isNewPassword = () => mode === 'signup' || mode === 'reset';
 // or with error_code=otp_expired etc. when the link is stale. Read it before supabase-js clears it.
 const hashParams = new URLSearchParams(window.location.hash.slice(1));
 const recovering = hashParams.get('type') === 'recovery';
-// The mobile Google redirect comes back as /login/#google_credential=<ID token>, or #google_error=<code>
+// The mobile Google sign-in comes back as /login/#google_credential=<ID token>, or #google_error=<code>
 // when it was cancelled or failed (cloudfront/google-login-redirect.js). Drop it from the address bar right away.
 const googleCredential = hashParams.get('google_credential');
 const googleError = hashParams.get('google_error');
@@ -142,12 +142,14 @@ async function signInWithGoogle(credential, nonce) {
     window.location.replace(APP_PATH);
 }
 
-// On mobile the GIS popup hands the credential back through a second account sheet (iOS Chrome) or gets
-// stuck in it, and GIS redirect mode (accounts.google.com/gsi/select) answers a stale Google session
-// (signed in long ago, needs re-verification) with a bare 500. So mobile goes to Google's standard OAuth
-// endpoint instead, which re-prompts in that case: response_type=id_token with response_mode=form_post
-// POSTs the ID token to /auth/google, which bounces it back here in the hash. The raw nonce waits in
-// sessionStorage (same tab); Google gets its hash and puts it in the token, as with GIS.
+// Mobile can't use GIS:
+//   - the GIS popup hands the credential back through a second account sheet (iOS Chrome) or gets stuck in it
+//   - every flow where Google POSTs an ID token back to us (GIS redirect mode /gsi/select, and
+//     response_type=id_token&response_mode=form_post) ends in a bare accounts.google.com 500 on iOS for
+//     some signed-in Google sessions; the code flow passes there (checked on an affected iPhone)
+// So mobile runs an authorization code flow with our own redirect_uri (Google's screen names our site,
+// unlike the Supabase redirect): /auth/google exchanges the code and bounces the ID token back here in
+// the hash. The raw nonce waits in sessionStorage (same tab); Google gets its hash and puts it in the token.
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS reports as Mac
 const NONCE_KEY = 'ollarai-google-nonce';
@@ -167,13 +169,12 @@ function finishGoogleRedirect() {
     signInWithGoogle(googleCredential, nonce);
 }
 
-async function startGoogleOAuth() {
+async function startGoogleCodeFlow() {
     const { nonce, hashed } = await makeNonce();
     sessionStorage.setItem(NONCE_KEY, nonce); // throws when storage is blocked -> Supabase redirect instead
     const params = new URLSearchParams({
         client_id: GOOGLE_CLIENT_ID,
-        response_type: 'id_token',
-        response_mode: 'form_post',
+        response_type: 'code',
         redirect_uri: window.location.origin + '/auth/google',
         scope: 'openid email profile',
         nonce: hashed,
@@ -203,7 +204,7 @@ async function setUpGis() {
 
 if (googleReturned) finishGoogleRedirect();
 
-// Mobile: our own button (startGoogleOAuth). Desktop: the GIS button, or ours with the Supabase redirect if GIS fails.
+// Mobile: our button (startGoogleCodeFlow). Desktop: the GIS button, or ours with the Supabase redirect if GIS fails.
 if (isMobile) {
     useRedirectGoogle();
 } else {
@@ -219,7 +220,7 @@ googleBtn.addEventListener('click', async () => {
     googleBtn.disabled = true;
     if (isMobile && GOOGLE_CLIENT_ID) {
         try {
-            await startGoogleOAuth();
+            await startGoogleCodeFlow();
             return;
         } catch (error) {
             console.error(error);
