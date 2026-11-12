@@ -178,7 +178,9 @@ async function startGoogleCodeFlow() {
         redirect_uri: window.location.origin + '/auth/google',
         scope: 'openid email profile',
         nonce: hashed,
-        prompt: 'select_account',
+        // No prompt=select_account: tapping an account on Google's chooser is where iOS Chrome (signed in to
+        // Chrome) sometimes takes over with its own account sheet and then fails in /InteractiveLogin with a 500.
+        // Without it Google skips the chooser when there is one session; with several it still shows it.
         hl: lang,
     });
     window.location.assign('https://accounts.google.com/o/oauth2/v2/auth?' + params);
