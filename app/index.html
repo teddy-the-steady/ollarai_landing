@@ -118,10 +118,22 @@
                 <p><span data-i18n="app.tier.locked">정밀 답변은 생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요. Pro 플랜에서 쓸 수 있어요.</span>
                     <a id="tier-upsell-link" href="/pricing/" class="font-semibold text-primary whitespace-nowrap"><span data-i18n="app.tier.see-pricing">요금 보기</span> <i class="fas fa-arrow-right text-xs"></i></a></p>
             </div>
-            <!-- Example questions (GET /examples via src/beta/examples.js, picked per page load): shown once the server sends some, a click fills the box (no auto-send), hidden after the first question on this page -->
+            <!-- Example questions (src/beta/examples.js): GET /examples picked per page load (a click fills the box, no auto-send) and two Pro chips (share prices / market data, a medium and a hard one in turn per load - paid accounts get it in the box with Precise picked, free accounts get #pro-dialog), shuffled together once /examples answers; hidden after the first question on this page -->
             <div id="query-examples" class="query-examples hidden">
                 <span class="query-examples-label"><i class="fas fa-lightbulb"></i><span data-i18n="app.examples.label">이렇게 물어보세요</span></span>
             </div>
+            <!-- Free accounts clicking the Pro chip: go to the pricing page? -->
+            <dialog id="pro-dialog" class="pro-dialog" aria-labelledby="pro-dialog-title">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="query-example-pro-badge">PRO</span>
+                    <h2 id="pro-dialog-title" class="text-lg font-semibold text-white" data-i18n="app.examples.pro.dialog.title">Pro 구독이 필요한 질문이에요</h2>
+                </div>
+                <p class="text-sm leading-relaxed text-slate-300" data-i18n="app.examples.pro.dialog.desc">주가·시가총액·PER 같은 시세 데이터는 Pro 플랜의 정밀 답변에서 볼 수 있어요. 결제 화면으로 이동하시겠습니까?</p>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" data-action="cancel" class="px-5 py-2 rounded-full text-sm font-semibold border border-white/15 text-white hover:bg-white/5 transition" data-i18n="app.examples.pro.dialog.cancel">취소</button>
+                    <button type="button" data-action="confirm" class="px-5 py-2 rounded-full text-sm font-semibold bg-primary bg-primary-hover text-white transition" data-i18n="app.examples.pro.dialog.confirm">확인</button>
+                </div>
+            </dialog>
 
             <div id="results" class="flex flex-col gap-10 mt-10"></div>
             <!-- Older questions from GET /history -->

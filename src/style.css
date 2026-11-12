@@ -586,6 +586,43 @@ html[lang="ja"] body {
     background: rgba(116, 210, 78, 0.12);
     border-color: rgba(116, 210, 78, 0.35);
 }
+/* Pro chip (share prices / market data): amber instead of the green of the free ones */
+.query-example-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding-left: 0.45rem;
+    color: rgb(253, 230, 138);
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.4);
+}
+.query-example-pro:hover {
+    color: rgb(254, 243, 199);
+    background: rgba(251, 191, 36, 0.16);
+    border-color: rgba(251, 191, 36, 0.6);
+}
+.query-example-pro-badge {
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: rgb(15, 23, 42);
+    background: linear-gradient(135deg, rgb(252, 211, 77), rgb(245, 158, 11));
+}
+
+/* Free accounts clicking the Pro chip: go to the pricing page? */
+.pro-dialog {
+    width: min(26rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: rgb(15, 23, 42);
+    color: rgb(203, 213, 225);
+}
+.pro-dialog::backdrop { background: rgba(2, 6, 23, 0.75); }
+
 @media (max-width: 640px) {
     .query-examples { justify-content: flex-start; }
     .query-examples-label { width: 100%; }

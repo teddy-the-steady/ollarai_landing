@@ -5,7 +5,7 @@ import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
-import { exampleQuestions } from './beta/examples.js';
+import { exampleQuestions, proExampleQuestions } from './beta/examples.js';
 import { rowFilings, tableFilings, filingLabel, systemName, refLink, refTopic, STATEMENTS, TOPICS } from './beta/sources.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
@@ -302,11 +302,48 @@ queryInput.addEventListener('keydown', (e) => {
 const queryExamples = document.getElementById('query-examples');
 // Set by the first question: chips arriving after it stay hidden
 let examplesDismissed = false;
+// Pro chips (share prices / market data, paid accounts on 정밀 답변 only): a medium one and a hard one,
+// each in turn per load. Paid accounts get it in the box with Precise picked; free accounts are asked whether
+// to go to the pricing page.
+const proChips = proExampleQuestions(lang).map(proQuestion => {
+    const proChip = el('button', 'query-example query-example-pro');
+    proChip.type = 'button';
+    proChip.title = t('app.examples.pro.title');
+    proChip.appendChild(el('span', 'query-example-pro-badge', 'PRO'));
+    proChip.appendChild(el('span', null, proQuestion));
+    proChip.addEventListener('click', () => {
+        if (busy) return;
+        if (!isPaidAccount()) {
+            proDialog.showModal();
+            return;
+        }
+        // Like the other chips it only fills the box, and switches the answer mode to Precise
+        storageSet(TIER_KEY, 'paid');
+        renderTierToggle();
+        queryInput.value = proQuestion;
+        questionSource = 'example';
+        autoResize();
+        querySubmit.disabled = false;
+        queryInput.focus();
+    });
+    return proChip;
+});
+
+const proDialog = document.getElementById('pro-dialog');
+proDialog.querySelector('[data-action="cancel"]').addEventListener('click', () => proDialog.close());
+proDialog.querySelector('[data-action="confirm"]').addEventListener('click', () => {
+    window.location.href = sitePath('/pricing/');
+});
+// A click on the backdrop (outside the box) cancels
+proDialog.addEventListener('click', (e) => {
+    if (e.target === proDialog) proDialog.close();
+});
+
+// Server chips and Pro chips go up together, in random order, once /examples answers (or fails)
 exampleQuestions(lang).then(questions => {
-    questions.forEach(question => {
+    const chips = questions.map(question => {
         const btn = el('button', 'query-example', question);
         btn.type = 'button';
-        queryExamples.appendChild(btn);
         btn.addEventListener('click', () => {
             if (busy) return;
             queryInput.value = btn.textContent.trim();
@@ -315,8 +352,15 @@ exampleQuestions(lang).then(questions => {
             querySubmit.disabled = false;
             queryInput.focus();
         });
-    });
-    if (questions.length && !examplesDismissed) queryExamples.classList.remove('hidden');
+        return btn;
+    }).concat(proChips);
+    // Fisher-Yates shuffle
+    for (let i = chips.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [chips[i], chips[j]] = [chips[j], chips[i]];
+    }
+    queryExamples.append(...chips);
+    if (!examplesDismissed) queryExamples.classList.remove('hidden');
 });
 
 queryForm.addEventListener('submit', (e) => {
