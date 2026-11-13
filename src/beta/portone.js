@@ -35,7 +35,7 @@ export async function issueBillingKey({ member, fullName, phoneNumber, redirectU
         billingKeyMethod: 'CARD',
         // KG Inicis: issueId (ASCII) and issueName are required
         issueId: `sub-${member.id.slice(0, 8)}-${Date.now()}`,
-        issueName: '올라라이 Pro 정기결제',
+        issueName: '올라AI Pro 정기결제',
         // Shown in the window; with both set Inicis opens its newer PC window
         displayAmount: PRICE_KRW,
         currency: 'KRW',

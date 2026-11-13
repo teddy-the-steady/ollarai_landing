@@ -112,18 +112,24 @@ if (button && dialog) {
                 form.elements.phoneNumber.addEventListener('input', () => form.elements.phoneNumber.setCustomValidity(''), { once: true });
                 return;
             }
-            show('loading');
+            // A modal <dialog> sits in the top layer, above PortOne's window - close it while that is
+            // open (the form keeps its values), and bring it back for the result.
+            dialog.close();
+            let result;
             try {
-                const result = await issueBillingKey({
+                result = await issueBillingKey({
                     member, fullName, phoneNumber,
                     redirectUrl: `${window.location.origin}/pricing/`,
                 });
-                if (result.billingKey && !result.code) await startDomesticSubscription(result.billingKey);
-                else issueFailed(result);
             } catch (error) {
                 console.error(error);
+                dialog.showModal();
                 show('error');
+                return;
             }
+            dialog.showModal();
+            if (result.billingKey && !result.code) await startDomesticSubscription(result.billingKey);
+            else issueFailed(result);
             return;
         }
 
