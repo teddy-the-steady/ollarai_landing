@@ -19,7 +19,7 @@
       gtag('config', 'G-NKE2BBMBGT');
     </script>
 
-    <script type="module" src="/src/legal.js"></script>
+    <script type="module" src="/src/pricing.js"></script>
 </head>
 <body class="text-slate-200">
 
@@ -83,7 +83,7 @@
                         <li>결과 표 전체 보기</li>
                         <li>결과 CSV 복사</li>
                     </ul>
-                    <button type="button" class="pricing-cta pricing-cta-primary" disabled>결제 준비 중</button>
+                    <button type="button" id="subscribe-btn" class="pricing-cta pricing-cta-primary">구독하기</button>
                 </section>
             </div>
 
@@ -106,6 +106,68 @@
             </article>
         </div>
     </main>
+
+    <!-- Pro 결제 (src/pricing.js): 약관이 "결제 화면에서" 알리고 동의받기로 한 내용(제9조 제2항, 제12조 제2항, 제13조)과
+         KG이니시스 빌링키 발급에 필요한 구매자 정보(이름, 휴대폰 번호 - PC는 필수), 그다음 포트원(KG이니시스) 카드 등록 창.
+         이름·휴대폰 번호는 결제대행사로만 전달되고 운영자 서버에는 저장하지 않음. -->
+    <dialog id="subscribe-dialog" class="subscribe-dialog" aria-labelledby="subscribe-title">
+        <div data-state="loading" class="flex justify-center py-12"><span class="beta-spinner"></span></div>
+
+        <form data-state="consent" method="dialog" class="hidden" novalidate>
+            <h2 id="subscribe-title" class="text-xl font-bold text-white">Pro 구독하기</h2>
+            <dl class="subscribe-summary">
+                <dt>요금</dt><dd>월 9,900원 (부가세 포함)</dd>
+                <dt>결제</dt><dd>오늘 첫 결제 후, 해지할 때까지 매월 같은 날 등록한 카드로 자동 결제</dd>
+                <dt>해지</dt><dd>구독 관리 화면에서 언제든지. 이미 결제한 기간이 끝날 때까지 유료 기능을 쓸 수 있어요</dd>
+            </dl>
+            <ul class="subscribe-notes">
+                <li>결제일부터 7일 안에 청약을 철회할 수 있어요. 다만 그 기간에 <strong>정밀 답변을 이용했다면 청약철회가 제한</strong>돼요. 결제 전에 무료 플랜으로 먼저 써 볼 수 있어요(<a href="/terms/#refund" target="_blank" rel="noopener">이용약관 제12조</a>).</li>
+                <li>만 19세 미만이라면 결제 전에 법정대리인의 동의가 필요해요(<a href="/terms/#minors" target="_blank" rel="noopener">제13조</a>).</li>
+                <li>결제는 KG이니시스(포트원)의 카드 등록 창에서 진행돼요. 카드 정보는 결제대행사가 처리하며 올라라이는 저장하지 않아요.</li>
+            </ul>
+
+            <div class="subscribe-fields">
+                <label class="subscribe-field">
+                    <span>이름</span>
+                    <input type="text" name="fullName" autocomplete="name" maxlength="40" required>
+                </label>
+                <label class="subscribe-field">
+                    <span>휴대폰 번호</span>
+                    <input type="tel" name="phoneNumber" autocomplete="tel" inputmode="numeric" placeholder="01012345678" maxlength="13" required>
+                </label>
+                <p class="subscribe-detail">결제대행사가 결제와 영수증 발송에 쓰도록 전달되며, 올라라이 서버에는 저장하지 않아요.</p>
+            </div>
+
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>(필수)</strong> 위 요금, 자동 결제, 해지와 청약철회 조건과 <a href="/terms/" target="_blank" rel="noopener">이용약관</a>을 확인했고 결제에 동의해요.</span>
+            </label>
+
+            <div class="subscribe-actions">
+                <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary">취소</button>
+                <button type="submit" class="pricing-cta pricing-cta-primary" disabled>카드 등록하고 결제</button>
+            </div>
+        </form>
+
+        <div data-state="subscribed" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">이미 Pro를 이용 중이에요. 구독 관리에서 확인할 수 있어요.</p>
+            <a href="/account/?lang=ko" class="pricing-cta pricing-cta-primary">구독 관리</a>
+        </div>
+
+        <div data-state="declined" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-2">결제가 완료되지 않았어요. 다른 카드로 다시 시도해 주세요.</p>
+            <p data-message class="hidden text-sm text-slate-500 mb-2"></p>
+            <div class="subscribe-actions">
+                <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary">닫기</button>
+                <button type="button" data-action="back" class="pricing-cta pricing-cta-primary">다시 시도</button>
+            </div>
+        </div>
+
+        <div data-state="error" class="hidden text-center py-4">
+            <p class="text-slate-300 mb-6">결제 창을 열지 못했어요. 잠시 후 다시 시도하거나 <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a>으로 알려 주세요.</p>
+            <button type="button" data-action="close" class="pricing-cta pricing-cta-secondary w-full">닫기</button>
+        </div>
+    </dialog>
 
     <!-- Footer -->
     <footer class="py-12 border-t border-white/5">

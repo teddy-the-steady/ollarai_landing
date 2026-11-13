@@ -804,6 +804,21 @@ html[lang="ja"] body {
 .subscribe-check strong { color: #fff; }
 .subscribe-detail { display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgb(148, 163, 184); }
 .subscribe-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; }
+/* Buyer details for the domestic (KG Inicis) checkout - /pricing/ only */
+.subscribe-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.subscribe-fields .subscribe-detail { grid-column: 1 / -1; margin-top: 0; }
+.subscribe-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: rgb(148, 163, 184); }
+.subscribe-field input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 1rem;
+}
+.subscribe-field input:focus { outline: none; border-color: var(--primary-green); }
+@media (max-width: 480px) { .subscribe-fields { grid-template-columns: 1fr; } }
 
 /* Subscription management (/account/) */
 .account-card {
