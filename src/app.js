@@ -793,7 +793,10 @@ function sourceTd(result, i) {
 function renderTableCard(result, loadAll) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
-    let view = toggleable ? selectedCurrency() : null;
+    // A question that asked its amounts in a currency ("억 달러로") opens in it (ResultTable.money.currency_asked);
+    // the viewer's own choice is kept for the other tables, and the toggle still switches every table.
+    const asked = VIEW_CURRENCIES.includes(result.money?.currency_asked) ? result.money.currency_asked : null;
+    let view = toggleable ? (asked || selectedCurrency()) : null;
     const locked = result.locked_rows || 0;
     const lockedLabel = `${locked}${result.truncated ? '+' : ''}`;
     let shown = Math.min(result.rows.length, PAID_PAGE_ROWS);
