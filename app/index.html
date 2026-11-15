@@ -57,7 +57,7 @@
                     <i class="fas fa-rocket text-primary text-2xl"></i>
                 </div>
                 <h1 class="text-2xl md:text-3xl font-bold text-white mb-3" data-i18n="app.start.title">베타 테스트에 오신 걸 환영해요</h1>
-                <p class="text-slate-400 leading-relaxed mb-8" data-i18n-html="app.start.desc">공시 원본 데이터에 자연어로 질문하고,<br>SQL로 조회한 결과를 표로 바로 확인해 보세요.</p>
+                <p class="text-slate-400 leading-relaxed mb-8" data-i18n-html="app.start.desc">공시 원본 데이터에 자연어로 질문하고,<br>찾아낸 결과를 표로 바로 확인해 보세요.</p>
                 <button id="start-btn" type="button" class="bg-primary bg-primary-hover text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105" data-i18n="app.start.button">베타 테스트 시작</button>
             </div>
         </section>
@@ -103,7 +103,19 @@
                         <!-- Every account: paid accounts pick the pipeline per request; free accounts see Precise locked -->
                         <div id="tier-toggle" class="tier-toggle hidden" role="radiogroup" aria-label="답변 방식" data-i18n-aria-label="app.tier.label">
                             <button type="button" role="radio" data-tier="free" aria-checked="false" title="바로 답해요" data-i18n-title="app.tier.free.title" data-i18n="app.tier.free">빠른 답변</button>
-                            <button type="button" role="radio" data-tier="paid" aria-checked="false" title="생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요" data-i18n-title="app.tier.paid.title"><i class="fas fa-lock tier-lock hidden"></i><span data-i18n="app.tier.paid">정밀 답변</span></button>
+                            <button type="button" role="radio" data-tier="paid" aria-checked="false" title="AI가 찾은 답을 한 번 더 검증·보완해 더 정확하게 답해요" data-i18n-title="app.tier.paid.title"><i class="fas fa-lock tier-lock hidden"></i><span data-i18n="app.tier.paid">정밀 답변</span></button>
+                        </div>
+                        <!-- Quick vs Precise, side by side: hover on desktop, tap on touch screens -->
+                        <div id="tier-help" class="tier-help hidden">
+                            <button type="button" id="tier-help-btn" class="tier-help-btn" aria-expanded="false" aria-controls="tier-help-pop" aria-label="답변 방식 차이 보기" data-i18n-aria-label="app.tier.help.label"><i class="fas fa-circle-question"></i></button>
+                            <div id="tier-help-pop" class="tier-help-pop" role="tooltip">
+                                <dl>
+                                    <dt data-i18n="app.tier.free">빠른 답변</dt>
+                                    <dd data-i18n="app.tier.help.free">질문하면 바로 답해요. 한 회사의 실적처럼 간단한 조회에 알맞아요.</dd>
+                                    <dt><span data-i18n="app.tier.paid">정밀 답변</span> <span class="query-example-pro-badge">PRO</span></dt>
+                                    <dd data-i18n="app.tier.help.paid">AI가 찾은 답을 한 번 더 검증·보완해 더 정확하게 답해요. 조건이 여러 개거나 계산이 필요한 질문, 주가·시가총액·PER 같은 시세 데이터에 알맞아요. 답이 조금 늦을 수 있어요.</dd>
+                                </dl>
+                            </div>
                         </div>
                         <span id="query-hint" class="text-slate-500 text-xs pl-2 truncate max-sm:hidden" data-i18n="app.query.hint">Enter로 전송 · Shift+Enter로 줄바꿈</span>
                     </div>
@@ -115,7 +127,7 @@
             <!-- Free accounts: what Precise is, shown when they pick it -->
             <div id="tier-upsell" class="tier-upsell hidden">
                 <i class="fas fa-circle-info mt-0.5"></i>
-                <p><span data-i18n="app.tier.locked">정밀 답변은 생성된 SQL을 한 번 더 검증·보완해 더 정확하게 답해요. Pro 플랜에서 쓸 수 있어요.</span>
+                <p><span data-i18n="app.tier.locked">정밀 답변은 AI가 찾은 답을 한 번 더 검증·보완해 더 정확하게 답해요. Pro 플랜에서 쓸 수 있어요.</span>
                     <a id="tier-upsell-link" href="/pricing/" class="font-semibold text-primary whitespace-nowrap"><span data-i18n="app.tier.see-pricing">요금 보기</span> <i class="fas fa-arrow-right text-xs"></i></a></p>
             </div>
             <!-- Example questions (src/beta/examples.js): GET /examples picked per page load (a click fills the box, no auto-send) and two Pro chips (share prices / market data, a medium and a hard one in turn per load - paid accounts get it in the box with Precise picked, free accounts get #pro-dialog), shuffled together once /examples answers; hidden after the first question on this page -->

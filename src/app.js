@@ -91,6 +91,7 @@ function renderAccount() {
     badge.classList.toggle('hover:text-white', !!badgeLink);
 
     document.getElementById('tier-toggle').classList.toggle('hidden', me.status !== 'approved');
+    tierHelp.classList.toggle('hidden', me.status !== 'approved');
     document.querySelector('#tier-toggle .tier-lock').classList.toggle('hidden', isPaid);
     if (isPaid) tierUpsell.classList.add('hidden');
     renderTierToggle();
@@ -129,6 +130,20 @@ document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
         queryInput.focus();
     });
 });
+
+// Quick vs Precise popover: hover opens it on desktop (CSS), a tap toggles it; outside tap / Escape closes
+const tierHelp = document.getElementById('tier-help');
+const tierHelpBtn = document.getElementById('tier-help-btn');
+function setTierHelp(open) {
+    tierHelp.classList.toggle('open', open);
+    tierHelpBtn.setAttribute('aria-expanded', String(open));
+}
+tierHelpBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    setTierHelp(!tierHelp.classList.contains('open'));
+});
+document.addEventListener('click', e => { if (!tierHelp.contains(e.target)) setTierHelp(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setTierHelp(false); });
 
 function routeByStatus() {
     if (me.status === 'approved') {

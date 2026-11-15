@@ -431,6 +431,56 @@ html[lang="ja"] body {
 
 .tier-lock { margin-right: 0.35rem; font-size: 0.65rem; }
 
+/* Quick vs Precise popover next to the toggle (opens upward, over the input) */
+.tier-help { position: relative; flex-shrink: 0; }
+.tier-help.hidden { display: none; }
+.tier-help-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.85rem;
+    color: rgb(100, 116, 139);
+    transition: color 0.2s;
+}
+.tier-help-btn:hover, .tier-help.open .tier-help-btn { color: #fff; }
+.tier-help-pop {
+    position: absolute;
+    bottom: calc(100% + 0.6rem);
+    left: -6rem;
+    z-index: 30;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: rgb(203, 213, 225);
+    background: rgb(17, 24, 39);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+.tier-help.open .tier-help-pop { opacity: 1; visibility: visible; transform: none; }
+@media (hover: hover) {
+    .tier-help:hover .tier-help-pop { opacity: 1; visibility: visible; transform: none; }
+}
+.tier-help-pop dt {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: #fff;
+}
+.tier-help-pop dd { margin: 0.15rem 0 0; }
+.tier-help-pop dd + dt { margin-top: 0.65rem; }
+@media (max-width: 639px) {
+    .tier-help-pop { left: auto; right: -3rem; }
+}
+
 /* Free accounts picking Precise: what it is + pricing link */
 .tier-upsell {
     display: flex;
