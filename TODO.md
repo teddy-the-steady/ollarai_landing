@@ -29,14 +29,17 @@
 - [ ] **신청 서류 준비**: 사업자등록증, 통신판매업 신고증, 대표자 신분증, 정산 계좌 사본(사업자 명의 또는 대표자 명의)
 - [x] ~~토스페이먼츠 신청~~: 2026-11-05 입점 거절 (위 진행 상황)
 - [ ] **포트원 문의·PG 신청**: 업종은 "SaaS, 공시 재무 데이터 조회 도구"로, 투자 자문·종목 추천이 아님을 분명히. 카드 일반결제가 아니라 **자동결제(빌링)** 사용을 명시. 토스 거절 사실과 지적받은 문구를 고쳤다는 점은 물어보면 그대로 설명. 심사용 테스트 계정 하나 준비
-  - [ ] 계약 확정 후 처리방침(ko/en/ja) 제6조 수탁자 표의 "국내 결제대행사(PG)"를 실제 업체명(코리아포트원, PG사)으로 바꾸고 개정 이력에 기재
+  - [x] 처리방침(ko/en/ja) 제6조 수탁자 표를 (주)코리아포트원·(주)케이지이니시스로 나눠 기재, 한눈에 보기·11/20 개정 이력에도 업체명 반영 (11/20판 시행 전이라 같은 판에 반영)
   - [ ] 서버 구독 `provider` 값은 `portone` 기준 (`src/beta/i18n.js` `account.provider.portone`)
   - [x] **KG이니시스 심사용 결제창 연동** (심사 요건 5번: 구매 시 이니시스 결제창, 신용카드 필수): 한국어 요금 안내 "구독하기" → 로그인 확인 → 고지·동의 + 이름·휴대폰 번호 → 포트원 V2 SDK `requestIssueBillingKey`(KG이니시스 빌링키, 모바일은 `/pricing/?billingKey=`로 복귀) → 서버 `POST /subscription/portone`이 첫 달 9,900원 결제 후 구독 생성 → `/account/`. 매월 갱신은 서버 `common/renew_portone.py`(매일 00:30 KST 타이머, 실패 3회면 만료·빌링키 삭제)
-    - [ ] 포트원 콘솔: KG이니시스 **테스트 채널**(정기결제 MID `INIBillTst`) 추가 → `.env.local`에 `VITE_PORTONE_STORE_ID`·`VITE_PORTONE_CHANNEL_KEY`
-    - [ ] 서버: 마이그레이션 `0011_subscription_portone.py` → `infra/env.sh --no-apply PORTONE_API_SECRET PORTONE_STORE_ID` → `infra/deploy.sh`
-    - [ ] 테스트 채널로 PC·모바일 결제 → `/account/` 해지 확인 후 프론트 배포, 심사용 테스트 계정 ID/PW 전달 (심사 요건 6번)
-    - [ ] 승인 후 실제 MID 채널로 `VITE_PORTONE_CHANNEL_KEY` 교체
-    - [ ] 처리방침 제2조 국내 결제 항목에 "구매자 이름·휴대폰 번호(결제대행사 전달용, 운영자 미저장)" 추가 검토
+    - [x] 포트원 콘솔: KG이니시스 테스트 채널(`INIBillTst`)로 연동·심사 진행
+    - [x] 서버: 마이그레이션 `0011_subscription_portone.py`, `PORTONE_API_SECRET`·`PORTONE_STORE_ID`, 배포
+    - [x] **실연동 전환 (2026-11-17)**: 콘솔 실연동 채널(실제 정기결제 MID) → `VITE_PORTONE_CHANNEL_KEY` 교체·프론트 배포. 서버는 테스트 채널 빌링키를 구독 시작·갱신에서 거부(개발 서버만 `PORTONE_ALLOW_TEST=true`), 주문명 "올라AI Pro 1개월"
+    - [ ] 테스트 구독 정리: EC2에서 `python -m common.purge_test_portone --apply` (dry run 결과 subscription 16 한 건) → 다시 dry run해 `0 from the test channel` 확인
+    - [ ] 카드사 심사 완료 후 이니시스에 카드사별 개통 여부 확인
+    - [ ] 본인 카드로 PC·모바일 실결제 9,900원 → 포트원 콘솔·이니시스 상점관리자 승인 확인 → 콘솔에서 결제 취소, `/account/` 해지·빌링키 삭제 확인
+    - [ ] 첫 실결제 한 달 뒤 00:30 KST 갱신 로그(CloudWatch, `[portone] renewed=1`) 확인
+    - [x] 처리방침(ko/en/ja) 제2조 국내 결제 항목·수집 방법, 안내 문단(운영자 미저장, 결제 요청 시 포트원에서 불러옴), 제3조 보유 기간, 11/20 개정 이력에 구매자 이름·휴대폰 번호 추가 (11/20판에 포함 - 공지 기간 3일)
 - [ ] **Paddle 신청**: 도메인 심사에서 요금·약관·환불·처리방침 페이지(en)를 확인함. 서비스 설명은 "공시 데이터 조회·분석 도구"로 쓰고 투자 자문이 아님을 분명히 (금융 관련 업종은 추가 확인 대상)
 
 ## P0. 무료 버전 배포 전 필수
