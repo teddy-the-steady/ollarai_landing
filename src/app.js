@@ -317,8 +317,8 @@ queryInput.addEventListener('keydown', (e) => {
 const queryExamples = document.getElementById('query-examples');
 // Set by the first question: chips arriving after it stay hidden
 let examplesDismissed = false;
-// Pro chips (share prices / market data, paid accounts on 정밀 답변 only): a medium one and a hard one,
-// each in turn per load. Paid accounts get it in the box with Precise picked; free accounts are asked whether
+// Pro chips (share prices / market data, paid accounts on 정밀 답변 only): two hard ones, the next in turn
+// per load. Paid accounts get it in the box with Precise picked; free accounts are asked whether
 // to go to the pricing page.
 const proChips = proExampleQuestions(lang).map(proQuestion => {
     const proChip = el('button', 'query-example query-example-pro');
