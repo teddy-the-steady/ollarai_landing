@@ -31,14 +31,17 @@ async function loadApi() {
 }
 
 async function signedInMember() {
-    const { supabase, api, ApiError, LOGIN_PATH } = await loadApi();
+    const { supabase, api, ApiError, LOGIN_PATH, SESSION_REVOKED } = await loadApi();
     const { data } = await supabase.auth.getSession();
     const toLogin = () => { window.location.href = `${LOGIN_PATH}?lang=${lang}`; return null; };
     if (!data.session) return toLogin();
     try {
         return await api('/me');
     } catch (error) {
-        if (error instanceof ApiError && error.status === 401) return toLogin();
+        if (error instanceof ApiError && error.status === 401) {
+            if (error.detail?.code === SESSION_REVOKED) return null;  // api() is already on its way to the login page
+            return toLogin();
+        }
         throw error;
     }
 }

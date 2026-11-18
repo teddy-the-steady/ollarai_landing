@@ -81,6 +81,15 @@ if (recovering) {
     showError(t('auth.error.link-expired'));
 }
 
+// Sent here because another sign-in of this account pushed this browser's session out (src/beta/api.js)
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.get('reason') === 'session_revoked') {
+    searchParams.delete('reason');
+    const query = searchParams.toString();
+    history.replaceState(null, '', window.location.pathname + (query ? `?${query}` : '') + window.location.hash);
+    if (!recovering) showNotice(t('auth.notice.session-revoked'));
+}
+
 function showError(message) {
     errorEl.textContent = message;
     errorEl.classList.toggle('hidden', !message);

@@ -1,5 +1,5 @@
 import './style.css';
-import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
+import { supabase, api, ApiError, signOut, LOGIN_PATH, loginUrl } from './beta/api.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 // Subscription management (terms 제11조: cancelling must be no harder than subscribing).
@@ -246,7 +246,7 @@ async function init() {
 }
 
 supabase.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') window.location.replace(LOGIN_PATH);
+    if (event === 'SIGNED_OUT') window.location.replace(loginUrl());
 });
 
 document.getElementById('logout-btn').addEventListener('click', signOut);

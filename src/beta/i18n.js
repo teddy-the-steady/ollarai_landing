@@ -84,6 +84,7 @@ const STRINGS = {
         'auth.reset-done': '비밀번호를 변경했어요. 잠시 후 이동해요.',
         'auth.error.same-password': '기존 비밀번호와 다른 비밀번호를 입력해 주세요.',
         'auth.error.link-expired': '링크가 만료됐거나 이미 사용됐어요. 재설정 메일을 다시 요청해 주세요.',
+        'auth.notice.session-revoked': '다른 기기에서 이 계정으로 로그인해 로그아웃됐어요. 한 계정은 동시에 2개 기기까지 쓸 수 있어요. 계속 쓰려면 다시 로그인해 주세요.',
 
         // app: account and views
         'app.logout': '로그아웃',
@@ -281,6 +282,7 @@ const STRINGS = {
         'auth.reset-done': 'Your password has been changed. Taking you to the app…',
         'auth.error.same-password': 'Please choose a password different from your current one.',
         'auth.error.link-expired': 'This link has expired or was already used. Please request a new reset email.',
+        'auth.notice.session-revoked': 'You were signed out because this account signed in on another device. An account can be used on up to 2 devices at a time. Log in again to continue.',
 
         'app.logout': 'Log out',
         'app.usage': 'Paid this month {used} / {limit}',
@@ -474,6 +476,7 @@ const STRINGS = {
         'auth.reset-done': 'パスワードを変更しました。まもなく移動します。',
         'auth.error.same-password': '現在のパスワードとは異なるパスワードを入力してください。',
         'auth.error.link-expired': 'リンクの有効期限が切れているか、すでに使用されています。再設定メールをもう一度リクエストしてください。',
+        'auth.notice.session-revoked': '別の端末でこのアカウントにログインしたため、ログアウトされました。1つのアカウントは同時に2台の端末まで利用できます。続けるにはもう一度ログインしてください。',
 
         'app.logout': 'ログアウト',
         'app.usage': '今月の有料 {used} / {limit}',
