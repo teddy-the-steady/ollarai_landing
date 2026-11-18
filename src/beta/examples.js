@@ -20,41 +20,42 @@ export async function exampleQuestions(lang) {
 }
 
 // Pro-only examples: share prices / market data are answered on 정밀 답변 for paid accounts only
-// (ollarai_backend pipeline/price_preview.py, paid_only / precise_only). Hard ones only (L4 / L5) from the
-// backend's slang / quant2 / chart sets (pipeline_test_logs/ai_beta/newdata) that passed at least 4 of the
-// last 6 paid runs, one wording per template and none tied to a fixed date. Listed with the sets taking turns
-// so the two shown together mostly differ.
+// (ollarai_backend pipeline/price_preview.py, paid_only / precise_only). Taken word for word from the
+// backend's slang / quant2 / chart sets (pipeline_test_logs/ai_beta/newdata), only wordings that passed at
+// least 4 of the last 6 paid runs and none tied to a fixed date. A chip has to read at a glance: short,
+// no explanation in brackets, and no clipped slang (맥디 골크) - investor terms like 장대양봉 / 상따 / 점상
+// are fine. Listed with the sets taking turns so the two shown together mostly differ.
 const PRO_QUESTIONS = {
     ko: [
-        '최근 거래일에 상승장악형 캔들 나온 나스닥 종목 거래량 상위 5개',
-        '코스피에서 MACD 골든크로스 나온 종목',
-        '배당수익률 4% 이상이면서 2025년 배당성향(배당금/순이익) 50% 미만인 국내 기업',
-        '시가총액 상위 20개 미국 기업 중 올해 최대 낙폭(MDD)이 가장 컸던 5개',
-        '코스닥에서 흑삼병 나온 종목 거래대금 상위 5개',
+        '오늘 장대양봉 나온 나스닥 종목 거래량 상위 5개',
         '오늘 MACD 데드크로스 난 미국 종목 중 시가총액 상위 5개',
-        '최근 2주간 상한가 갔던 종목들 다음 거래일 평균 등락률',
-        '오늘 MACD 골든크로스가 나오면서 거래량도 20일 평균의 2배 넘게 터진 미국 종목',
-        '시총 1조원 이상 국내 기업 중 FCF 수익률(2025년 잉여현금흐름/시가총액) 10% 넘는 곳 상위 5개',
-        '삼성전자 MACD 지금 골든크로스야?',
-        '눌림목 나스닥 종목 거래량 상위 5개 (정배열 + 20일선 3% 이내)',
+        'PBR 1배 미만에 ROE 10% 넘는 코스피 기업 시총 순으로 5개',
+        '상따 하면 어땠어? 최근 2주 상한가 종목들 다음날 평균 수익률',
+        '최근 3거래일 안에 MACD 골든크로스 나온 나스닥 종목 중 거래량 상위 5개',
+        '엔비디아 PER이 미국 반도체 회사 평균 PER보다 높아?',
+        '최근 2주 사이에 점상 간 종목 있어?',
+        '코스닥에서 최근 5거래일 연속 오른 종목 거래량 상위 5개',
+        '코스닥 소형주 중 최근 일주일 30% 넘게 급등한 종목',
         '오늘 52주 신고가를 돌파하면서 거래량이 20일 평균의 3배 이상인 종목',
-        '최근 2주 상한가 다음날에도 또 오른 종목(상따 성공) 알려줘',
-        '최근 한 달 안에 데드크로스(50일선이 200일선 하향 돌파) 나온 시총 10조원 이상 미국 기업',
-        'ROE 15% 이상, 2025년 부채비율 100% 미만, 시총 10조원 이상 미국 기업 중 최근 1년 주가 변동성이 가장 낮은 5개',
-        '요즘 맥디 골크 난 나스닥 종목 거래량 많은 순으로 5개만',
-        '적삼병(3일 연속 양봉에 종가도 매일 상승) 나온 나스닥 종목 거래량 상위 5개',
-        '시가총액 상위 50개 미국 기업 중 최근 3개월 일간 변동성이 가장 낮은 5개',
-        '최근 5거래일 안에 MACD 골든크로스가 나왔고 이동평균선이 정배열(5>20>60>120일선)인 종목 거래량 상위 5개',
+        '최근 거래일에 상승장악형 캔들 나온 나스닥 종목 거래량 상위 5개',
+        '오늘 5일선이 20일선을 골든크로스한 뉴욕증권거래소 종목 거래량 상위 5개',
+        '최근 2주 동안 상한가 두 번 이상 간 종목',
+        '어제 3% 이상 갭상승으로 시작한 코스닥 종목 거래대금 순으로 5개',
     ],
     en: [
+        'Which Korean stocks hit the daily limit up on the latest trading day?',
+        'Nasdaq stocks with a MACD bullish crossover in the last 3 trading days, top 5 by volume',
+        'US companies with P/B under 3 and ROE above 20%: top 5 by 6-month stock return',
         'Nasdaq stocks with a bullish engulfing candle on the latest session, top 5 by volume',
         'Stocks that broke out to a new 52-week high today on volume at least 3x their 20-day average',
-        'Stocks above their 200-day moving average with a MACD bullish crossover in the last 5 sessions, top 5 by market cap',
+        "Apple's market cap is how many times its 2025 net income?",
     ],
     ja: [
+        '今日大陽線が出たナスダック銘柄、出来高上位5',
         '直近3営業日でMACDがシグナルを上抜けたナスダック銘柄、出来高上位5',
-        '押し目：パーフェクトオーダーで20日線の3%以内まで下げたナスダック銘柄、出来高上位5',
-        '赤三兵（3日連続の陽線で終値も毎日上昇）が出たナスダック銘柄、出来高上位5',
+        'PBR1倍割れでROE10%以上の韓国企業、時価総額上位5社',
+        '韓国株で直近の取引日にストップ高になった銘柄',
+        '直近の取引日に5%以上窓を開けて下落して始まったNYSE銘柄、出来高上位5',
     ],
 };
 
