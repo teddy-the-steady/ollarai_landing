@@ -15,7 +15,8 @@ export async function exampleQuestions(lang) {
     const groups = await api(`/examples?lang=${lang}`).then(data => data?.groups || {}).catch(() => ({}));
     const lists = Object.values(groups).filter(questions => questions?.length);
     while (lists.length > SHOWN) lists.splice(Math.floor(Math.random() * lists.length), 1);
-    return lists.map(pick);
+    // A chip ends with "?" or no mark: older nights' wordings may still end with "." / "。"
+    return lists.map(pick).map(question => question.trim().replace(/[.。．]+$/u, '').trimEnd());
 }
 
 // Pro-only examples: share prices / market data are answered on 정밀 답변 for paid accounts only
