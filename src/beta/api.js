@@ -25,9 +25,18 @@ let sessionRevoked = false;
 // The login page, saying why when this session was pushed out.
 export const loginUrl = () => LOGIN_PATH + (sessionRevoked ? `?reason=${SESSION_REVOKED}` : '');
 
+// The buyer's name and phone number the Korean pricing page keeps for the member's next checkout
+// (src/pricing.js) - this browser only, never sent to us. Gone on sign-out.
+export const BUYER_KEY = 'ollarai-buyer';
+
+export function forgetBuyer() {
+    try { localStorage.removeItem(BUYER_KEY); } catch { /* storage blocked */ }
+}
+
 // This browser's session only: a global sign-out would end the other device's session too.
 async function leaveRevokedSession() {
     sessionRevoked = true;
+    forgetBuyer();
     await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
     window.location.replace(loginUrl());
 }
@@ -68,6 +77,7 @@ export async function api(path, { method = 'GET', body } = {}) {
 
 export async function signOut() {
     // Already signed out locally (pushed out): keep the reason on the way to the login page.
+    forgetBuyer();
     if (sessionRevoked) return window.location.replace(loginUrl());
     await supabase.auth.signOut();
     window.location.href = LOGIN_PATH;

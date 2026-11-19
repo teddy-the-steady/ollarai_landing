@@ -46,12 +46,31 @@ async function signedInMember() {
     }
 }
 
+// The name and phone number the member last typed in the form, kept in this browser so a reload or
+// the return from PortOne's mobile window doesn't make them type it again. Only for the member who
+// typed it; dropped once subscribed and on sign-out (api.js forgetBuyer).
+async function savedBuyer(memberId) {
+    const { BUYER_KEY } = await loadApi();
+    try {
+        const saved = JSON.parse(localStorage.getItem(BUYER_KEY));
+        return saved?.memberId === memberId ? saved : null;
+    } catch {
+        return null;
+    }
+}
+
+async function saveBuyer(memberId, fullName, phoneNumber) {
+    const { BUYER_KEY } = await loadApi();
+    try { localStorage.setItem(BUYER_KEY, JSON.stringify({ memberId, fullName, phoneNumber })); } catch { /* storage blocked */ }
+}
+
 // The billing key PortOne issued -> first payment on the server -> the subscription screen.
 async function startDomesticSubscription(billingKey) {
-    const { api, ApiError } = await loadApi();
+    const { api, ApiError, forgetBuyer } = await loadApi();
     show('loading');
     try {
         await api('/subscription/portone', { method: 'POST', body: { billing_key: billingKey } });
+        forgetBuyer();
         window.location.href = '/account/?lang=ko';
     } catch (error) {
         console.error(error);
@@ -83,6 +102,15 @@ if (button && dialog) {
     const updateSubmit = () => {
         submit.disabled = !checks.every(c => c.checked) || !fields.every(f => f.value.trim());
     };
+    // The member's saved name and number into empty fields (never over what they typed here)
+    const fillBuyer = async () => {
+        if (!domestic || !member) return;
+        const saved = await savedBuyer(member.id);
+        if (!saved) return;
+        if (!form.elements.fullName.value) form.elements.fullName.value = saved.fullName || '';
+        if (!form.elements.phoneNumber.value) form.elements.phoneNumber.value = saved.phoneNumber || '';
+        updateSubmit();
+    };
     [...checks, ...fields].forEach(input => input.addEventListener('input', updateSubmit));
     checks.forEach(check => check.addEventListener('change', updateSubmit));
     dialog.querySelectorAll('[data-action="close"]').forEach(btn => btn.addEventListener('click', () => dialog.close()));
@@ -95,7 +123,10 @@ if (button && dialog) {
             member = await signedInMember();
             if (!member) return;
             if (member.paid_source === 'subscription' || member.paid_source === 'grant') show('subscribed');
-            else show('consent');
+            else {
+                await fillBuyer();
+                show('consent');
+            }
         } catch (error) {
             console.error(error);
             show('error');
@@ -115,6 +146,7 @@ if (button && dialog) {
                 form.elements.phoneNumber.addEventListener('input', () => form.elements.phoneNumber.setCustomValidity(''), { once: true });
                 return;
             }
+            await saveBuyer(member.id, fullName, phoneNumber);
             // A modal <dialog> sits in the top layer, above PortOne's window - close it while that is
             // open (the form keeps its values), and bring it back for the result.
             dialog.close();
@@ -161,7 +193,7 @@ if (button && dialog) {
             startDomesticSubscription(returned.billingKey);
         } else {
             // The form needs the member again if they retry
-            signedInMember().then(m => { member = m; }).catch(console.error);
+            signedInMember().then(m => { member = m; return fillBuyer(); }).catch(console.error);
             issueFailed(returned);
         }
     }
