@@ -568,13 +568,13 @@ function interpretationLine(read) {
 // with the answer; a small table's is made after it ({pending}) - the table is shown meanwhile, and
 // the line goes away when there is none (the summary didn't pass the server's checks, or failed).
 function summaryLine(summary, loadSummary) {
-    if (summary?.text) return el('p', 'result-summary', summary.text);
+    if (summary?.text) return summaryText(el('p', 'result-summary'), summary.text);
     if (!summary?.pending || !loadSummary) return null;
     const line = el('p', 'result-summary is-loading', t('result.summary-loading'));
     loadSummary()
         .then(made => {
             if (made?.text) {
-                line.textContent = made.text;
+                summaryText(line, made.text);
                 line.classList.remove('is-loading');
             } else {
                 line.remove();
@@ -582,6 +582,27 @@ function summaryLine(summary, loadSummary) {
         })
         .catch(() => line.remove());
     return line;
+}
+
+// The figures in a summary, made bold: an amount, ratio or multiple with its unit ("1조 2,345억원", "+12.3%",
+// "15.2배", "$1.2 billion") - not a point in time ("2024년", "3분기", "FY2024"), nor a bare year.
+const SUMMARY_NUM = String.raw`[+\-−]?[$₩¥€]?\d+(?:,\d{3})*(?:\.\d+)?`;
+const SUMMARY_UNIT = String.raw`(?:%p|%|배|倍|조|兆|억|億|만|万|천|千|원|円|달러|ドル|엔|위|位|개|곳|社|주|株|x\b|times\b|trillion\b|billion\b|million\b|bn\b|tn\b|[KMB]\b|pp\b)`;
+const SUMMARY_FIGURE = new RegExp(
+    String.raw`(?<![\w.])${SUMMARY_NUM}(?:\s?${SUMMARY_UNIT})*(?:\s?${SUMMARY_NUM}(?:\s?${SUMMARY_UNIT})+)*(?!\s?(?:년|年|월|月|일|日|분기|四半期|[QH]\b|[\d.]))`, 'g');
+
+function summaryText(node, text) {
+    const parts = [];
+    let last = 0;
+    for (const m of text.matchAll(SUMMARY_FIGURE)) {
+        if (/^(?:19|20)\d\d$/.test(m[0])) continue; // a bare year
+        if (m.index > last) parts.push(text.slice(last, m.index));
+        parts.push(el('strong', null, m[0]));
+        last = m.index + m[0].length;
+    }
+    parts.push(text.slice(last));
+    node.replaceChildren(...parts);
+    return node;
 }
 
 // An ask-back ("디와이키" could be 디와이씨 or 디와이): requests are one-shot, so each option is
