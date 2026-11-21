@@ -39,10 +39,14 @@ function header(chart) {
     const title = document.createElement('strong');
     title.textContent = chart.label?.[lang] ?? chart.label?.en ?? chart.pattern;
     box.appendChild(title);
-    const facts = [t(`result.chart.status.${chart.status}`)];
+    // a day state (long candle, cross ... - "PriceEvents") or a window screen's days has no status, only its
+    // day - a window its first ~ last session
+    const facts = chart.status ? [t(`result.chart.status.${chart.status}`)] : [];
     if (chart.timeframe === 'W') facts.push(t('result.chart.weekly'));
     const d = chart.dates;
-    if (d.breakout) facts.push(t('result.chart.breakout', { date: d.breakout.replaceAll('-', '.') }));
+    const dot = (s) => s.replaceAll('-', '.');
+    if (d.event) facts.push(d.start ? `${dot(d.start)} ~ ${dot(d.event)}` : dot(d.event));
+    else if (d.breakout) facts.push(t('result.chart.breakout', { date: d.breakout.replaceAll('-', '.') }));
     else if (d.completion) facts.push(t('result.chart.completion', { date: d.completion.replaceAll('-', '.') }));
     const meta = document.createElement('span');
     meta.textContent = facts.filter(Boolean).join(' · ');
@@ -115,7 +119,8 @@ export async function renderPatternChart(container, chart) {
     candles.setMarkers(chart.points.map(p => ({
         time: p.time,
         position: p.value <= (chart.candles.find(c => c[0] === p.time)?.[3] ?? p.value) + 0.05 ? 'belowBar' : 'aboveBar',
-        color: bull ? UP : DOWN,
+        // no direction (a window screen's days, a volume spike): neutral
+        color: chart.direction == null ? '#e2e8f0' : bull ? UP : DOWN,
         shape: 'circle',
         text: p.label,
     })).sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0)));
