@@ -7,6 +7,7 @@ import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 import { exampleQuestions, proExampleQuestions } from './beta/examples.js';
 import { rowFilings, tableFilings, filingLabel, systemName, refLink, refTopic, STATEMENTS, TOPICS } from './beta/sources.js';
+import { renderPatternChart } from './beta/patternChart.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
@@ -474,7 +475,9 @@ function createResultCard(question, createdAt = new Date()) {
                 const loadAll = historyId != null && isPaidAccount()
                     ? () => api(`/history/${historyId}/rows?part=${i}`) : null;
                 const loadSummary = historyId != null ? () => api(`/history/${historyId}/summary?part=${i}`) : null;
-                body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary));
+                const loadChart = historyId != null
+                    ? (key) => api(`/history/${historyId}/chart?part=${i}&key=${encodeURIComponent(key)}`) : null;
+                body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary, loadChart));
             });
             if (live && response.tier === 'free') body.appendChild(retryPrecise(question));
         },
@@ -515,7 +518,7 @@ function notice(message, kind = 'info') {
     return box;
 }
 
-function renderPart(part, isMulti, loadAll, loadSummary) {
+function renderPart(part, isMulti, loadAll, loadSummary, loadChart) {
     const wrap = el('section', 'flex flex-col gap-3');
     if (isMulti && part.question) {
         wrap.appendChild(el('h3', 'text-sm font-semibold text-slate-300', part.question));
@@ -532,7 +535,7 @@ function renderPart(part, isMulti, loadAll, loadSummary) {
     const summary = part.result && summaryLine(part.summary, loadSummary);
     if (summary) wrap.appendChild(summary);
     if (part.result) {
-        wrap.appendChild(renderTable(part.result, loadAll));
+        wrap.appendChild(renderTable(part.result, loadAll, loadChart));
     } else if (!part.message) {
         wrap.appendChild(notice(t('result.not-found'), 'info'));
     }
@@ -792,12 +795,77 @@ function sourcesNote(result) {
     return box;
 }
 
-// loadAll: fetches every row of a truncated table (paid accounts), or null
-function renderTable(result, loadAll) {
-    const card = renderTableCard(result, loadAll);
+// loadAll: fetches every row of a truncated table (paid accounts), or null; loadChart(key): a row's
+// chart-pattern chart (GET /history/{id}/chart), or null
+function renderTable(result, loadAll, loadChart) {
+    const card = renderTableCard(result, loadAll, loadChart);
     if (result.price && result.rows.length) card.appendChild(priceNote(result.price));
     if (result.sources && tableFilings(result.sources, result.rows.length).length) card.appendChild(sourcesNote(result));
     return card;
+}
+
+// A chart-pattern row's chart button: opens the newest event's chart in a row below (one more click closes
+// it); a row of several events gets a switch between them. Charts are fetched once and kept.
+function chartTd(keys, tr, loadChart) {
+    const td = el('td', 'result-source-cell');
+    if (!keys.length) return td;
+    const btn = el('button', 'result-chart-btn');
+    btn.type = 'button';
+    btn.appendChild(el('i', 'fas fa-chart-line'));
+    btn.title = t('result.chart.open');
+    btn.setAttribute('aria-label', t('result.chart.open'));
+    btn.setAttribute('aria-expanded', 'false');
+    td.appendChild(btn);
+    const cache = new Map();
+    let panel = null;
+    let dispose = null;
+    async function show(box, key) {
+        dispose?.();
+        dispose = null;
+        box.replaceChildren(el('p', 'pattern-chart-note', t('result.chart.loading')));
+        try {
+            if (!cache.has(key)) cache.set(key, await loadChart(key));
+            dispose = await renderPatternChart(box, cache.get(key));
+        } catch (error) {
+            if (handleAuthError(error)) return;
+            console.error(error);
+            cache.delete(key);
+            box.replaceChildren(el('p', 'pattern-chart-note', t('result.chart.failed')));
+        }
+    }
+    btn.addEventListener('click', () => {
+        if (panel) {
+            dispose?.();
+            dispose = null;
+            panel.remove();
+            panel = null;
+            btn.setAttribute('aria-expanded', 'false');
+            return;
+        }
+        panel = el('tr', 'result-chart-row');
+        const cell = el('td');
+        cell.colSpan = tr.children.length;
+        const box = el('div', 'pattern-chart');
+        if (keys.length > 1) {      // newest first: "2026.11.02 · 2026.10.29"
+            const tabs = el('div', 'pattern-chart-tabs');
+            keys.forEach((key, i) => {
+                const tab = el('button', i ? '' : 'is-active', key.slice(0, 10).replaceAll('-', '.'));
+                tab.type = 'button';
+                tab.addEventListener('click', () => {
+                    tabs.querySelectorAll('button').forEach(b => b.classList.toggle('is-active', b === tab));
+                    show(box, key);
+                });
+                tabs.appendChild(tab);
+            });
+            cell.appendChild(tabs);
+        }
+        cell.appendChild(box);
+        panel.appendChild(cell);
+        tr.after(panel);
+        btn.setAttribute('aria-expanded', 'true');
+        show(box, keys[0]);
+    });
+    return td;
 }
 
 // The last cell of a row: a link to the row's own filing - the statement's page in it when known -,
@@ -826,7 +894,7 @@ function sourceTd(result, i) {
     return td;
 }
 
-function renderTableCard(result, loadAll) {
+function renderTableCard(result, loadAll, loadChart) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
     // A question that asked its amounts in a currency ("억 달러로") opens in it (ResultTable.money.currency_asked);
@@ -965,6 +1033,12 @@ function renderTableCard(result, loadAll) {
             th.setAttribute('aria-label', t('result.sources.column'));
             headRow.appendChild(th);
         }
+        const charted = Boolean(loadChart && result.charts?.rows?.some(keys => keys.length));
+        if (charted) {
+            const th = el('th', 'result-source-cell');
+            th.setAttribute('aria-label', t('result.chart.column'));
+            headRow.appendChild(th);
+        }
         thead.appendChild(headRow);
 
         const tbody = el('tbody');
@@ -973,6 +1047,7 @@ function renderTableCard(result, loadAll) {
             const tr = el('tr');
             row.forEach((cell, i) => tr.appendChild(cellTd(cell, numericCols[i])));
             if (linked) tr.appendChild(sourceTd(result, r));
+            if (charted) tr.appendChild(chartTd(result.charts.rows[r] || [], tr, loadChart));
             tbody.appendChild(tr);
         });
         if (locked) tbody.append(...lockedPreview(cells, Math.min(locked, LOCKED_PREVIEW_ROWS), numericCols));
@@ -1008,7 +1083,7 @@ function renderTableCard(result, loadAll) {
         try {
             const full = await loadAll();
             Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money,
-                sources: full.sources, display: full.display ?? result.display });
+                sources: full.sources, charts: full.charts, display: full.display ?? result.display });
             loadAll = null; // still truncated only under SQL_FULL_MAX_ROWS - nothing more to load
             numericCols = numericColumns();
             shown = result.rows.length;
