@@ -9,7 +9,8 @@ import { lang, t } from './i18n.js';
 const UP_RED = lang === 'ko' || lang === 'ja';
 const UP = UP_RED ? '#ef4444' : '#22c55e';
 const DOWN = UP_RED ? '#3b82f6' : '#ef4444';
-const LEVEL_COLORS = { neckline: '#fbbf24', target: '#a3e635', stop: '#f87171' };
+// The neckline only: no target / stop price is drawn (server pattern_charts.py - not investment advice)
+const LEVEL_COLORS = { neckline: '#fbbf24' };
 
 let libraryPromise = null;
 const library = () => (libraryPromise ??= import('lightweight-charts'));
@@ -59,6 +60,10 @@ function footer(chart) {
         span.textContent = text;
         box.appendChild(span);
     });
+    const note = document.createElement('p');
+    note.className = 'pattern-chart-disclaimer';
+    note.textContent = t('result.chart.disclaimer');
+    box.appendChild(note);
     return box;
 }
 

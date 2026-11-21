@@ -607,6 +607,7 @@ html[lang="ja"] body {
 .pattern-chart-head strong { color: rgb(226, 232, 240); font-weight: 600; }
 .pattern-chart-area { width: 100%; height: 260px; }
 .pattern-chart-foot { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin-top: 0.4rem; font-size: 0.7rem; color: rgb(100, 116, 139); }
+.pattern-chart-disclaimer { flex-basis: 100%; margin-top: 0.15rem; color: rgb(71, 85, 105); }
 .pattern-chart-note { padding: 1.5rem 0; text-align: center; font-size: 0.75rem; color: rgb(100, 116, 139); }
 .pattern-chart-tabs { display: flex; gap: 0.35rem; margin-bottom: 0.5rem; }
 .pattern-chart-tabs button { font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 0.25rem; color: rgb(148, 163, 184); background: rgba(255, 255, 255, 0.05); }
