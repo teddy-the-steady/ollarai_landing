@@ -920,8 +920,9 @@ function renderTableCard(result, loadAll, loadChart) {
         toggle = currencyToggle(view);
         actions.appendChild(toggle.el);
     }
+    // Every plan: the CSV holds only the rows shown (free accounts get FREE_MAX_ROWS; locked ones arrive as a count).
     // Share-price results (ResultTable.price): no CSV / copy-all - figures are not handed out in bulk
-    if (isPaidAccount() && !result.price?.restricted) {
+    if (!result.price?.restricted) {
         const copyBtn = el('button', 'hover:text-white transition', t('result.csv'));
         copyBtn.type = 'button';
         copyBtn.addEventListener('click', async () => {

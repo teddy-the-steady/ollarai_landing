@@ -42,7 +42,7 @@ function header(chart) {
     // a day state (long candle, cross ... - "PriceEvents") or a window screen's days has no status, only its
     // day - a window its first ~ last session
     const facts = chart.status ? [t(`result.chart.status.${chart.status}`)] : [];
-    if (chart.timeframe === 'W') facts.push(t('result.chart.weekly'));
+    if (chart.timeframe === 'W' || chart.bars === 'W') facts.push(t('result.chart.weekly'));
     const d = chart.dates;
     const dot = (s) => s.replaceAll('-', '.');
     if (d.event) facts.push(d.start ? `${dot(d.start)} ~ ${dot(d.event)}` : dot(d.event));
