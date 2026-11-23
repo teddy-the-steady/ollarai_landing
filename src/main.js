@@ -320,9 +320,9 @@ const simData = {
         result: "$890,200,000 <span class=\"text-sm font-normal text-slate-500\">USD</span>"
     },
     ja: {
-        system: 'edinet',
-        query: "SELECT operating_income FROM edinet_financials WHERE ticker='6758' AND period='2026Q1'",
-        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">JPY</span>"
+        system: 'dart',
+        query: "SELECT op_profit FROM dart_financials WHERE ticker='005930' AND period='2026Q1'",
+        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">KRW</span>"
     }
 };
 
@@ -369,7 +369,6 @@ function applyLang(lang) {
     const sd = simData[lang];
     document.getElementById('sim-dart').classList.toggle('hidden', sd.system !== 'dart');
     document.getElementById('sim-edgar').classList.toggle('hidden', sd.system !== 'edgar');
-    document.getElementById('sim-edinet').classList.toggle('hidden', sd.system !== 'edinet');
     document.getElementById('sim-sql-query').textContent = sd.query;
     document.getElementById('sim-sql-result').innerHTML = sd.result;
 }
@@ -411,10 +410,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: '영업이익률 20%↑ · 부채비율 60%↓ (한·미·일)', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
+            { query: '영업이익률 20%↑ · 부채비율 60%↓', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: '삼성전자 최근 4개 분기 실적 추이', columns: ['분기', '매출 YoY', '영업이익 YoY', '영업이익률'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
@@ -429,10 +428,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: 'Op. margin 20%+ · Debt/Equity under 60% (KR/US/JP)', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
+            { query: 'Op. margin 20%+ · Debt/Equity under 60%', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: 'Samsung Electronics — last 4 quarters trend', columns: ['Quarter', 'Revenue YoY', 'Op. Income YoY', 'Op Margin'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
@@ -447,10 +446,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: '営業利益率20%以上・負債比率60%以下(韓・米・日)', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
+            { query: '営業利益率20%以上・負債比率60%以下', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: 'サムスン電子、直近4四半期の業績推移', columns: ['四半期', '売上高YoY', '営業利益YoY', '営業利益率'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
