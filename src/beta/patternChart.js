@@ -75,7 +75,9 @@ function footer(chart) {
     });
     const note = document.createElement('p');
     note.className = 'pattern-chart-disclaimer';
-    note.textContent = t('result.chart.disclaimer');
+    // a plain price chart (server generic_keys: price / price_day) classifies nothing
+    const plain = chart.pattern === 'price' || chart.pattern === 'price_day';
+    note.textContent = t(plain ? 'result.chart.disclaimer_price' : 'result.chart.disclaimer');
     box.appendChild(note);
     return box;
 }
