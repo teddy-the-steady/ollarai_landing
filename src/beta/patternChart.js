@@ -1,6 +1,6 @@
 // Mini chart of a chart-pattern event (GET /history/{id}/chart - server pipeline/pattern_charts.py): candles as
 // an index (the window's first close = 100), the pattern's points as markers, its lines, the neckline / target /
-// stop as price lines with their distance from the last close. No price reaches the page: the server sends the
+// stop as price lines with their distance from the last close, the moving averages as lines. No price reaches the page: the server sends the
 // index and approximations only (PRICE_DATA_LICENSING_PLAN.md §5.3) - the range is shown as text beside it.
 // Lightweight Charts (Apache-2.0, TradingView attribution logo kept) is loaded only when a chart opens.
 import { lang, t } from './i18n.js';
@@ -11,6 +11,9 @@ const UP = UP_RED ? '#ef4444' : '#22c55e';
 const DOWN = UP_RED ? '#3b82f6' : '#ef4444';
 // The neckline only: no target / stop price is drawn (server pattern_charts.py - not investment advice)
 const LEVEL_COLORS = { neckline: '#fbbf24' };
+// Moving averages (server `ma`: 5 / 20 / 60 / 120 days, or 5 / 10 / 20 / 60 weeks on weekly bars), by order
+const MA_COLORS = ['#f472b6', '#fb923c', '#38bdf8', '#a78bfa'];
+const maWeekly = (chart) => chart.timeframe === 'W' || chart.bars === 'W';
 
 let libraryPromise = null;
 const library = () => (libraryPromise ??= import('lightweight-charts'));
@@ -64,6 +67,12 @@ function footer(chart) {
         span.textContent = text;
         box.appendChild(span);
     });
+    (chart.ma ?? []).forEach((ma, i) => {
+        const span = document.createElement('span');
+        span.style.color = MA_COLORS[i % MA_COLORS.length];
+        span.textContent = `— ${t(maWeekly(chart) ? 'result.chart.ma_weekly' : 'result.chart.ma', { n: ma.period })}`;
+        box.appendChild(span);
+    });
     const note = document.createElement('p');
     note.className = 'pattern-chart-disclaimer';
     note.textContent = t('result.chart.disclaimer');
@@ -105,6 +114,11 @@ export async function renderPatternChart(container, chart) {
         color: chart.candles[i] && chart.candles[i][4] >= chart.candles[i][1] ? `${UP}55` : `${DOWN}55`,
     })));
 
+    (chart.ma ?? []).forEach((ma, i) => {
+        const line = view.addLineSeries({ color: MA_COLORS[i % MA_COLORS.length], lineWidth: 1, priceLineVisible: false,
+            lastValueVisible: false, crosshairMarkerVisible: false });
+        line.setData(ma.points.map(([time, value]) => ({ time, value })));
+    });
     chart.lines.forEach(seg => {
         const line = view.addLineSeries({ color: '#e2e8f0', lineWidth: 1, lineStyle: 2, priceLineVisible: false,
             lastValueVisible: false, crosshairMarkerVisible: false });
