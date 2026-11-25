@@ -264,7 +264,8 @@ const STRINGS = {
         'thanks.lead': 'Ollarai Pro 결제가 완료됐어요. 이제 모든 유료 기능을 쓸 수 있어요.',
         'thanks.start': 'Ollarai 시작하기',
         'thanks.account': '구독 설정',
-        'thanks.note-delay': 'Pro가 계정에 반영되기까지 1분 정도 걸릴 수 있어요. 바로 보이지 않으면 잠시 후 새로고침해 주세요.',
+        // Empty: domestic payments open the subscription before landing here, so there's no delay to explain
+        'thanks.note-delay': '',
         'thanks.note-receipt': '결제 영수증은 이메일로 보내드려요. 구독 해지와 결제 내역은 구독 설정에서 확인할 수 있어요.',
         'thanks.note-contact': '문의: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
     },

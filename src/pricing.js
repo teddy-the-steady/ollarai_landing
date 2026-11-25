@@ -64,14 +64,14 @@ async function saveBuyer(memberId, fullName, phoneNumber) {
     try { localStorage.setItem(BUYER_KEY, JSON.stringify({ memberId, fullName, phoneNumber })); } catch { /* storage blocked */ }
 }
 
-// The billing key PortOne issued -> first payment on the server -> the subscription screen.
+// The billing key PortOne issued -> first payment on the server -> the thank-you page.
 async function startDomesticSubscription(billingKey) {
     const { api, ApiError, forgetBuyer } = await loadApi();
     show('loading');
     try {
         await api('/subscription/portone', { method: 'POST', body: { billing_key: billingKey } });
         forgetBuyer();
-        window.location.href = '/account/?lang=ko';
+        window.location.href = '/thanks/';
     } catch (error) {
         console.error(error);
         if (error instanceof ApiError && error.status === 402) show('declined', error.detail?.message);

@@ -961,3 +961,38 @@ html:has(dialog[open]) { overflow: hidden; }
 .account-btn-primary:hover:not(:disabled) { background: var(--primary-green-dark); }
 .account-btn-danger { border-color: rgba(239, 68, 68, 0.4); color: rgb(252, 165, 165); }
 .account-btn-danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.1); }
+
+/* Thank-you page (/thanks/): filled green badge, soft halo, check drawn in once */
+.thanks-check {
+    position: relative;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin: 0 auto 2rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--primary-green-light), var(--primary-green-dark));
+    box-shadow: 0 0 0 8px rgba(116, 210, 78, 0.1), 0 12px 40px -8px rgba(116, 210, 78, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: thanks-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.thanks-check svg {
+    width: 2.25rem;
+    height: 2.25rem;
+    fill: none;
+    stroke: rgb(15, 23, 42);
+    stroke-width: 2.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.thanks-check path {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    animation: thanks-draw 0.35s ease-out 0.3s forwards;
+}
+@keyframes thanks-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes thanks-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .thanks-check { animation: none; }
+    .thanks-check path { animation: none; stroke-dashoffset: 0; }
+}

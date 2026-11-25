@@ -7,5 +7,7 @@ import { t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 document.title = t('thanks.page-title');
 applyI18n();
+// A note with no text in this language (ko has no activation delay) is left out
+document.querySelectorAll('main li').forEach(li => { if (!li.textContent.trim()) li.remove(); });
 langSwitch(document.getElementById('lang-switch'));
 document.getElementById('home-link').href = sitePath('/');
