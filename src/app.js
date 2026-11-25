@@ -362,6 +362,13 @@ exampleQuestions(lang).then(questions => {
         btn.type = 'button';
         btn.addEventListener('click', () => {
             if (busy) return;
+            // These were checked on Quick the night before (ollarai_backend common/example_questions.py);
+            // on Precise some came back with a notice or no rows (2026-11-25, 5 of 56), so a paid account
+            // is switched to Quick for them, as a Pro chip switches it to Precise
+            if (me?.tier === 'paid') {
+                storageSet(TIER_KEY, 'free');
+                renderTierToggle();
+            }
             queryInput.value = btn.textContent.trim();
             questionSource = 'example';
             autoResize();
