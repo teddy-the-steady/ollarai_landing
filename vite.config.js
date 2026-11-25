@@ -39,6 +39,7 @@ export default defineConfig(({ command, mode }) => {
           app: resolve(root, 'app/index.html'),
           account: resolve(root, 'account/index.html'),
           checkout: resolve(root, 'checkout/index.html'),
+          thanks: resolve(root, 'thanks/index.html'),
         },
         output: {
           assetFileNames: 'assets/[name]-[hash][extname]',

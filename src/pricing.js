@@ -40,6 +40,8 @@ if (button && dialog) {
     dialog.querySelectorAll('[data-action="close"]').forEach(btn => btn.addEventListener('click', () => dialog.close()));
 
     button.addEventListener('click', async () => {
+        // The thank-you page after payment (/thanks/) and the beta pages read this, so they stay in this language
+        try { localStorage.setItem('ollarai-lang', lang); } catch { /* storage blocked */ }
         show('loading');
         dialog.showModal();
         try {
