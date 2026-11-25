@@ -43,9 +43,9 @@
                 <span class="text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
             </a>
             <div class="hidden md:flex gap-10 text-sm font-medium tracking-wide">
-                <a href="#screening" class="hover:text-primary transition" data-i18n="nav-screening"></a>
-                <a href="#features" class="hover:text-primary transition" data-i18n="nav-features"></a>
-                <a href="#vision" class="hover:text-primary transition" data-i18n="nav-roadmap"></a>
+                <a href="#data" class="hover:text-primary transition" data-i18n="nav-data"></a>
+                <a href="#sources" class="hover:text-primary transition" data-i18n="nav-sources"></a>
+                <a href="#updates" class="hover:text-primary transition" data-i18n="nav-updates"></a>
             </div>
             <div class="flex items-center gap-3">
                 <button type="button" data-theme-toggle class="theme-toggle"></button>
@@ -66,54 +66,26 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="pt-40 pb-28 bg-page">
-        <div class="container mx-auto px-6 text-center">
-            <div class="text-sm font-medium text-slate-400 mb-5 empty:hidden empty:m-0" data-i18n="hero-kicker"></div>
-            <h1 class="text-5xl md:text-6xl font-bold text-white mb-8 leading-[1.15] tracking-tight" data-i18n="hero-title">
-            </h1>
-            <p class="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed font-light" data-i18n="hero-subtitle">
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-5">
-                <button id="hero-cta-btn" class="bg-primary bg-primary-hover text-white px-7 py-3.5 rounded-lg font-semibold text-base transition" data-i18n="hero-cta">
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI Stock Screening Section -->
-    <section id="screening" class="py-32 overflow-hidden bg-section-3">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col lg:flex-row items-center gap-16">
-                <div class="lg:w-1/2">
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight" data-i18n="screening-title"></h2>
-                    <p class="text-slate-400 text-lg leading-relaxed mb-8" data-i18n="screening-desc"></p>
-                    <ul class="space-y-4 mb-10">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-primary mt-1"></i>
-                            <span class="text-slate-300 text-sm leading-relaxed" data-i18n="screening-point1"></span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-primary mt-1"></i>
-                            <p class="text-sm leading-relaxed"><span class="query-example-pro-badge align-middle mr-1.5">PRO</span><span class="text-slate-300" data-i18n="screening-point2"></span></p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-primary mt-1"></i>
-                            <p class="text-sm leading-relaxed"><span class="query-example-pro-badge align-middle mr-1.5">PRO</span><span class="text-slate-300" data-i18n="screening-point3"></span></p>
-                        </li>
-                    </ul>
-                    <button id="screening-cta-btn" class="bg-primary bg-primary-hover text-white px-6 py-3 rounded-lg font-semibold text-sm transition" data-i18n="screening-cta">
-                    </button>
+    <!-- Hero: the pitch on the left, real answers replaying on the right -->
+    <section class="pt-36 pb-24 lg:pt-44 lg:pb-28 bg-page">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="flex flex-col lg:flex-row lg:items-center gap-14">
+                <div class="lg:w-[46%]">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-[1.15] tracking-tight" data-i18n="hero-title"></h1>
+                    <p class="text-slate-400 text-lg md:text-xl mb-8 leading-relaxed" data-i18n="hero-subtitle"></p>
+                    <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+                        <button id="hero-cta-btn" class="bg-primary bg-primary-hover text-white px-7 py-3.5 rounded-lg font-semibold text-base transition" data-i18n="hero-cta"></button>
+                        <span class="text-slate-500 text-sm" data-i18n="cta-note"></span>
+                    </div>
                 </div>
-                <div class="lg:w-1/2 relative">
+                <div class="lg:w-[54%] w-full">
                     <div id="screener-demo" class="panel relative overflow-hidden">
-                        <!-- Preview tag -->
-                        <div class="flex items-center justify-between px-5 py-3 border-b border-white/10 text-[11px] text-slate-500">
+                            <div class="flex items-center justify-between px-5 py-3 border-b border-white/10 text-[11px] text-slate-500">
                             <span data-i18n="screening-preview-tag"></span>
                             <span id="screener-step" class="tabular-nums"></span>
                         </div>
 
-                        <!-- Screening query + result demo (illustrative sample data) -->
+                        <!-- Question + answer, replayed from real answers (src/main.js) -->
                         <div class="p-5">
                             <div class="flex items-center gap-3 px-3.5 py-3 rounded-md bg-slate-900/60 border border-white/10 mb-4">
                                 <i class="fas fa-magnifying-glass text-slate-500 text-sm"></i>
@@ -134,112 +106,143 @@
         </div>
     </section>
 
-    <!-- Problem Section -->
-    <section class="py-32 bg-section">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto text-center mb-20">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-i18n="problem-title"></h2>
-                <p class="text-slate-400 text-lg leading-relaxed" data-i18n="problem-desc">
-                </p>
+    <!-- What you can ask about: real coverage (counted from the DB on 2026-11-25) -->
+    <section id="data" class="py-24 bg-section-3">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" data-i18n="data-title"></h2>
+            <p class="text-slate-400 text-lg leading-relaxed mb-10 max-w-3xl" data-i18n="data-desc"></p>
+            <div class="panel text-sm">
+                <div class="data-row data-head text-slate-500 text-xs">
+                    <div></div>
+                    <div data-i18n="data-col-kr"></div>
+                    <div data-i18n="data-col-us"></div>
+                    <div class="md:text-right" data-i18n="data-col-plan"></div>
+                </div>
+                <div class="data-row">
+                    <div class="text-white font-medium" data-i18n="data-fin-label"></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-kr"></span><span data-i18n="data-fin-kr"></span></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-us"></span><span data-i18n="data-fin-us"></span></div>
+                    <div class="text-slate-500 text-xs md:text-right"><span data-i18n="data-free"></span></div>
+                </div>
+                <div class="data-row">
+                    <div class="text-white font-medium" data-i18n="data-price-label"></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-kr"></span><span data-i18n="data-price-kr"></span></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-us"></span><span data-i18n="data-price-us"></span></div>
+                    <div class="text-slate-500 text-xs md:text-right"><span class="query-example-pro-badge">PRO</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="text-white font-medium" data-i18n="data-ratio-label"></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-kr"></span><span data-i18n="data-ratio-kr"></span></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-us"></span><span data-i18n="data-ratio-us"></span></div>
+                    <div class="text-slate-500 text-xs md:text-right"><span class="query-example-pro-badge">PRO</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="text-white font-medium" data-i18n="data-chart-label"></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-kr"></span><span data-i18n="data-chart-kr"></span></div>
+                    <div class="text-slate-300"><span class="md:hidden text-slate-500 mr-1.5" data-i18n="data-col-us"></span><span data-i18n="data-chart-us"></span></div>
+                    <div class="text-slate-500 text-xs md:text-right"><span class="query-example-pro-badge">PRO</span></div>
+                </div>
             </div>
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mt-8">
+                <button id="screening-cta-btn" class="bg-primary bg-primary-hover text-white px-6 py-3 rounded-lg font-semibold text-sm transition" data-i18n="screening-cta"></button>
+                <span class="text-slate-500 text-xs" data-i18n="data-asof"></span>
+            </div>
+        </div>
+    </section>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="panel p-8">
-                    <div class="text-slate-500 mb-5 text-xl"><i class="fas fa-file-lines"></i></div>
-                    <h3 class="text-lg font-semibold text-white mb-3" data-i18n="problem-card1-title"></h3>
-                    <p class="text-slate-400 text-sm leading-relaxed" data-i18n="problem-card1-desc"></p>
+    <!-- The manual way vs asking -->
+    <section class="py-24 bg-section">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" data-i18n="manual-title"></h2>
+            <p class="text-slate-400 text-lg leading-relaxed mb-10 max-w-3xl" data-i18n="manual-desc"></p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="panel p-7">
+                    <h3 class="text-white font-semibold mb-4" data-i18n="manual-old-title"></h3>
+                    <ol class="manual-steps text-slate-400 text-sm leading-relaxed">
+                        <li data-i18n="manual-step1"></li>
+                        <li data-i18n="manual-step2"></li>
+                        <li data-i18n="manual-step3"></li>
+                        <li data-i18n="manual-step4"></li>
+                        <li data-i18n="manual-step5"></li>
+                        <li data-i18n="manual-step6"></li>
+                    </ol>
                 </div>
-                <div class="panel p-8">
-                    <div class="text-slate-500 mb-5 text-xl"><i class="fas fa-lock"></i></div>
-                    <h3 class="text-lg font-semibold text-white mb-3" data-i18n="problem-card2-title"></h3>
-                    <p class="text-slate-400 text-sm leading-relaxed" data-i18n="problem-card2-desc"></p>
-                </div>
-                <div class="panel p-8">
-                    <div class="text-slate-500 mb-5 text-xl"><i class="fas fa-globe"></i></div>
-                    <h3 class="text-lg font-semibold text-white mb-3" data-i18n="problem-card3-title"></h3>
-                    <p class="text-slate-400 text-sm leading-relaxed" data-i18n="problem-card3-desc"></p>
+                <div class="panel p-7">
+                    <h3 class="text-white font-semibold mb-4" data-i18n="manual-new-title"></h3>
+                    <div class="flex items-center gap-3 px-3.5 py-3 rounded-md bg-slate-900/60 border border-white/10 mb-4 text-sm text-slate-200">
+                        <i class="fas fa-magnifying-glass text-slate-500 text-sm"></i>
+                        <span data-i18n="manual-new-query"></span>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed" data-i18n="manual-new-desc"></p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Key Differentiator Section -->
-    <section id="features" class="py-32 overflow-hidden bg-page">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-24">
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6" data-i18n="features-title"></h2>
-                <p class="text-slate-400 text-lg" data-i18n="features-desc"></p>
-            </div>
-
-            <div class="space-y-32">
-                <!-- 1. Precise Data: DART Infographic -->
-                <div class="flex flex-col lg:flex-row items-center gap-16">
-                    <div class="lg:w-1/2">
-                        <h3 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight" data-i18n="feat1-title"></h3>
-                        <p class="text-slate-400 text-lg leading-relaxed">
-                            <span data-i18n="feat1-desc"></span>
-                            <span class="tooltip-wrapper ml-1.5" tabindex="0">
-                                <i class="fas fa-circle-info text-primary text-sm cursor-pointer align-middle"></i>
-                                <span class="tooltip-box" data-i18n="feat1-tooltip"></span>
-                            </span>
-                        </p>
-                    </div>
-                    <div class="lg:w-1/2 relative">
-                        <div class="panel p-6 relative z-10">
-                            <!-- DART filing excerpt (ko, ja): Samsung Electronics Q3 2026 quarterly report, consolidated income statement.
-                                 Figures as Ollarai returned them on 2026-11-25 ("삼성전자 2025년 3분기 / 최근 4개 분기 매출과 영업이익"). -->
-                            <div id="sim-dart" class="bg-[#f8f9fa] text-[#333] p-4 rounded-md mb-4 pointer-events-none">
-                                <div class="flex items-baseline justify-between border-b border-gray-300 pb-1.5 mb-2">
-                                    <p class="text-[10px] font-bold">삼성전자 · 분기보고서 (2026.09)</p>
-                                    <p class="text-[9px] text-gray-500">연결 손익계산서 · 단위: 백만원</p>
+    <!-- Where the numbers come from -->
+    <section id="sources" class="py-24 overflow-hidden bg-page">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="flex flex-col lg:flex-row items-center gap-14">
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight" data-i18n="feat1-title"></h2>
+                    <p class="text-slate-400 text-lg leading-relaxed mb-5" data-i18n="feat1-desc"></p>
+                    <p class="text-slate-500 text-sm leading-relaxed" data-i18n="feat1-tooltip"></p>
+                </div>
+                <div class="lg:w-1/2 w-full">
+                    <div class="panel p-6 relative z-10">
+                        <!-- DART filing excerpt (ko, ja): Samsung Electronics Q3 2026 quarterly report, consolidated income statement.
+                             Figures as Ollarai returned them on 2026-11-25 ("삼성전자 2025년 3분기 / 최근 4개 분기 매출과 영업이익"). -->
+                        <div id="sim-dart" class="bg-[#f8f9fa] text-[#333] p-4 rounded-md mb-4 pointer-events-none">
+                            <div class="flex items-baseline justify-between border-b border-gray-300 pb-1.5 mb-2">
+                                <p class="text-[10px] font-bold">삼성전자 · 분기보고서 (2026.09)</p>
+                                <p class="text-[9px] text-gray-500">연결 손익계산서 · 단위: 백만원</p>
+                            </div>
+                            <table class="dart-table w-full text-[10px] tabular-nums">
+                                <tr class="bg-gray-100"><th>과목</th><th>2026년 3분기</th><th>2025년 3분기</th></tr>
+                                <tr><td>매출액</td><td>195,253,209</td><td>86,061,747</td></tr>
+                                <tr class="bg-blue-50"><td>영업이익</td><td>107,440,482</td><td>12,166,062</td></tr>
+                            </table>
+                        </div>
+                        <!-- EDGAR filing excerpt (en): Apple 10-Q for the quarter ended Jun 27, 2026, same provenance -->
+                        <div id="sim-edgar" class="hidden bg-[#fff] text-[#333] p-4 rounded-md mb-4 pointer-events-none" style="border:1px solid #ddd;">
+                            <div class="flex items-start justify-between border-b border-gray-300 pb-1.5 mb-2">
+                                <div>
+                                    <p class="text-[8px] text-gray-500">U.S. Securities and Exchange Commission · EDGAR</p>
+                                    <p class="text-[10px] font-bold text-gray-800 mt-0.5">Apple Inc. · Form 10-Q</p>
                                 </div>
-                                <table class="dart-table w-full text-[10px] tabular-nums">
-                                    <tr class="bg-gray-100"><th>과목</th><th>2026년 3분기</th><th>2025년 3분기</th></tr>
-                                    <tr><td>매출액</td><td>195,253,209</td><td>86,061,747</td></tr>
-                                    <tr class="bg-blue-50"><td>영업이익</td><td>107,440,482</td><td>12,166,062</td></tr>
-                                </table>
+                                <p class="text-[8px] text-gray-500 text-right">Three months ended<br>June 27, 2026</p>
                             </div>
-                            <!-- EDGAR filing excerpt (en): Apple 10-Q for the quarter ended Jun 27, 2026, same provenance -->
-                            <div id="sim-edgar" class="hidden bg-[#fff] text-[#333] p-4 rounded-md mb-4 pointer-events-none" style="border:1px solid #ddd;">
-                                <div class="flex items-start justify-between border-b border-gray-300 pb-1.5 mb-2">
-                                    <div>
-                                        <p class="text-[8px] text-gray-500">U.S. Securities and Exchange Commission · EDGAR</p>
-                                        <p class="text-[10px] font-bold text-gray-800 mt-0.5">Apple Inc. · Form 10-Q</p>
-                                    </div>
-                                    <p class="text-[8px] text-gray-500 text-right">Three months ended<br>June 27, 2026</p>
-                                </div>
-                                <p class="text-[8px] text-gray-500 mb-1">Condensed Consolidated Statements of Operations (in millions)</p>
-                                <table class="w-full text-[10px] tabular-nums" style="border-collapse:collapse;">
-                                    <tr style="background:#f0f0f0;">
-                                        <th class="text-left py-0.5 px-1 border border-gray-300 font-semibold"></th>
-                                        <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">Jun 27, 2026</th>
-                                        <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">Jun 28, 2025</th>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-0.5 px-1 border border-gray-200">Total net sales</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">$ 109,417</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">$ 94,036</td>
-                                    </tr>
-                                    <tr style="background:#ebf5ff;">
-                                        <td class="py-0.5 px-1 border border-gray-200 font-semibold">Operating income</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200 font-semibold text-blue-700">35,695</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">28,202</td>
-                                    </tr>
-                                </table>
+                            <p class="text-[8px] text-gray-500 mb-1">Condensed Consolidated Statements of Operations (in millions)</p>
+                            <table class="w-full text-[10px] tabular-nums" style="border-collapse:collapse;">
+                                <tr style="background:#f0f0f0;">
+                                    <th class="text-left py-0.5 px-1 border border-gray-300 font-semibold"></th>
+                                    <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">Jun 27, 2026</th>
+                                    <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">Jun 28, 2025</th>
+                                </tr>
+                                <tr>
+                                    <td class="py-0.5 px-1 border border-gray-200">Total net sales</td>
+                                    <td class="text-right py-0.5 px-1 border border-gray-200">$ 109,417</td>
+                                    <td class="text-right py-0.5 px-1 border border-gray-200">$ 94,036</td>
+                                </tr>
+                                <tr style="background:#ebf5ff;">
+                                    <td class="py-0.5 px-1 border border-gray-200 font-semibold">Operating income</td>
+                                    <td class="text-right py-0.5 px-1 border border-gray-200 font-semibold text-blue-700">35,695</td>
+                                    <td class="text-right py-0.5 px-1 border border-gray-200">28,202</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Arrow -->
+                        <div class="flex justify-center my-4 text-slate-500">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <!-- Extracted Result -->
+                        <div class="bg-slate-900 p-4 rounded-md border border-white/10">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-slate-500 text-[10px]" data-i18n="feat1-sql-label"></span>
+                                <span id="sim-source" class="text-slate-500 text-[10px]"></span>
                             </div>
-                            <!-- Arrow -->
-                            <div class="flex justify-center my-4 text-slate-500">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <!-- Extracted Result -->
-                            <div class="bg-slate-900 p-4 rounded-md border border-white/10">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-slate-500 text-[10px]" data-i18n="feat1-sql-label"></span>
-                                    <span id="sim-source" class="text-slate-500 text-[10px]"></span>
-                                </div>
-                                <p id="sim-sql-query" class="text-slate-400 text-[11px] font-mono leading-relaxed break-all">SELECT op_profit FROM dart_financials WHERE ticker='005930' AND period='2026Q1'</p>
-                                <div class="mt-3 text-2xl font-semibold text-white tabular-nums" id="sim-sql-result">890,200,000,000 <span class="text-sm font-normal text-slate-500">KRW</span></div>
-                            </div>
+                            <p id="sim-sql-query" class="text-slate-400 text-[11px] font-mono leading-relaxed break-all"></p>
+                            <div class="mt-3 text-2xl font-semibold text-white tabular-nums" id="sim-sql-result"></div>
                         </div>
                     </div>
                 </div>
@@ -247,63 +250,47 @@
         </div>
     </section>
 
-    <!-- Vision Roadmap -->
-    <section id="vision" class="py-32 relative overflow-hidden bg-section-2">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-24">
-                <h2 class="text-4xl font-bold text-white mb-6" data-i18n="vision-title"></h2>
-                <p class="text-slate-400" data-i18n="vision-desc"></p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-12 relative">
-                <!-- Step 1 -->
-                <div class="panel p-8">
-                    <div class="text-sm text-slate-500 tabular-nums">01</div>
-                    <h3 class="text-xl font-semibold text-white mt-2 mb-4" data-i18n="vision1-title"></h3>
-                    <p class="text-slate-400 leading-relaxed mb-6" data-i18n="vision1-desc">
-                    </p>
-                    <div class="h-1 w-full rounded-full" style="background-color: rgba(116, 210, 78, 0.3);">
-                        <div class="h-full bg-primary w-3/4 rounded-full"></div>
-                    </div>
-                    <span class="inline-block mt-3 text-xs font-semibold text-primary" data-i18n="vision-stage-current"></span>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="panel p-8">
-                    <div class="text-sm text-slate-500 tabular-nums">02</div>
-                    <h3 class="text-xl font-semibold text-white mt-2 mb-4" data-i18n="vision2-title"></h3>
-                    <p class="text-slate-400 leading-relaxed mb-6" data-i18n="vision2-desc">
-                    </p>
-                    <div class="h-1 bg-slate-700 w-full rounded-full">
-                        <div class="h-full bg-primary w-1/4 rounded-full"></div>
-                    </div>
-                    <span class="inline-block mt-3 text-xs text-slate-500" data-i18n="vision-stage-developing"></span>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="panel p-8">
-                    <div class="text-sm text-slate-500 tabular-nums">03</div>
-                    <h3 class="text-xl font-semibold text-white mt-2 mb-4" data-i18n="vision3-title"></h3>
-                    <p class="text-slate-400 leading-relaxed mb-6" data-i18n="vision3-desc">
-                    </p>
-                    <div class="h-1 bg-slate-700 w-full rounded-full"></div>
-                    <span class="inline-block mt-3 text-xs text-slate-500" data-i18n="vision-stage-future"></span>
-                </div>
-            </div>
+    <!-- Recent updates: dated, shipped changes instead of a roadmap -->
+    <section id="updates" class="py-24 bg-section-2">
+        <div class="container mx-auto px-6 max-w-6xl">
+          <div class="max-w-3xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" data-i18n="updates-title"></h2>
+            <p class="text-slate-400 leading-relaxed mb-8" data-i18n="updates-desc"></p>
+            <ul class="border-t border-white/10">
+                <li class="update-row">
+                    <time class="text-slate-500 tabular-nums" data-i18n="upd1-date"></time>
+                    <span class="text-slate-300" data-i18n="upd1-text"></span>
+                </li>
+                <li class="update-row">
+                    <time class="text-slate-500 tabular-nums" data-i18n="upd2-date"></time>
+                    <span class="text-slate-300" data-i18n="upd2-text"></span>
+                </li>
+                <li class="update-row">
+                    <time class="text-slate-500 tabular-nums" data-i18n="upd3-date"></time>
+                    <span class="text-slate-300" data-i18n="upd3-text"></span>
+                </li>
+                <li class="update-row">
+                    <time class="text-slate-500 tabular-nums" data-i18n="upd4-date"></time>
+                    <span class="text-slate-300" data-i18n="upd4-text"></span>
+                </li>
+                <li class="update-row">
+                    <time class="text-slate-500 tabular-nums" data-i18n="upd5-date"></time>
+                    <span class="text-slate-300" data-i18n="upd5-text"></span>
+                </li>
+            </ul>
+            <p class="text-slate-500 text-sm mt-6" data-i18n="updates-next"></p>
+          </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-32">
+    <section class="py-24">
         <div class="container mx-auto px-6">
-            <div class="max-w-5xl mx-auto panel px-8 py-12 md:p-16 text-center">
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-8 relative z-10 leading-tight" data-i18n="cta-title">
-                </h2>
-                <p class="text-slate-400 text-lg mb-12 relative z-10" data-i18n="cta-desc">
-                </p>
-                <div class="flex flex-col items-center gap-4 relative z-10">
-                    <button id="cta-start-btn" class="bg-primary bg-primary-hover text-white px-7 py-3.5 rounded-lg font-semibold text-base transition min-w-[160px]" data-i18n="cta">
-                    </button>
+            <div class="max-w-4xl mx-auto panel px-8 py-12 md:p-14 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-5 leading-tight" data-i18n="cta-title"></h2>
+                <p class="text-slate-400 text-lg mb-8" data-i18n="cta-desc"></p>
+                <div class="flex flex-col items-center gap-3">
+                    <button id="cta-start-btn" class="bg-primary bg-primary-hover text-white px-7 py-3.5 rounded-lg font-semibold text-base transition min-w-[160px]" data-i18n="cta"></button>
                     <p class="text-slate-500 text-sm" data-i18n="cta-note"></p>
                 </div>
             </div>

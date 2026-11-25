@@ -166,6 +166,37 @@ html[lang="ja"] body {
 }
 .panel-solid { background: var(--surface); }
 
+/* Coverage table: label + Korea + US + plan; stacked on phones */
+.data-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px 16px;
+    padding: 14px 20px;
+    border-top: 1px solid rgb(var(--c-white) / 0.06);
+}
+.data-row:first-child { border-top: 0; }
+.data-row.data-head { display: none; }
+@media (min-width: 768px) {
+    .data-row { grid-template-columns: 1.1fr 1.4fr 1.4fr 0.6fr; align-items: baseline; }
+    .data-row.data-head { display: grid; padding-top: 12px; padding-bottom: 12px; }
+}
+
+/* "Doing it by hand" steps */
+.manual-steps { counter-reset: step; }
+.manual-steps li { counter-increment: step; display: flex; gap: 10px; padding: 4px 0; }
+.manual-steps li::before { content: counter(step); flex: none; width: 1.25rem; color: rgb(var(--c-slate-500)); font-variant-numeric: tabular-nums; }
+
+/* Recent updates list */
+.update-row {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgb(var(--c-white) / 0.06);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
 /* Filing excerpt in the "from the filing" graphic */
 .dart-table { border-collapse: collapse; }
 .dart-table th, .dart-table td { padding: 3px 6px; border: 1px solid #e5e7eb; text-align: right; }

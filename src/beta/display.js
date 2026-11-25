@@ -159,7 +159,7 @@ export function createFormatter(lang, locale) {
         if (mapped) return { text: mapped[lang] ?? String(value), numeric: false };
         if (col.format === 'company') {
             const names = companies?.[value];
-            const text = (lang === 'ko' ? names?.ko : names?.en) ?? names?.en ?? String(value);
+            const text = (lang === 'ko' ? names?.ko : lang === 'ja' ? names?.ja : names?.en) ?? names?.en ?? String(value);
             const flag = flagEmoji(names?.country);
             if (!flag) return { text, numeric: false };
             const flagTitle = LISTED[lang]?.[names.country] ?? regionName(names.country);
