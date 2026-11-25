@@ -69,8 +69,8 @@
     <!-- Hero: the pitch on the left, real answers replaying on the right -->
     <section class="pt-36 pb-24 lg:pt-44 lg:pb-28 bg-page">
         <div class="container mx-auto px-6 max-w-6xl">
-            <div class="flex flex-col lg:flex-row lg:items-center gap-14">
-                <div class="lg:w-[46%]">
+            <div class="flex flex-col lg:flex-row lg:items-start gap-14">
+                <div class="lg:w-[46%] lg:pt-12">
                     <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-[1.15] tracking-tight" data-i18n="hero-title"></h1>
                     <p class="text-slate-400 text-lg md:text-xl mb-8 leading-relaxed" data-i18n="hero-subtitle"></p>
                     <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -87,11 +87,11 @@
 
                         <!-- Question + answer, replayed from real answers (src/main.js) -->
                         <div class="p-5">
-                            <div class="flex items-center gap-3 px-3.5 py-3 rounded-md bg-slate-900/60 border border-white/10 mb-4">
+                            <div class="flex items-center gap-3 px-3.5 py-3 min-h-[4.25rem] rounded-md bg-slate-900/60 border border-white/10 mb-4">
                                 <i class="fas fa-magnifying-glass text-slate-500 text-sm"></i>
-                                <span class="text-slate-200 text-sm"><span id="screener-query-text"></span><span class="screener-caret">|</span></span>
+                                <span class="text-slate-200 text-sm leading-5"><span id="screener-query-text"></span><span class="screener-caret">|</span></span>
                             </div>
-                            <div class="min-h-[13rem]">
+                            <div class="h-[14.5rem] overflow-hidden">
                                 <table class="w-full text-xs text-slate-300 tabular-nums">
                                     <thead id="screener-result-head"></thead>
                                     <tbody id="screener-result-body"></tbody>
