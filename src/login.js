@@ -35,10 +35,12 @@ const isNewPassword = () => mode === 'signup' || mode === 'reset';
 // or with error_code=otp_expired etc. when the link is stale. Read it before supabase-js clears it.
 const hashParams = new URLSearchParams(window.location.hash.slice(1));
 const recovering = hashParams.get('type') === 'recovery';
-// GIS redirect mode (mobile) comes back as /login/#google_credential=<ID token> (cloudfront/google-login-redirect.js).
-// Drop it from the address bar right away.
+// The mobile Google sign-in comes back as /login/#google_credential=<ID token>, or #google_error=<code>
+// when it was cancelled or failed (cloudfront/google-login-redirect.js). Drop it from the address bar right away.
 const googleCredential = hashParams.get('google_credential');
-if (googleCredential !== null) history.replaceState(null, '', window.location.pathname + window.location.search);
+const googleError = hashParams.get('google_error');
+const googleReturned = googleCredential !== null || googleError !== null;
+if (googleReturned) history.replaceState(null, '', window.location.pathname + window.location.search);
 
 // Already signed in -> straight to the app (except a recovery session, which still needs the new password)
 supabase.auth.getSession().then(({ data: { session } }) => {
@@ -77,6 +79,15 @@ if (recovering) {
 } else if (hashParams.get('error_code')) {
     setMode('forgot');
     showError(t('auth.error.link-expired'));
+}
+
+// Sent here because another sign-in of this account pushed this browser's session out (src/beta/api.js)
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.get('reason') === 'session_revoked') {
+    searchParams.delete('reason');
+    const query = searchParams.toString();
+    history.replaceState(null, '', window.location.pathname + (query ? `?${query}` : '') + window.location.hash);
+    if (!recovering) showNotice(t('auth.notice.session-revoked'));
 }
 
 function showError(message) {
@@ -140,9 +151,14 @@ async function signInWithGoogle(credential, nonce) {
     window.location.replace(APP_PATH);
 }
 
-// On mobile the popup flow hands the credential back through a second account sheet (iOS Chrome) or
-// gets stuck in it, so mobile uses GIS redirect mode: Google POSTs the ID token to /auth/google,
-// which bounces it back here in the hash. The raw nonce waits in sessionStorage (same tab).
+// Mobile can't use GIS:
+//   - the GIS popup hands the credential back through a second account sheet (iOS Chrome) or gets stuck in it
+//   - every flow where Google POSTs an ID token back to us (GIS redirect mode /gsi/select, and
+//     response_type=id_token&response_mode=form_post) ends in a bare accounts.google.com 500 on iOS for
+//     some signed-in Google sessions; the code flow passes there (checked on an affected iPhone)
+// So mobile runs an authorization code flow with our own redirect_uri (Google's screen names our site,
+// unlike the Supabase redirect): /auth/google exchanges the code and bounces the ID token back here in
+// the hash. The raw nonce waits in sessionStorage (same tab); Google gets its hash and puts it in the token.
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS reports as Mac
 const NONCE_KEY = 'ollarai-google-nonce';
@@ -153,24 +169,39 @@ function finishGoogleRedirect() {
         nonce = sessionStorage.getItem(NONCE_KEY);
         sessionStorage.removeItem(NONCE_KEY);
     } catch { /* storage blocked */ }
-    if (!googleCredential || !nonce) {
+    // access_denied: the user backed out of Google's screen, nothing to report
+    if (googleError === 'access_denied') return;
+    if (googleError !== null || !googleCredential || !nonce) {
         showError(t('auth.error.generic'));
         return;
     }
     signInWithGoogle(googleCredential, nonce);
 }
 
+async function startGoogleCodeFlow() {
+    const { nonce, hashed } = await makeNonce();
+    sessionStorage.setItem(NONCE_KEY, nonce); // throws when storage is blocked -> Supabase redirect instead
+    const params = new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        response_type: 'code',
+        redirect_uri: window.location.origin + '/auth/google',
+        scope: 'openid email profile',
+        nonce: hashed,
+        // No prompt=select_account: tapping an account on Google's chooser is where iOS Chrome (signed in to
+        // Chrome) sometimes takes over with its own account sheet and then fails in /InteractiveLogin with a 500.
+        // Without it Google skips the chooser when there is one session; with several it still shows it.
+        hl: lang,
+    });
+    window.location.assign('https://accounts.google.com/o/oauth2/v2/auth?' + params);
+}
+
 async function setUpGis() {
     if (!GOOGLE_CLIENT_ID) throw new Error('VITE_GOOGLE_CLIENT_ID is not set');
     const [{ nonce, hashed }] = await Promise.all([makeNonce(), loadGis()]);
-    // Without storage the redirect can't be finished; the catch below falls back to the Supabase redirect
-    if (isMobile) sessionStorage.setItem(NONCE_KEY, nonce);
     google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         nonce: hashed,
-        ...(isMobile
-            ? { ux_mode: 'redirect', login_uri: window.location.origin + '/auth/google' }
-            : { callback: ({ credential }) => signInWithGoogle(credential, nonce) }),
+        callback: ({ credential }) => signInWithGoogle(credential, nonce),
     });
     google.accounts.id.renderButton(gisContainer, {
         theme: 'outline',
@@ -182,18 +213,30 @@ async function setUpGis() {
     });
 }
 
-// Read the returned credential's nonce before setUpGis stores a fresh one
-if (googleCredential !== null) finishGoogleRedirect();
+if (googleReturned) finishGoogleRedirect();
 
-setUpGis().catch(error => {
-    console.error(error);
+// Mobile: our button (startGoogleCodeFlow). Desktop: the GIS button, or ours with the Supabase redirect if GIS fails.
+if (isMobile) {
     useRedirectGoogle();
-});
+} else {
+    setUpGis().catch(error => {
+        console.error(error);
+        useRedirectGoogle();
+    });
+}
 
 googleBtn.addEventListener('click', async () => {
     showError('');
     showNotice('');
     googleBtn.disabled = true;
+    if (isMobile && GOOGLE_CLIENT_ID) {
+        try {
+            await startGoogleCodeFlow();
+            return;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: redirectTo() },
@@ -203,6 +246,11 @@ googleBtn.addEventListener('click', async () => {
         showError(authErrorMessage(error));
         googleBtn.disabled = false;
     }
+});
+
+// Back from Google's page via the back/forward cache: the button is still disabled from the click
+window.addEventListener('pageshow', e => {
+    if (e.persisted) googleBtn.disabled = false;
 });
 
 resendBtn.addEventListener('click', async () => {

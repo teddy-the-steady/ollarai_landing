@@ -1,12 +1,13 @@
 import './style.css';
 import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
 import flagFontUrl from 'country-flag-emoji-polyfill/dist/TwemojiCountryFlags.woff2?url';
-import { supabase, api, ApiError, signOut, LOGIN_PATH } from './beta/api.js';
+import { supabase, api, ApiError, signOut, LOGIN_PATH, loginUrl } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
 import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
-import { exampleQuestions } from './beta/examples.js';
+import { exampleQuestions, proExampleQuestions } from './beta/examples.js';
 import { rowFilings, tableFilings, filingLabel, systemName, refLink, refTopic, STATEMENTS, TOPICS } from './beta/sources.js';
+import { renderPatternChart } from './beta/patternChart.js';
 
 // Windows has no flag glyphs (🇰🇷 shows as "KR"): the flags-only Twemoji font, loaded there alone
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
@@ -91,6 +92,7 @@ function renderAccount() {
     badge.classList.toggle('hover:text-white', !!badgeLink);
 
     document.getElementById('tier-toggle').classList.toggle('hidden', me.status !== 'approved');
+    tierHelp.classList.toggle('hidden', me.status !== 'approved');
     document.querySelector('#tier-toggle .tier-lock').classList.toggle('hidden', isPaid);
     if (isPaid) tierUpsell.classList.add('hidden');
     renderTierToggle();
@@ -129,6 +131,20 @@ document.querySelectorAll('#tier-toggle [data-tier]').forEach(btn => {
         queryInput.focus();
     });
 });
+
+// Quick vs Precise popover: hover opens it on desktop (CSS), a tap toggles it; outside tap / Escape closes
+const tierHelp = document.getElementById('tier-help');
+const tierHelpBtn = document.getElementById('tier-help-btn');
+function setTierHelp(open) {
+    tierHelp.classList.toggle('open', open);
+    tierHelpBtn.setAttribute('aria-expanded', String(open));
+}
+tierHelpBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    setTierHelp(!tierHelp.classList.contains('open'));
+});
+document.addEventListener('click', e => { if (!tierHelp.contains(e.target)) setTierHelp(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setTierHelp(false); });
 
 function routeByStatus() {
     if (me.status === 'approved') {
@@ -175,7 +191,7 @@ async function init() {
 }
 
 supabase.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') window.location.replace(LOGIN_PATH);
+    if (event === 'SIGNED_OUT') window.location.replace(loginUrl());
 });
 
 document.getElementById('logout-btn').addEventListener('click', signOut);
@@ -302,11 +318,48 @@ queryInput.addEventListener('keydown', (e) => {
 const queryExamples = document.getElementById('query-examples');
 // Set by the first question: chips arriving after it stay hidden
 let examplesDismissed = false;
+// Pro chips (share prices / market data, paid accounts on 정밀 답변 only): two hard ones, the next in turn
+// per load. Paid accounts get it in the box with Precise picked; free accounts are asked whether
+// to go to the pricing page.
+const proChips = proExampleQuestions(lang).map(proQuestion => {
+    const proChip = el('button', 'query-example query-example-pro');
+    proChip.type = 'button';
+    proChip.title = t('app.examples.pro.title');
+    proChip.appendChild(el('span', 'query-example-pro-badge', 'PRO'));
+    proChip.appendChild(el('span', null, proQuestion));
+    proChip.addEventListener('click', () => {
+        if (busy) return;
+        if (!isPaidAccount()) {
+            proDialog.showModal();
+            return;
+        }
+        // Like the other chips it only fills the box, and switches the answer mode to Precise
+        storageSet(TIER_KEY, 'paid');
+        renderTierToggle();
+        queryInput.value = proQuestion;
+        questionSource = 'example';
+        autoResize();
+        querySubmit.disabled = false;
+        queryInput.focus();
+    });
+    return proChip;
+});
+
+const proDialog = document.getElementById('pro-dialog');
+proDialog.querySelector('[data-action="cancel"]').addEventListener('click', () => proDialog.close());
+proDialog.querySelector('[data-action="confirm"]').addEventListener('click', () => {
+    window.location.href = sitePath('/pricing/');
+});
+// A click on the backdrop (outside the box) cancels
+proDialog.addEventListener('click', (e) => {
+    if (e.target === proDialog) proDialog.close();
+});
+
+// Server chips and Pro chips go up together, in random order, once /examples answers (or fails)
 exampleQuestions(lang).then(questions => {
-    questions.forEach(question => {
+    const chips = questions.map(question => {
         const btn = el('button', 'query-example', question);
         btn.type = 'button';
-        queryExamples.appendChild(btn);
         btn.addEventListener('click', () => {
             if (busy) return;
             queryInput.value = btn.textContent.trim();
@@ -315,8 +368,15 @@ exampleQuestions(lang).then(questions => {
             querySubmit.disabled = false;
             queryInput.focus();
         });
-    });
-    if (questions.length && !examplesDismissed) queryExamples.classList.remove('hidden');
+        return btn;
+    }).concat(proChips);
+    // Fisher-Yates shuffle
+    for (let i = chips.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [chips[i], chips[j]] = [chips[j], chips[i]];
+    }
+    queryExamples.append(...chips);
+    if (!examplesDismissed) queryExamples.classList.remove('hidden');
 });
 
 queryForm.addEventListener('submit', (e) => {
@@ -415,7 +475,9 @@ function createResultCard(question, createdAt = new Date()) {
                 const loadAll = historyId != null && isPaidAccount()
                     ? () => api(`/history/${historyId}/rows?part=${i}`) : null;
                 const loadSummary = historyId != null ? () => api(`/history/${historyId}/summary?part=${i}`) : null;
-                body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary));
+                const loadChart = historyId != null
+                    ? (key) => api(`/history/${historyId}/chart?part=${i}&key=${encodeURIComponent(key)}`) : null;
+                body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary, loadChart));
             });
             if (live && response.tier === 'free') body.appendChild(retryPrecise(question));
         },
@@ -456,7 +518,7 @@ function notice(message, kind = 'info') {
     return box;
 }
 
-function renderPart(part, isMulti, loadAll, loadSummary) {
+function renderPart(part, isMulti, loadAll, loadSummary, loadChart) {
     const wrap = el('section', 'flex flex-col gap-3');
     if (isMulti && part.question) {
         wrap.appendChild(el('h3', 'text-sm font-semibold text-slate-300', part.question));
@@ -473,7 +535,7 @@ function renderPart(part, isMulti, loadAll, loadSummary) {
     const summary = part.result && summaryLine(part.summary, loadSummary);
     if (summary) wrap.appendChild(summary);
     if (part.result) {
-        wrap.appendChild(renderTable(part.result, loadAll));
+        wrap.appendChild(renderTable(part.result, loadAll, loadChart));
     } else if (!part.message) {
         wrap.appendChild(notice(t('result.not-found'), 'info'));
     }
@@ -509,13 +571,13 @@ function interpretationLine(read) {
 // with the answer; a small table's is made after it ({pending}) - the table is shown meanwhile, and
 // the line goes away when there is none (the summary didn't pass the server's checks, or failed).
 function summaryLine(summary, loadSummary) {
-    if (summary?.text) return el('p', 'result-summary', summary.text);
+    if (summary?.text) return summaryText(el('p', 'result-summary'), summary.text);
     if (!summary?.pending || !loadSummary) return null;
     const line = el('p', 'result-summary is-loading', t('result.summary-loading'));
     loadSummary()
         .then(made => {
             if (made?.text) {
-                line.textContent = made.text;
+                summaryText(line, made.text);
                 line.classList.remove('is-loading');
             } else {
                 line.remove();
@@ -523,6 +585,27 @@ function summaryLine(summary, loadSummary) {
         })
         .catch(() => line.remove());
     return line;
+}
+
+// The figures in a summary, made bold: an amount, ratio or multiple with its unit ("1조 2,345억원", "+12.3%",
+// "15.2배", "$1.2 billion") - not a point in time ("2024년", "3분기", "FY2024"), nor a bare year.
+const SUMMARY_NUM = String.raw`[+\-−]?[$₩¥€]?\d+(?:,\d{3})*(?:\.\d+)?`;
+const SUMMARY_UNIT = String.raw`(?:%p|%|배|倍|조|兆|억|億|만|万|천|千|원|円|달러|ドル|엔|위|位|개|곳|社|주|株|x\b|times\b|trillion\b|billion\b|million\b|bn\b|tn\b|[KMB]\b|pp\b)`;
+const SUMMARY_FIGURE = new RegExp(
+    String.raw`(?<![\w.])${SUMMARY_NUM}(?:\s?${SUMMARY_UNIT})*(?:\s?${SUMMARY_NUM}(?:\s?${SUMMARY_UNIT})+)*(?!\s?(?:년|年|월|月|일|日|분기|四半期|[QH]\b|[\d.]))`, 'g');
+
+function summaryText(node, text) {
+    const parts = [];
+    let last = 0;
+    for (const m of text.matchAll(SUMMARY_FIGURE)) {
+        if (/^(?:19|20)\d\d$/.test(m[0])) continue; // a bare year
+        if (m.index > last) parts.push(text.slice(last, m.index));
+        parts.push(el('strong', null, m[0]));
+        last = m.index + m[0].length;
+    }
+    parts.push(text.slice(last));
+    node.replaceChildren(...parts);
+    return node;
 }
 
 // An ask-back ("디와이키" could be 디와이씨 or 디와이): requests are one-shot, so each option is
@@ -712,12 +795,77 @@ function sourcesNote(result) {
     return box;
 }
 
-// loadAll: fetches every row of a truncated table (paid accounts), or null
-function renderTable(result, loadAll) {
-    const card = renderTableCard(result, loadAll);
+// loadAll: fetches every row of a truncated table (paid accounts), or null; loadChart(key): a row's
+// chart-pattern chart (GET /history/{id}/chart), or null
+function renderTable(result, loadAll, loadChart) {
+    const card = renderTableCard(result, loadAll, loadChart);
     if (result.price && result.rows.length) card.appendChild(priceNote(result.price));
     if (result.sources && tableFilings(result.sources, result.rows.length).length) card.appendChild(sourcesNote(result));
     return card;
+}
+
+// A chart-pattern row's chart button: opens the newest event's chart in a row below (one more click closes
+// it); a row of several events gets a switch between them. Charts are fetched once and kept.
+function chartTd(keys, tr, loadChart) {
+    const td = el('td', 'result-source-cell');
+    if (!keys.length) return td;
+    const btn = el('button', 'result-chart-btn');
+    btn.type = 'button';
+    btn.appendChild(el('i', 'fas fa-chart-line'));
+    btn.title = t('result.chart.open');
+    btn.setAttribute('aria-label', t('result.chart.open'));
+    btn.setAttribute('aria-expanded', 'false');
+    td.appendChild(btn);
+    const cache = new Map();
+    let panel = null;
+    let dispose = null;
+    async function show(box, key) {
+        dispose?.();
+        dispose = null;
+        box.replaceChildren(el('p', 'pattern-chart-note', t('result.chart.loading')));
+        try {
+            if (!cache.has(key)) cache.set(key, await loadChart(key));
+            dispose = await renderPatternChart(box, cache.get(key));
+        } catch (error) {
+            if (handleAuthError(error)) return;
+            console.error(error);
+            cache.delete(key);
+            box.replaceChildren(el('p', 'pattern-chart-note', t('result.chart.failed')));
+        }
+    }
+    btn.addEventListener('click', () => {
+        if (panel) {
+            dispose?.();
+            dispose = null;
+            panel.remove();
+            panel = null;
+            btn.setAttribute('aria-expanded', 'false');
+            return;
+        }
+        panel = el('tr', 'result-chart-row');
+        const cell = el('td');
+        cell.colSpan = tr.children.length;
+        const box = el('div', 'pattern-chart');
+        if (keys.length > 1) {      // newest first: "2026.11.02 · 2026.10.29"
+            const tabs = el('div', 'pattern-chart-tabs');
+            keys.forEach((key, i) => {
+                const tab = el('button', i ? '' : 'is-active', key.slice(0, 10).replaceAll('-', '.'));
+                tab.type = 'button';
+                tab.addEventListener('click', () => {
+                    tabs.querySelectorAll('button').forEach(b => b.classList.toggle('is-active', b === tab));
+                    show(box, key);
+                });
+                tabs.appendChild(tab);
+            });
+            cell.appendChild(tabs);
+        }
+        cell.appendChild(box);
+        panel.appendChild(cell);
+        tr.after(panel);
+        btn.setAttribute('aria-expanded', 'true');
+        show(box, keys[0]);
+    });
+    return td;
 }
 
 // The last cell of a row: a link to the row's own filing - the statement's page in it when known -,
@@ -746,10 +894,13 @@ function sourceTd(result, i) {
     return td;
 }
 
-function renderTableCard(result, loadAll) {
+function renderTableCard(result, loadAll, loadChart) {
     const card = el('div', 'result-table-card');
     const toggleable = hasToggle(result);
-    let view = toggleable ? selectedCurrency() : null;
+    // A question that asked its amounts in a currency ("억 달러로") opens in it (ResultTable.money.currency_asked);
+    // the viewer's own choice is kept for the other tables, and the toggle still switches every table.
+    const asked = VIEW_CURRENCIES.includes(result.money?.currency_asked) ? result.money.currency_asked : null;
+    let view = toggleable ? (asked || selectedCurrency()) : null;
     const locked = result.locked_rows || 0;
     const lockedLabel = `${locked}${result.truncated ? '+' : ''}`;
     let shown = Math.min(result.rows.length, PAID_PAGE_ROWS);
@@ -769,8 +920,9 @@ function renderTableCard(result, loadAll) {
         toggle = currencyToggle(view);
         actions.appendChild(toggle.el);
     }
+    // Every plan: the CSV holds only the rows shown (free accounts get FREE_MAX_ROWS; locked ones arrive as a count).
     // Share-price results (ResultTable.price): no CSV / copy-all - figures are not handed out in bulk
-    if (isPaidAccount() && !result.price?.restricted) {
+    if (!result.price?.restricted) {
         const copyBtn = el('button', 'hover:text-white transition', t('result.csv'));
         copyBtn.type = 'button';
         copyBtn.addEventListener('click', async () => {
@@ -882,6 +1034,12 @@ function renderTableCard(result, loadAll) {
             th.setAttribute('aria-label', t('result.sources.column'));
             headRow.appendChild(th);
         }
+        const charted = Boolean(loadChart && result.charts?.rows?.some(keys => keys.length));
+        if (charted) {
+            const th = el('th', 'result-source-cell');
+            th.setAttribute('aria-label', t('result.chart.column'));
+            headRow.appendChild(th);
+        }
         thead.appendChild(headRow);
 
         const tbody = el('tbody');
@@ -890,6 +1048,7 @@ function renderTableCard(result, loadAll) {
             const tr = el('tr');
             row.forEach((cell, i) => tr.appendChild(cellTd(cell, numericCols[i])));
             if (linked) tr.appendChild(sourceTd(result, r));
+            if (charted) tr.appendChild(chartTd(result.charts.rows[r] || [], tr, loadChart));
             tbody.appendChild(tr);
         });
         if (locked) tbody.append(...lockedPreview(cells, Math.min(locked, LOCKED_PREVIEW_ROWS), numericCols));
@@ -925,7 +1084,7 @@ function renderTableCard(result, loadAll) {
         try {
             const full = await loadAll();
             Object.assign(result, { rows: full.rows, truncated: full.truncated, money: full.money,
-                sources: full.sources, display: full.display ?? result.display });
+                sources: full.sources, charts: full.charts, display: full.display ?? result.display });
             loadAll = null; // still truncated only under SQL_FULL_MAX_ROWS - nothing more to load
             numericCols = numericColumns();
             shown = result.rows.length;

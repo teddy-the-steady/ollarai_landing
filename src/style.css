@@ -42,11 +42,10 @@
     line-height: inherit;
 }
 
-/* Paint the canvas dark so iOS overscroll / area below short pages isn't white,
-   and stop the rubber-band bounce that makes the footer look like it keeps going */
+/* Paint the canvas dark so iOS overscroll / area below short pages isn't white.
+   (No overscroll-behavior: none — it also kills mobile pull-to-refresh.) */
 html {
     background-color: rgb(15, 23, 35);
-    overscroll-behavior-y: none;
 }
 
 body {
@@ -329,6 +328,7 @@ html[lang="ja"] body {
 .result-read-label::after { content: ':'; }
 .result-basis { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.75rem; color: rgb(100, 116, 139); }
 .result-summary { font-size: 0.9375rem; line-height: 1.6; color: rgb(226, 232, 240); }
+.result-summary strong { font-weight: 600; color: rgb(255, 255, 255); }
 .result-summary.is-loading { font-size: 0.8125rem; color: rgb(100, 116, 139); animation: result-summary-pulse 1.4s ease-in-out infinite; }
 @keyframes result-summary-pulse { 50% { opacity: 0.45; } }
 .result-notice-info { background: rgba(255, 255, 255, 0.04); color: rgb(203, 213, 225); }
@@ -431,6 +431,59 @@ html[lang="ja"] body {
 }
 
 .tier-lock { margin-right: 0.35rem; font-size: 0.65rem; }
+
+/* Quick vs Precise popover next to the toggle (opens upward, over the input) */
+.tier-help { position: relative; flex-shrink: 0; }
+.tier-help.hidden { display: none; }
+.tier-help-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.85rem;
+    color: rgb(100, 116, 139);
+    transition: color 0.2s;
+}
+.tier-help-btn:hover, .tier-help.open .tier-help-btn { color: #fff; }
+.tier-help-pop {
+    position: absolute;
+    bottom: calc(100% + 0.6rem);
+    left: -6rem;
+    z-index: 30;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: rgb(203, 213, 225);
+    background: rgb(17, 24, 39);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+.tier-help.open .tier-help-pop { opacity: 1; visibility: visible; transform: none; }
+@media (hover: hover) {
+    .tier-help:hover .tier-help-pop { opacity: 1; visibility: visible; transform: none; }
+}
+.tier-help-pop dt {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: #fff;
+}
+.tier-help-pop dd { margin: 0.15rem 0 0; }
+.tier-help-pop dd + dt { margin-top: 0.65rem; }
+/* Phones: anchor to the input's bottom row and span its width, so it never runs off either edge */
+@media (max-width: 639px) {
+    .query-actions { position: relative; }
+    .tier-help { position: static; }
+    .tier-help-pop { left: 0; right: 0; width: auto; }
+}
 
 /* Free accounts picking Precise: what it is + pricing link */
 .tier-upsell {
@@ -542,6 +595,23 @@ html[lang="ja"] body {
 .result-table .result-source-cell a { color: rgb(100, 116, 139); transition: color 0.15s; }
 .result-table .result-source-cell a:hover,
 .result-table .result-source-cell a:focus-visible { color: rgb(252, 211, 77); }
+/* Chart-pattern rows: a chart button, the chart in a row below (src/beta/patternChart.js) */
+.result-table .result-chart-btn { color: rgb(100, 116, 139); transition: color 0.15s; }
+.result-table .result-chart-btn:hover,
+.result-table .result-chart-btn:focus-visible,
+.result-table .result-chart-btn[aria-expanded="true"] { color: rgb(252, 211, 77); }
+.result-table .result-chart-row > td { padding: 0.5rem 0.75rem 0.9rem; background: rgba(255, 255, 255, 0.02); white-space: normal; }
+/* its own width: a one-column company list would leave the chart that column's width */
+.pattern-chart { width: min(720px, calc(100vw - 4rem)); }
+.pattern-chart-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.8rem; color: rgb(148, 163, 184); }
+.pattern-chart-head strong { color: rgb(226, 232, 240); font-weight: 600; }
+.pattern-chart-area { width: 100%; height: 260px; }
+.pattern-chart-foot { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin-top: 0.4rem; font-size: 0.7rem; color: rgb(100, 116, 139); }
+.pattern-chart-disclaimer { flex-basis: 100%; margin-top: 0.15rem; color: rgb(71, 85, 105); }
+.pattern-chart-note { padding: 1.5rem 0; text-align: center; font-size: 0.75rem; color: rgb(100, 116, 139); }
+.pattern-chart-tabs { display: flex; gap: 0.35rem; margin-bottom: 0.5rem; }
+.pattern-chart-tabs button { font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 0.25rem; color: rgb(148, 163, 184); background: rgba(255, 255, 255, 0.05); }
+.pattern-chart-tabs button.is-active { color: rgb(15, 23, 42); background: rgb(252, 211, 77); }
 .result-sources { border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.75rem; color: rgb(100, 116, 139); }
 .result-sources summary { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; cursor: pointer; }
 .result-sources summary:hover { color: rgb(203, 213, 225); }
@@ -587,6 +657,43 @@ html[lang="ja"] body {
     background: rgba(116, 210, 78, 0.12);
     border-color: rgba(116, 210, 78, 0.35);
 }
+/* Pro chip (share prices / market data): tinted in the brand green, unlike the neutral free ones */
+.query-example-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding-left: 0.45rem;
+    color: rgb(190, 238, 170);
+    background: rgba(116, 210, 78, 0.08);
+    border-color: rgba(116, 210, 78, 0.45);
+}
+.query-example-pro:hover {
+    color: #fff;
+    background: rgba(116, 210, 78, 0.18);
+    border-color: rgba(116, 210, 78, 0.7);
+}
+.query-example-pro-badge {
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: rgb(15, 23, 42);
+    background: linear-gradient(135deg, var(--primary-green-light), var(--primary-green-dark));
+}
+
+/* Free accounts clicking the Pro chip: go to the pricing page? */
+.pro-dialog {
+    width: min(26rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(116, 210, 78, 0.3);
+    background: rgb(15, 23, 42);
+    color: rgb(203, 213, 225);
+}
+.pro-dialog::backdrop { background: rgba(2, 6, 23, 0.75); }
+
 @media (max-width: 640px) {
     .query-examples { justify-content: flex-start; }
     .query-examples-label { width: 100%; }
@@ -734,6 +841,11 @@ html[lang="ja"] body {
     overflow-y: auto;
 }
 .subscribe-dialog::backdrop { background: rgba(2, 6, 23, 0.75); }
+
+/* Modals: a swipe that hits the dialog's end (or lands on the backdrop) shouldn't scroll the page behind.
+   Only while a dialog is open, so pull-to-refresh on the page itself is untouched. */
+.subscribe-dialog, .pro-dialog { overscroll-behavior: contain; }
+html:has(dialog[open]) { overflow: hidden; }
 .subscribe-summary {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -768,6 +880,21 @@ html[lang="ja"] body {
 .subscribe-check strong { color: #fff; }
 .subscribe-detail { display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgb(148, 163, 184); }
 .subscribe-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; }
+/* Buyer details for the domestic (KG Inicis) checkout - /pricing/ only */
+.subscribe-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.subscribe-fields .subscribe-detail { grid-column: 1 / -1; margin-top: 0; }
+.subscribe-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: rgb(148, 163, 184); }
+.subscribe-field input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 1rem;
+}
+.subscribe-field input:focus { outline: none; border-color: var(--primary-green); }
+@media (max-width: 480px) { .subscribe-fields { grid-template-columns: 1fr; } }
 
 /* Subscription management (/account/) */
 .account-card {

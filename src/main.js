@@ -87,19 +87,19 @@ document.addEventListener('click', closeAll);
 // i18n data
 const i18n = {
     ko: {
-        title: 'Ollarai - 공시 재무 데이터, 물어보면 바로',
+        title: 'Ollarai - 재무·시세 데이터, 물어보면 바로',
         // OG / Twitter meta, kept in sync with index.html (ko) and build-locale-pages.js (en, ja)
-        'og-title': 'Ollarai - 공시 재무 데이터, 물어보면 바로',
-        'og-description': '공시 뒤지는 시간은 0분으로. 궁금한 재무 숫자를 물어보면 공시 원문에서 그대로 꺼내 드리는 AI 공시 데이터 검색.',
+        'og-title': 'Ollarai - 재무·시세 데이터, 물어보면 바로',
+        'og-description': '숫자 찾는 시간은 0분으로. 재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보면 공시와 시세 데이터에서 정확한 숫자를 찾아 드리는 AI 데이터 검색.',
         'og-image': 'og/ollarai-og-image-ko.png',
         'og-locale': 'ko_KR',
         'nav-roadmap': '로드맵',
         'nav-screening': 'AI 스크리닝',
         'nav-features': '주요 기능',
         'cta': '무료로 시작하기',
-        'hero-kicker': '공시 재무 데이터 AI 검색',
-        'hero-title': '공시 뒤지는 시간은<br/><span class="gradient-text">0분</span>으로.',
-        'hero-subtitle': '궁금한 재무 숫자를 물어보세요.<br/><span class="ollarai-brand">Ollarai</span>가 공시 원문에서<br/><span class="text-primary font-semibold">정확한 숫자를 찾아</span> 한눈에 보기 쉽게 정리해 드립니다.',
+        'hero-kicker': '재무·시세·투자 지표 AI 검색',
+        'hero-title': '숫자 찾는 시간은<br/><span class="gradient-text">0분</span>으로.',
+        'hero-subtitle': '재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보세요.<br/><span class="ollarai-brand">Ollarai</span>가 공시와 시세 데이터에서<br/><span class="text-primary font-semibold">정확한 숫자를 찾아</span> 한눈에 보기 쉽게 정리해 드립니다.',
         'hero-cta': '무료로 시작하기',
         'problem-title': '데이터가 없는 분석은 가설일 뿐입니다.',
         'problem-desc': '시장의 소음 속에서 개인 투자자가 믿을 만한 숫자를 직접 확인하기는 여전히 어렵습니다.<br/>전문가들의 모델은 강력하지만, 그 모델을 지탱하는 \'정밀한 데이터\'는 너무나 비싸고 어렵습니다.',
@@ -110,14 +110,13 @@ const i18n = {
         'problem-card3-title': '파편화된 시장',
         'problem-card3-desc': '나라마다 다른 공시 체계와 언어. 한국 공시부터 시작해 미국으로 범위를 넓히며, 데이터를 모으는 데만 하루를 다 쓰는 비효율을 끝냅니다.',
         'screening-title': '재무 조건으로 기업을 걸러보는 AI 스크리닝',
-        'screening-desc': '내가 정한 재무 조건에 맞는 기업을 공시 숫자로 걸러보는 스크리닝을 준비하고 있습니다. 지금은 공시 재무제표의 숫자를 인출하고, 다음으로 종가와 거래량 데이터를 더한 뒤, 이를 바탕으로 PER, PBR 같은 주가 기반 지표 스크리닝을 <span class="ollarai-brand">Ollarai</span>에서 선보일 예정입니다.',
-        'screening-point1': '<b>지금 이용 가능</b> · 공시 재무제표 숫자 인출 (매출, 영업이익, 부채, ROE 등)',
-        'screening-point2': '<b>다음 단계</b> · 종가, 거래량 데이터 추가',
-        'screening-point3': '<b>그다음</b> · PER, PBR 등 주가 기반 지표로 필터링',
+        'screening-desc': '내가 정한 재무 조건에 맞는 기업을 공시 숫자로 걸러보는 스크리닝입니다. 공시 재무제표의 숫자와 종가·거래량 데이터(미국 2016년 이후, 한국 2020년 이후)는 물론, 이를 결합한 PER, PBR 같은 주가 기반 지표(추정치가 아닌 과거 실적 기준)로도 <span class="ollarai-brand">Ollarai</span>에서 기업을 걸러볼 수 있습니다.',
+        'screening-point1': '공시 재무제표 숫자 인출 (매출, 영업이익, 부채, ROE 등)',
+        'screening-point2': '종가, 거래량 데이터 (미국 2016년 이후, 한국 2020년 이후)',
+        'screening-point3': 'PER, PBR 등 주가 기반 지표로 필터링 (추정치가 아닌 과거 실적 기준)',
         'screening-ribbon': '공사중',
         'screening-badge': '스크리닝 화면 준비 중입니다',
         'screening-badge-desc': '정확한 데이터 위에 세워질 다음 기능을 곧 만나보세요.',
-        'screening-launch-badge': '출시 예정',
         'screening-cta': '지금 무료로 써보기',
         'screening-preview-tag': '미리보기',
         'screening-query-caption': '예시 화면입니다 · 표의 수치는 실제 데이터가 아닙니다',
@@ -152,9 +151,9 @@ const i18n = {
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai (올라라이). All rights reserved.`,
     },
     en: {
-        title: 'Ollarai - Financial Filing Data, Just Ask',
-        'og-title': 'Ollarai - Financial Filing Data, Just Ask',
-        'og-description': 'Spend zero minutes digging through filings. Ask for any financial figure and get it straight from the original filings. AI search for filing data.',
+        title: 'Ollarai - Financials & Market Data, Just Ask',
+        'og-title': 'Ollarai - Financials & Market Data, Just Ask',
+        'og-description': 'Spend zero minutes hunting for numbers. Ask about financial statements, stock prices and volume, or metrics like P/E and ROE, and get exact figures from filings and market data.',
         'og-image': 'og/ollarai-og-image.png',
         'og-locale': 'en_US',
         'nav-roadmap': 'Roadmap',
@@ -162,8 +161,8 @@ const i18n = {
         'nav-features': 'Features',
         'cta': 'Start for Free',
         'hero-kicker': '',
-        'hero-title': 'Spend <span class="gradient-text">zero minutes</span><br/>digging through filings.',
-        'hero-subtitle': 'Just ask for the financial figures you need.<br/><span class="ollarai-brand">Ollarai</span> finds the <span class="text-primary font-semibold">exact figures</span> in the original filings<br/>and lays them out in an easy-to-read format.',
+        'hero-title': 'Spend <span class="gradient-text">zero minutes</span><br/>hunting for numbers.',
+        'hero-subtitle': 'Ask about financial statements, stock prices and volume,<br/>or metrics like P/E and ROE. <span class="ollarai-brand">Ollarai</span> finds the <span class="text-primary font-semibold">exact figures</span><br/>in filings and market data and lays them out in an easy-to-read format.',
         'hero-cta': 'Start for Free',
         'problem-title': 'Analysis without data is just a hypothesis.',
         'problem-desc': 'Amid the market noise, checking reliable numbers for yourself is still hard for individual investors.<br/>Expert models are powerful, but the "precise data" underpinning them is prohibitively expensive and inaccessible.',
@@ -174,14 +173,13 @@ const i18n = {
         'problem-card3-title': 'Fragmented Markets',
         'problem-card3-desc': 'Every country has its own filing system and language. Starting with Korean filings and expanding to the US, we end the inefficiency of spending a whole day just gathering data.',
         'screening-title': 'AI Screening by Financial Criteria',
-        'screening-desc': 'We\'re building screening that filters companies by the financial criteria you set, using figures from filings. Today, <span class="ollarai-brand">Ollarai</span> extracts the figures in companies\' financial statements. Next we\'ll add closing prices and trading volume, and on top of that, screening by price-based metrics like PER and PBR.',
-        'screening-point1': '<b>Available now</b> · Financial statement figures from filings (revenue, operating income, liabilities, ROE, and more)',
-        'screening-point2': '<b>Next</b> · Closing price and trading volume data',
-        'screening-point3': '<b>After that</b> · Filtering by price-based metrics like PER and PBR',
+        'screening-desc': 'Screening that filters companies by the financial criteria you set, using figures from filings. With <span class="ollarai-brand">Ollarai</span>, you can filter by financial statement figures, closing prices and trading volume (US from 2016, Korea from 2020), and price-based metrics like PER and PBR that combine the two (based on historical results, not estimates).',
+        'screening-point1': 'Financial statement figures from filings (revenue, operating income, liabilities, ROE, and more)',
+        'screening-point2': 'Closing price and trading volume data (US from 2016, Korea from 2020)',
+        'screening-point3': 'Filtering by price-based metrics like PER and PBR (based on historical results, not estimates)',
         'screening-ribbon': 'Under Construction',
         'screening-badge': 'Screening Dashboard Coming Soon',
         'screening-badge-desc': 'The next feature, built on accurate data, is on its way.',
-        'screening-launch-badge': 'Coming Soon',
         'screening-cta': 'Try It Free Now',
         'screening-preview-tag': 'Preview',
         'screening-query-caption': 'Example screen · the figures are not real data',
@@ -216,9 +214,9 @@ const i18n = {
         'footer-copyright': `&copy; ${new Date().getFullYear()} Ollarai. All rights reserved.`,
     },
     ja: {
-        title: 'Ollarai - 開示財務データ、聞けばすぐ',
-        'og-title': 'Ollarai - 開示財務データ、聞けばすぐ',
-        'og-description': '開示資料を探す時間は0分に。知りたい財務数値を質問すれば、開示原文からそのまま取り出すAI開示データ検索。',
+        title: 'Ollarai - 財務・株価データ、聞けばすぐ',
+        'og-title': 'Ollarai - 財務・株価データ、聞けばすぐ',
+        'og-description': '数字を探す時間は0分に。財務諸表から株価・出来高、PER・ROEなどの指標まで、質問すれば開示資料と株価データから正確な数値を見つけるAIデータ検索。',
         'og-image': 'og/ollarai-og-image-ja.png',
         'og-locale': 'ja_JP',
         'nav-roadmap': 'ロードマップ',
@@ -226,8 +224,8 @@ const i18n = {
         'nav-features': '主な機能',
         'cta': '無料で始める',
         'hero-kicker': '',
-        'hero-title': '開示資料を探す時間は<br/><span class="gradient-text">0分</span>に。',
-        'hero-subtitle': '知りたい財務数値を質問してください。<br/><span class="ollarai-brand">Ollarai</span>が開示原文から<br/><span class="text-primary font-semibold">正確な数値を見つけ</span>、ひと目でわかるように整理します。',
+        'hero-title': '数字を探す時間は<br/><span class="gradient-text">0分</span>に。',
+        'hero-subtitle': '財務諸表から株価・出来高、PER・ROEなどの指標まで質問してください。<br/><span class="ollarai-brand">Ollarai</span>が開示資料と株価データから<br/><span class="text-primary font-semibold">正確な数値を見つけ</span>、ひと目でわかるように整理します。',
         'hero-cta': '無料で始める',
         'problem-title': 'データのない分析は、仮説に過ぎません。',
         'problem-desc': '市場のノイズの中で、個人投資家が信頼できる数字を自分で確かめるのは今も簡単ではありません。<br/>専門家のモデルは強力ですが、それを支える「精密なデータ」は高価で入手困難です。',
@@ -238,14 +236,13 @@ const i18n = {
         'problem-card3-title': '断片化された市場',
         'problem-card3-desc': '国ごとに異なる開示制度と言語。韓国の開示から始めて米国へと範囲を広げ、データ収集だけで一日を費やす非効率を終わらせます。',
         'screening-title': '財務条件で企業を絞り込むAIスクリーニング',
-        'screening-desc': '自分で決めた財務条件に合う企業を、開示の数字で絞り込むスクリーニングを準備しています。現在は開示された財務諸表の数字を抽出しており、次に終値と出来高のデータを加え、それをもとにPER、PBRなどの株価に基づく指標によるスクリーニングを<span class="ollarai-brand">Ollarai</span>で提供する予定です。',
-        'screening-point1': '<b>現在利用可能</b> ・ 開示財務諸表の数字の抽出(売上高、営業利益、負債、ROEなど)',
-        'screening-point2': '<b>次のステップ</b> ・ 終値・出来高データの追加',
-        'screening-point3': '<b>その次</b> ・ PER、PBRなどの株価に基づく指標によるフィルタリング',
+        'screening-desc': '自分で決めた財務条件に合う企業を、開示の数字で絞り込むスクリーニングです。<span class="ollarai-brand">Ollarai</span>では、開示財務諸表の数字と終値・出来高データ(米国は2016年以降、韓国は2020年以降)に加え、それらを組み合わせたPER、PBRなどの株価に基づく指標(予想値ではなく過去の実績ベース)でも企業を絞り込めます。',
+        'screening-point1': '開示財務諸表の数字の抽出(売上高、営業利益、負債、ROEなど)',
+        'screening-point2': '終値・出来高データ(米国は2016年以降、韓国は2020年以降)',
+        'screening-point3': 'PER、PBRなどの株価に基づく指標によるフィルタリング(予想値ではなく過去の実績ベース)',
         'screening-ribbon': '工事中',
         'screening-badge': 'スクリーニング画面、準備中です',
         'screening-badge-desc': '正確なデータの上に築かれる次の機能に、もうすぐ出会えます。',
-        'screening-launch-badge': '公開予定',
         'screening-cta': '今すぐ無料で試す',
         'screening-preview-tag': 'プレビュー',
         'screening-query-caption': '例示画面です ・ 表の数値は実際のデータではありません',
@@ -323,9 +320,9 @@ const simData = {
         result: "$890,200,000 <span class=\"text-sm font-normal text-slate-500\">USD</span>"
     },
     ja: {
-        system: 'edinet',
-        query: "SELECT operating_income FROM edinet_financials WHERE ticker='6758' AND period='2026Q1'",
-        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">JPY</span>"
+        system: 'dart',
+        query: "SELECT op_profit FROM dart_financials WHERE ticker='005930' AND period='2026Q1'",
+        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">KRW</span>"
     }
 };
 
@@ -372,7 +369,6 @@ function applyLang(lang) {
     const sd = simData[lang];
     document.getElementById('sim-dart').classList.toggle('hidden', sd.system !== 'dart');
     document.getElementById('sim-edgar').classList.toggle('hidden', sd.system !== 'edgar');
-    document.getElementById('sim-edinet').classList.toggle('hidden', sd.system !== 'edinet');
     document.getElementById('sim-sql-query').textContent = sd.query;
     document.getElementById('sim-sql-result').innerHTML = sd.result;
 }
@@ -414,10 +410,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: '영업이익률 20%↑ · 부채비율 60%↓ (한·미·일)', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
+            { query: '영업이익률 20%↑ · 부채비율 60%↓', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: '삼성전자 최근 4개 분기 실적 추이', columns: ['분기', '매출 YoY', '영업이익 YoY', '영업이익률'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
@@ -432,10 +428,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: 'Op. margin 20%+ · Debt/Equity under 60% (KR/US/JP)', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
+            { query: 'Op. margin 20%+ · Debt/Equity under 60%', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: 'Samsung Electronics — last 4 quarters trend', columns: ['Quarter', 'Revenue YoY', 'Op. Income YoY', 'Op Margin'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
@@ -450,10 +446,10 @@ if (document.readyState === 'loading') {
                 ['000660', '9.1', '19.8%', '24.6%'],
                 ['042700', '7.6', '16.2%', '18.9%'],
             ] },
-            { query: '営業利益率20%以上・負債比率60%以下(韓・米・日)', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
+            { query: '営業利益率20%以上・負債比率60%以下', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
                 ['035420', '9.1', '21.4%', '42%'],
                 ['AAPL', '7.6', '28.4%', '35%'],
-                ['6758.T', '9.8', '22.9%', '58%'],
+                ['MSFT', '9.8', '22.9%', '58%'],
             ] },
             { query: 'サムスン電子、直近4四半期の業績推移', columns: ['四半期', '売上高YoY', '営業利益YoY', '営業利益率'], highlight: [1, 2, 3], rows: [
                 ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],

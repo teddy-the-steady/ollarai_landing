@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="format-detection" content="telephone=no">
-    <title>Ollarai - 공시 재무 데이터, 물어보면 바로</title>
+    <title>Ollarai - 재무·시세 데이터, 물어보면 바로</title>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKE2BBMBGT"></script>
@@ -17,8 +17,8 @@
 
     <!-- Open Graph — updated dynamically by setLang() -->
     <meta property="og:type"        content="website">
-    <meta property="og:title"       content="Ollarai - 공시 재무 데이터, 물어보면 바로">
-    <meta property="og:description" content="공시 뒤지는 시간은 0분으로. 궁금한 재무 숫자를 물어보면 공시 원문에서 그대로 꺼내 드리는 AI 공시 데이터 검색.">
+    <meta property="og:title"       content="Ollarai - 재무·시세 데이터, 물어보면 바로">
+    <meta property="og:description" content="숫자 찾는 시간은 0분으로. 재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보면 공시와 시세 데이터에서 정확한 숫자를 찾아 드리는 AI 데이터 검색.">
     <meta property="og:image"       content="https://ollarai.com/og/ollarai-og-image-ko.png">
     <meta property="og:image:type"  content="image/png" />
     <meta property="og:image:width" content="1200">
@@ -26,8 +26,8 @@
     <meta property="og:locale"      content="ko_KR">
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:title"       content="Ollarai - 공시 재무 데이터, 물어보면 바로">
-    <meta name="twitter:description" content="공시 뒤지는 시간은 0분으로. 궁금한 재무 숫자를 물어보면 공시 원문에서 그대로 꺼내 드리는 AI 공시 데이터 검색.">
+    <meta name="twitter:title"       content="Ollarai - 재무·시세 데이터, 물어보면 바로">
+    <meta name="twitter:description" content="숫자 찾는 시간은 0분으로. 재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보면 공시와 시세 데이터에서 정확한 숫자를 찾아 드리는 AI 데이터 검색.">
     <meta name="twitter:image"       content="https://ollarai.com/og/ollarai-og-image-ko.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="/src/main.js"></script>
@@ -83,10 +83,6 @@
         <div class="container mx-auto px-6">
             <div class="flex flex-col lg:flex-row items-center gap-16">
                 <div class="lg:w-1/2">
-                    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.2); color: rgb(116, 210, 78);">
-                        <i class="fas fa-rocket text-[10px]"></i>
-                        <span data-i18n="screening-launch-badge"></span>
-                    </div>
                     <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight" data-i18n="screening-title"></h2>
                     <p class="text-slate-400 text-lg leading-relaxed mb-8" data-i18n="screening-desc"></p>
                     <ul class="space-y-4 mb-10">
@@ -95,12 +91,12 @@
                             <span class="text-slate-300 text-sm leading-relaxed" data-i18n="screening-point1"></span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="far fa-clock text-slate-500 mt-1"></i>
-                            <span class="text-slate-300 text-sm leading-relaxed" data-i18n="screening-point2"></span>
+                            <i class="fas fa-check text-primary mt-1"></i>
+                            <p class="text-sm leading-relaxed"><span class="query-example-pro-badge align-middle mr-1.5">PRO</span><span class="text-slate-300" data-i18n="screening-point2"></span></p>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="far fa-clock text-slate-500 mt-1"></i>
-                            <span class="text-slate-300 text-sm leading-relaxed" data-i18n="screening-point3"></span>
+                            <i class="fas fa-check text-primary mt-1"></i>
+                            <p class="text-sm leading-relaxed"><span class="query-example-pro-badge align-middle mr-1.5">PRO</span><span class="text-slate-300" data-i18n="screening-point3"></span></p>
                         </li>
                     </ul>
                     <button id="screening-cta-btn" class="bg-primary bg-primary-hover text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-105" data-i18n="screening-cta">
@@ -227,42 +223,6 @@
                                     </tr>
                                     <tr style="background:#ebf5ff;">
                                         <td class="py-0.5 px-1 border border-gray-200 font-semibold">Operating income</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200 font-semibold text-blue-700">890,200</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">540,330</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <!-- EDINET Simulation (Japanese) -->
-                            <div id="sim-edinet" class="hidden bg-white text-[#333] p-4 rounded-lg mb-4 opacity-80 pointer-events-none" style="border:1px solid #ddd;">
-                                <div class="flex items-start justify-between border-b border-gray-300 pb-1.5 mb-2">
-                                    <div>
-                                        <p class="text-[5.5px] font-bold text-gray-500 uppercase tracking-wide">金融庁 · EDINET</p>
-                                        <p class="text-[8px] font-black text-gray-800 mt-0.5">四半期報告書 &nbsp;<span class="font-normal text-gray-500 text-[7px]">Quarterly Securities Report</span></p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-[5.5px] text-gray-400">会計期間: 2026年3月31日</p>
-                                        <p class="text-[5.5px] text-blue-600 font-semibold uppercase tracking-wide mt-0.5">EDINET提出</p>
-                                    </div>
-                                </div>
-                                <p class="text-[6px] font-bold text-gray-500 mb-1 tracking-wide">四半期連結財務諸表 <span class="font-normal">(単位:百万円)</span></p>
-                                <table class="w-full text-[6.5px]" style="border-collapse:collapse;">
-                                    <tr style="background:#f0f0f0;">
-                                        <th class="text-left py-0.5 px-1 border border-gray-300 font-semibold">科目</th>
-                                        <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">2026年3月31日</th>
-                                        <th class="text-right py-0.5 px-1 border border-gray-300 font-semibold">2025年12月31日</th>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-0.5 px-1 border border-gray-200">流動資産合計</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">12,450,230</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">10,120,400</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-0.5 px-1 border border-gray-200">現金及び現金同等物</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">3,120,440</td>
-                                        <td class="text-right py-0.5 px-1 border border-gray-200">2,450,110</td>
-                                    </tr>
-                                    <tr style="background:#ebf5ff;">
-                                        <td class="py-0.5 px-1 border border-gray-200 font-semibold">営業利益</td>
                                         <td class="text-right py-0.5 px-1 border border-gray-200 font-semibold text-blue-700">890,200</td>
                                         <td class="text-right py-0.5 px-1 border border-gray-200">540,330</td>
                                     </tr>

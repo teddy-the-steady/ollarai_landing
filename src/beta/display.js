@@ -27,6 +27,14 @@ const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})/;
 
 const isCurrencyCode = (c) => typeof c === 'string' && /^[A-Z]{3}$/.test(c);
 
+// The flag's tooltip: display.companies' country is the listing market's (KOSPI / KOSDAQ: KR, NYSE / Nasdaq: US),
+// not the headquarters' - TSMC is 🇺🇸 "미국 상장"
+const LISTED = {
+    ko: { KR: '한국 상장', US: '미국 상장' },
+    en: { KR: 'Listed in Korea', US: 'Listed in the US' },
+    ja: { KR: '韓国上場', US: '米国上場' },
+};
+
 // 'KR' -> 🇰🇷 (regional indicator letters); display.companies carries country only when a result mixes them
 const flagEmoji = (c) => (typeof c === 'string' && /^[A-Z]{2}$/.test(c)
     ? String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65)) : null);
@@ -153,7 +161,9 @@ export function createFormatter(lang, locale) {
             const names = companies?.[value];
             const text = (lang === 'ko' ? names?.ko : names?.en) ?? names?.en ?? String(value);
             const flag = flagEmoji(names?.country);
-            return flag ? { text, numeric: false, flag, flagTitle: regionName(names.country) } : { text, numeric: false };
+            if (!flag) return { text, numeric: false };
+            const flagTitle = LISTED[lang]?.[names.country] ?? regionName(names.country);
+            return { text, numeric: false, flag, flagTitle };
         }
         if (typeof value === 'string' && col.format !== 'text' && col.format !== 'legacy' && ISO_DATE.test(value)) {
             return { text: date(value), numeric: false };
