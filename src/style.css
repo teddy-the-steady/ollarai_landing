@@ -945,6 +945,40 @@ html:has(dialog[open]) { overflow: hidden; }
     line-height: 1.6;
     color: rgb(226, 232, 240);
 }
+.account-reasons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.account-reasons legend {
+    padding: 0;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    color: rgb(148, 163, 184);
+}
+.account-reason {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+.account-reason input { accent-color: var(--primary-green); }
+.account-reason-comment {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.6);
+    color: rgb(226, 232, 240);
+    font: inherit;
+    resize: vertical;
+}
+.account-reason-comment::placeholder { color: rgb(100, 116, 139); }
+.account-reason-comment:focus { outline: none; border-color: var(--primary-green); }
 .account-btn {
     display: inline-block;
     padding: 0.6rem 1.25rem;

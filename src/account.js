@@ -83,12 +83,14 @@ function subscriptionCard(sub) {
             // One confirmation step, nothing more (terms 제11조)
             const confirmBox = el('div', 'account-confirm');
             confirmBox.appendChild(el('p', null, t('account.cancel.confirm-text', { date: end })));
+            const reasons = cancelReasons();
+            confirmBox.appendChild(reasons.node);
             const row = el('div', 'flex flex-wrap gap-2');
             const yes = el('button', 'account-btn account-btn-danger', t('account.cancel.confirm'));
             yes.type = 'button';
             const back = el('button', 'account-btn', t('account.cancel.back'));
             back.type = 'button';
-            yes.addEventListener('click', () => changeRenewal('/subscription/cancel', [yes, back], failure));
+            yes.addEventListener('click', () => changeRenewal('/subscription/cancel', [yes, back], failure, reasons.value()));
             back.addEventListener('click', () => confirmBox.replaceWith(cancel));
             row.append(yes, back);
             confirmBox.appendChild(row);
@@ -108,6 +110,36 @@ function subscriptionCard(sub) {
     actions.appendChild(failure);
     section.appendChild(actions);
     return section;
+}
+
+// Why they cancel: optional, inside the one confirmation step - skipping it cancels all the same (terms 제11조)
+const CANCEL_REASONS = ['too_expensive', 'not_using', 'missing_data', 'inaccurate', 'switching', 'other'];
+
+function cancelReasons() {
+    const fieldset = el('fieldset', 'account-reasons');
+    fieldset.appendChild(el('legend', null, t('account.cancel.reason.title')));
+    CANCEL_REASONS.forEach(reason => {
+        const label = el('label', 'account-reason');
+        const input = el('input');
+        input.type = 'radio';
+        input.name = 'cancel-reason';
+        input.value = reason;
+        label.append(input, el('span', null, t(`account.cancel.reason.${reason}`)));
+        fieldset.appendChild(label);
+    });
+    const comment = el('textarea', 'account-reason-comment');
+    comment.rows = 2;
+    comment.maxLength = 1000;
+    comment.placeholder = t('account.cancel.reason.comment');
+    comment.setAttribute('aria-label', t('account.cancel.reason.comment'));
+    fieldset.appendChild(comment);
+    return {
+        node: fieldset,
+        value: () => ({
+            reason: fieldset.querySelector('input[name="cancel-reason"]:checked')?.value ?? null,
+            comment: comment.value.trim() || null,
+        }),
+    };
 }
 
 function grantCard() {
@@ -186,13 +218,13 @@ function render(me) {
     show('body');
 }
 
-async function changeRenewal(path, buttons, failure) {
+async function changeRenewal(path, buttons, failure, body) {
     buttons.forEach(btn => { btn.disabled = true; });
     const label = buttons[0].textContent;
     buttons[0].textContent = t('account.working');
     failure.classList.add('hidden');
     try {
-        await api(path, { method: 'POST' });
+        await api(path, { method: 'POST', body });
         render(await api('/me'));
     } catch (error) {
         if (handleAuthError(error)) return;

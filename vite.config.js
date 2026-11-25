@@ -4,8 +4,9 @@ import { fileURLToPath } from 'url'
 
 const root = dirname(fileURLToPath(import.meta.url))
 
-// The beta pages (/login/, /app/) can't work without these, so refuse to build a broken bundle.
-const REQUIRED_ENV = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
+// The beta pages (/login/, /app/) and the Korean checkout (/pricing/) can't work without these,
+// so refuse to build a broken bundle.
+const REQUIRED_ENV = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_PORTONE_STORE_ID', 'VITE_PORTONE_CHANNEL_KEY']
 
 export default defineConfig(({ command, mode }) => {
   if (command === 'build') {
