@@ -9,7 +9,7 @@
 - 통신판매업 신고 완료: 신고번호 2026-강원강릉-0425
 - 토스페이먼츠 입점 거절 (2026-11-05): 랜딩의 목표가 산출, 종목 비교·분석, 수익 전환 문구를 보고 투자정보 제공·유사투자자문 형태로 판단. 가입비·연관리비 환불은 메일 회신으로 요청
   - 대응: 랜딩에서 해당 문구·섹션 제거, 하단에 투자자문 아님 고지 추가, 약관·처리방침·요금 안내의 토스 기재를 "국내 결제대행사(PG)"로 일반화
-- Paddle 심사 진행 중
+- Paddle 사용 중단 (2026-11-25): 해외 결제는 다른 서비스로 교체 예정. 프론트의 Paddle 코드는 제거했고 en/ja 결제 버튼은 "Coming soon"/"近日公開"로 막아 둠
 - 다음: 수정분 배포 → 포트원 문의(PG 일괄 신청)
 
 ## 결정 사항 (2026-10-30)
@@ -93,20 +93,12 @@
   - 유료 방식을 이용하면 청약철회가 제한된다는 안내 (약관 제12조 제2항). 요금 안내·구독 관리 화면에는 있음, 결제 직전 화면에도 넣기
   - 해외 결제 시 Paddle 제공·국외 이전 동의 체크박스 (처리방침 제5조, 제7조)
   - 만 19세 미만 법정대리인 동의 안내 (약관 제13조)
-- [x] **Paddle 결제 링크 페이지 `/checkout/`**: Default payment link용. `?_ptxn=`이 있으면 Paddle.js가 결제창을 열고(언어는 화면 언어 ko/en/ja), 없으면 요금 안내로 이동. 완료 시 `/account/`. 토큰은 `VITE_PADDLE_CLIENT_TOKEN`(`test_`면 sandbox)
-  - [ ] 라이브 승인 후 `.env.local`의 토큰을 `live_` 토큰으로 바꿔 배포, 라이브 대시보드 Default payment link에 `https://ollarai.com/checkout/`
-- [x] **Paddle 웹훅·해지 연동** (서버): `POST /webhooks/paddle`(서명 검증, `subscription.*` 이벤트로 `subscriptions` 행 생성·갱신, `occurred_at`으로 순서 보장), `billing.py` `_Paddle` 해지·해지 취소. Caddy IP 허용 목록에서 웹훅 경로 제외
-  - [x] 배포: 마이그레이션 `0009_subscription_provider_updated_at.py` → `infra/env.sh --no-apply PADDLE_WEBHOOK_SECRET PADDLE_API_KEY` → `infra/deploy.sh`
-  - [x] sandbox 실결제로 created → `/account/` 해지·해지 취소(updated) → 대시보드 즉시 해지(canceled) 확인 (2026-11-03). past_due는 미확인(실제로 만들기 어려움, 같은 코드 경로)
-- [x] **Paddle 결제 버튼** (프론트, en/ja 요금 안내): "Subscribe"/"申し込む" → 로그인 확인(안 했으면 `/login/`) → 이미 구독·베타 제공이면 안내 → 고지·동의 대화상자(요금·자동 갱신·해지, 청약철회 제한, 미성년자, 필수 동의 3개: 결제, Paddle 제3자 제공, 국외 이전) → Paddle 결제창(`customData.user_id`). 한국어 요금 안내는 국내 PG 연동 때까지 "결제 준비 중"
-  - [x] `.env.local`에 `VITE_PADDLE_PRICE_ID`(sandbox `pri_…`) 채우기
+- [ ] **해외 결제 교체** (Paddle 대체): 프론트 Paddle 코드(`src/beta/paddle.js`, `/checkout/`, `/account/` 결제 수단 변경 버튼, en/ja 결제 대화상자의 Paddle 동의 2개)는 제거함. 이전 구현은 git 이력 참고
+  - [ ] 새 서비스로 en/ja 결제 버튼 연결: `src/pricing.js`의 해외 결제 분기, en/ja 요금 안내 버튼 `disabled` 해제, 대화상자에 제3자 제공·국외 이전 동의 다시 넣기
+  - [x] 약관·처리방침(ko/en/ja)과 요금 안내 본문에서 Paddle 삭제, 해외 결제는 "준비 중"으로 (2026-11-25 개정, 11/20본은 `/terms/2026-11-20/`, `/privacy/2026-11-20/`에 보관)
+  - [ ] 새 서비스 확정 후 약관 제8조·제9조·제12조, 처리방침 제2조·제5조·제7조·제10조에 해외 결제 내용 다시 넣는 개정 (시행 7일 전 공지)
+  - [ ] 서버: `POST /webhooks/paddle`, `billing.py` `_Paddle`, `/subscription/payment-method`, `PADDLE_*` 환경변수 정리
   - [ ] 로그인 후 요금 안내로 돌아오기: 지금은 로그인하면 `/app/`으로 감
-  - [x] `/account/` "결제 수단 변경" 버튼(Paddle 구독, past_due면 강조): `POST /subscription/payment-method`가 Paddle `update-payment-method-transaction`의 `/checkout/?_ptxn=` 링크를 매번 새로 받아옴. past_due면 실패한 갱신 결제도 함께 처리
-    - [ ] 서버 배포 후 sandbox에서 확인
-- [ ] **Paddle 라이브 전환** (라이브 계정 인증·도메인 승인 후): 라이브에서 상품·가격($7.99, 세금 별도), Default payment link `https://ollarai.com/checkout/`, 웹훅 등록(`/webhooks/paddle`, `subscription.*`) 다시 만들기 → 프론트 `VITE_PADDLE_CLIENT_TOKEN`(live_)·`VITE_PADDLE_PRICE_ID`, 서버 `PADDLE_API_KEY`(pdl_live_)·`PADDLE_WEBHOOK_SECRET` 교체 후 배포 → 실제 카드로 1건 결제·환불해서 확인
-- [ ] **Paddle 가입 시 확인할 것**
-  - 데이터를 처리하는 국가: 처리방침에는 우선 영국으로 적어 둠
-  - 환불 정책과 구매자 약관 URL(`https://www.paddle.com/legal/checkout-buyer-terms`)이 약관 제8조, 제12조와 맞는지
 - [ ] **운영 수치 검토**: 장애 보상(연속 4시간 이상 장애 시 이용 기간 3배 연장, 약관 제15조)과 7일 환불(약관 제12조)은 업계에서 흔히 쓰는 기준으로 넣은 값. 운영 방침에 맞게 조정하기
 - [ ] **법률 전문가 검토**: 결제를 시작하기 전에 약관과 처리방침 받아보기
 

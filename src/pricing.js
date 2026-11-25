@@ -1,11 +1,10 @@
 import './legal.js';
-import { loadPaddle, PADDLE_PRICE_ID } from './beta/paddle.js';
 import { issueBillingKey, readRedirect } from './beta/portone.js';
 
 // Pro checkout on the pricing pages. The dialog shows the notices and takes the consents the terms
 // promise on the checkout screen, then:
-// - en/ja: Paddle's overlay with the member's id in customData - the webhook (POST /webhooks/paddle)
-//   finds the member by it.
+// - en/ja: no overseas payment provider yet (being replaced) - the button is disabled in the HTML,
+//   and submitting would only show the error state.
 // - ko: PortOne's KG Inicis window issues a billing key for the member (customer id = member id);
 //   POST /subscription/portone charges the first month with it and opens the subscription. On
 //   mobile the window takes over the page and comes back here with ?billingKey= (or ?code=).
@@ -170,20 +169,8 @@ if (button && dialog) {
             return;
         }
 
-        show('loading');
-        try {
-            if (!PADDLE_PRICE_ID) throw new Error('VITE_PADDLE_PRICE_ID is not set');
-            const Paddle = await loadPaddle({ lang });
-            dialog.close();
-            Paddle.Checkout.open({
-                items: [{ priceId: PADDLE_PRICE_ID, quantity: 1 }],
-                customer: member.email ? { email: member.email } : undefined,
-                customData: { user_id: member.id },
-            });
-        } catch (error) {
-            console.error(error);
-            show('error');
-        }
+        // Overseas payments: provider not connected yet
+        show('error');
     });
 
     // Back from PortOne's mobile window

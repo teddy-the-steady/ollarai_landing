@@ -1,6 +1,6 @@
 import './style.css';
 import { supabase, api, ApiError, signOut, LOGIN_PATH, loginUrl } from './beta/api.js';
-import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+import { locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 // Subscription management (terms 제11조: cancelling must be no harder than subscribing).
 // Everything comes from GET /me (subscription, paid_source); changes go through
@@ -97,15 +97,6 @@ function subscriptionCard(sub) {
             cancel.replaceWith(confirmBox);
         });
         actions.appendChild(cancel);
-    }
-    // Paddle keeps the card: change it (or pay a failed renewal) on its checkout, through /checkout/
-    if (sub.provider === 'paddle') {
-        const pastDue = sub.status === 'past_due';
-        const update = el('button', `account-btn${pastDue ? ' account-btn-primary' : ''}`, t('account.payment-method'));
-        update.type = 'button';
-        update.addEventListener('click', () => openPaymentMethod(update, failure));
-        if (pastDue) actions.prepend(update);
-        else actions.appendChild(update);
     }
     actions.appendChild(failure);
     section.appendChild(actions);
@@ -237,26 +228,6 @@ async function changeRenewal(path, buttons, failure, body) {
 }
 
 // The link expires, so it is asked for on each click
-async function openPaymentMethod(button, failure) {
-    button.disabled = true;
-    const label = button.textContent;
-    button.textContent = t('account.working');
-    failure.classList.add('hidden');
-    try {
-        const { url } = await api('/subscription/payment-method', { method: 'POST' });
-        const target = new URL(url);
-        target.searchParams.set('lang', lang);
-        window.location.href = target.toString();
-    } catch (error) {
-        if (handleAuthError(error)) return;
-        console.error(error);
-        failure.textContent = t('account.action-failed');
-        failure.classList.remove('hidden');
-        button.disabled = false;
-        button.textContent = label;
-    }
-}
-
 async function load() {
     show('loading');
     try {
