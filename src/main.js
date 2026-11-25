@@ -99,7 +99,7 @@ const i18n = {
         'nav-features': '주요 기능',
         'cta': '무료로 시작하기',
         'hero-kicker': '재무·시세·투자 지표 AI 검색',
-        'hero-title': '숫자 찾는 시간은<br/><span class="gradient-text">0분</span>으로.',
+        'hero-title': '숫자 찾는 시간은<br/><span class="text-primary">0분</span>으로.',
         'hero-subtitle': '재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보세요.<br/><span class="ollarai-brand">Ollarai</span>가 공시와 시세 데이터에서<br/><span class="text-primary font-semibold">정확한 숫자를 찾아</span> 한눈에 보기 쉽게 정리해 드립니다.',
         'hero-cta': '무료로 시작하기',
         'problem-title': '데이터가 없는 분석은 가설일 뿐입니다.',
@@ -119,8 +119,12 @@ const i18n = {
         'screening-badge': '스크리닝 화면 준비 중입니다',
         'screening-badge-desc': '정확한 데이터 위에 세워질 다음 기능을 곧 만나보세요.',
         'screening-cta': '지금 무료로 써보기',
-        'screening-preview-tag': '미리보기',
-        'screening-query-caption': '예시 화면입니다 · 표의 수치는 실제 데이터가 아닙니다',
+        'screening-preview-tag': '실제 답변',
+        'screening-query-caption': '2026년 11월 25일 <span class="ollarai-brand">Ollarai</span>에 실제로 물어본 결과입니다. 시세와 시세 기반 지표는 11월 23일 종가 기준입니다.',
+        'feat1-sql-label': '생성된 SQL',
+        'vision-stage-current': '지금 여기',
+        'vision-stage-developing': '개발 중',
+        'vision-stage-future': '다음 단계',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>의 진화',
         'vision-desc': '판단은 당신의 몫입니다. 우리는 그 판단에 필요한 숫자를 가장 빠르고 정확하게 찾아 드립니다.',
         'vision1-title': '무결점 데이터 토대',
@@ -162,7 +166,7 @@ const i18n = {
         'nav-features': 'Features',
         'cta': 'Start for Free',
         'hero-kicker': '',
-        'hero-title': 'Spend <span class="gradient-text">zero minutes</span><br/>hunting for numbers.',
+        'hero-title': 'Spend <span class="text-primary">zero minutes</span><br/>hunting for numbers.',
         'hero-subtitle': 'Ask about financial statements, stock prices and volume,<br/>or metrics like P/E and ROE. <span class="ollarai-brand">Ollarai</span> finds the <span class="text-primary font-semibold">exact figures</span><br/>in filings and market data and lays them out in an easy-to-read format.',
         'hero-cta': 'Start for Free',
         'problem-title': 'Analysis without data is just a hypothesis.',
@@ -182,8 +186,12 @@ const i18n = {
         'screening-badge': 'Screening Dashboard Coming Soon',
         'screening-badge-desc': 'The next feature, built on accurate data, is on its way.',
         'screening-cta': 'Try It Free Now',
-        'screening-preview-tag': 'Preview',
-        'screening-query-caption': 'Example screen · the figures are not real data',
+        'screening-preview-tag': 'Real answers',
+        'screening-query-caption': 'Asked on <span class="ollarai-brand">Ollarai</span> on Nov 25, 2026. Prices and price-based metrics as of the Nov 23 close.',
+        'feat1-sql-label': 'Generated SQL',
+        'vision-stage-current': 'Where we are',
+        'vision-stage-developing': 'In development',
+        'vision-stage-future': 'Next',
         'vision-title': 'The Evolution of <span class="ollarai-brand">Ollarai</span>',
         'vision-desc': 'The decisions are yours. We find the numbers you need for them, quickly and accurately.',
         'vision1-title': 'Flawless Data Foundation',
@@ -225,7 +233,7 @@ const i18n = {
         'nav-features': '主な機能',
         'cta': '無料で始める',
         'hero-kicker': '',
-        'hero-title': '数字を探す時間は<br/><span class="gradient-text">0分</span>に。',
+        'hero-title': '数字を探す時間は<br/><span class="text-primary">0分</span>に。',
         'hero-subtitle': '財務諸表から株価・出来高、PER・ROEなどの指標まで質問してください。<br/><span class="ollarai-brand">Ollarai</span>が開示資料と株価データから<br/><span class="text-primary font-semibold">正確な数値を見つけ</span>、ひと目でわかるように整理します。',
         'hero-cta': '無料で始める',
         'problem-title': 'データのない分析は、仮説に過ぎません。',
@@ -245,8 +253,12 @@ const i18n = {
         'screening-badge': 'スクリーニング画面、準備中です',
         'screening-badge-desc': '正確なデータの上に築かれる次の機能に、もうすぐ出会えます。',
         'screening-cta': '今すぐ無料で試す',
-        'screening-preview-tag': 'プレビュー',
-        'screening-query-caption': '例示画面です ・ 表の数値は実際のデータではありません',
+        'screening-preview-tag': '実際の回答',
+        'screening-query-caption': '2026年11月25日に<span class="ollarai-brand">Ollarai</span>へ実際に質問した結果です。株価と株価ベースの指標は11月23日終値時点です。',
+        'feat1-sql-label': '生成されたSQL',
+        'vision-stage-current': '現在地',
+        'vision-stage-developing': '開発中',
+        'vision-stage-future': '次の段階',
         'vision-title': '<span class="ollarai-brand">Ollarai</span>の進化',
         'vision-desc': '判断するのはあなたです。私たちは、その判断に必要な数字を最も速く正確に見つけます。',
         'vision1-title': '完璧なデータ基盤',
@@ -309,21 +321,26 @@ window.toggleLangMenu = function() {
     document.getElementById('lang-menu').classList.toggle('hidden');
 }
 
+// "From the filing" graphic: the SQL Ollarai wrote on 2026-11-25 for "삼성전자 2025년 3분기 매출과 영업이익" /
+// "Apple revenue and operating income for the quarter ended June 2026" (period filter shortened), and its answer
 const simData = {
     ko: {
         system: 'dart',
-        query: "SELECT op_profit FROM dart_financials WHERE ticker='005930' AND period='2026Q1'",
-        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">KRW</span>"
+        source: '출처: DART 분기보고서',
+        query: `SELECT i.revenue, i.operating_profit_ebit FROM "IncomeStatement" AS i JOIN "FinancialStatements" AS f ON i.financial_statement_id = f.financial_statement_id WHERE f.company_id = 2141 AND f.period_end_date = '2026-09-30' AND f.is_consolidated`,
+        result: '107조 4,405억 원 <span class="text-sm font-normal text-slate-500">영업이익 · 2026년 3분기</span>'
     },
     en: {
         system: 'edgar',
-        query: "SELECT operating_income FROM edgar_financials WHERE ticker='NVDA' AND period='2026Q1'",
-        result: "$890,200,000 <span class=\"text-sm font-normal text-slate-500\">USD</span>"
+        source: 'Source: SEC EDGAR 10-Q',
+        query: `SELECT i.revenue, i.operating_profit_ebit FROM "IncomeStatement" AS i JOIN "FinancialStatements" AS f ON i.financial_statement_id = f.financial_statement_id WHERE f.company_id = 2692 AND f.period_end_date = '2026-06-27' AND f.is_consolidated`,
+        result: '$35.7B <span class="text-sm font-normal text-slate-500">operating income · quarter ended Jun 2026</span>'
     },
     ja: {
         system: 'dart',
-        query: "SELECT op_profit FROM dart_financials WHERE ticker='005930' AND period='2026Q1'",
-        result: "890,200,000,000 <span class=\"text-sm font-normal text-slate-500\">KRW</span>"
+        source: '出典: DART 四半期報告書',
+        query: `SELECT i.revenue, i.operating_profit_ebit FROM "IncomeStatement" AS i JOIN "FinancialStatements" AS f ON i.financial_statement_id = f.financial_statement_id WHERE f.company_id = 2141 AND f.period_end_date = '2026-09-30' AND f.is_consolidated`,
+        result: '107兆4,405億ウォン <span class="text-sm font-normal text-slate-500">営業利益 · 2026年第3四半期</span>'
     }
 };
 
@@ -372,6 +389,7 @@ function applyLang(lang) {
     document.getElementById('sim-edgar').classList.toggle('hidden', sd.system !== 'edgar');
     document.getElementById('sim-sql-query').textContent = sd.query;
     document.getElementById('sim-sql-result').innerHTML = sd.result;
+    document.getElementById('sim-source').textContent = sd.source;
 }
 
 document.addEventListener('click', function(e) {
@@ -393,73 +411,89 @@ if (document.readyState === 'loading') {
     applyLang(currentLang);
 }
 
-// Screening demo: types a sample query, then reveals results row by row (illustrative sample data).
-// Columns are rendered per-query on purpose — the real product isn't a fixed-column screener,
-// it extracts whatever data the query asks for, and scoring itself happens server-side (no
-// client-side "Score" column here).
+// Screening demo: types a question, then reveals the answer row by row. Every row is what Ollarai answered
+// when the question was asked live on 2026-11-25 (test account, paid tier; prices as of the 2026-11-23 close),
+// rounded for display - re-ask and replace them together when they go stale. Columns follow each question on
+// purpose: the product isn't a fixed-column screener, it pulls whatever the question asks for.
+// A row's first cell is [name, ticker] or a plain label; note is the line under the table.
 (function () {
     const demoEl = document.getElementById('screener-demo');
     const queryEl = document.getElementById('screener-query-text');
     const thead = document.getElementById('screener-result-head');
     const tbody = document.getElementById('screener-result-body');
+    const noteEl = document.getElementById('screener-result-note');
+    const stepEl = document.getElementById('screener-step');
     if (!demoEl || !queryEl || !thead || !tbody) return;
 
     const demosByLang = {
         ko: [
-            { query: 'PER 10 이하 · ROE 15% 이상 반도체주', columns: ['Ticker', 'PER', 'ROE', '영업이익률'], highlight: [1, 2], rows: [
-                ['005930', '8.2', '17.4%', '21.3%'],
-                ['000660', '9.1', '19.8%', '24.6%'],
-                ['042700', '7.6', '16.2%', '18.9%'],
-            ] },
-            { query: '영업이익률 20%↑ · 부채비율 60%↓', columns: ['Ticker', 'PER', '영업이익률', '부채비율'], highlight: [2], rows: [
-                ['035420', '9.1', '21.4%', '42%'],
-                ['AAPL', '7.6', '28.4%', '35%'],
-                ['MSFT', '9.8', '22.9%', '58%'],
-            ] },
-            { query: '삼성전자 최근 4개 분기 실적 추이', columns: ['분기', '매출 YoY', '영업이익 YoY', '영업이익률'], highlight: [1, 2, 3], rows: [
-                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
-                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
-                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
-                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
-            ] },
+            { query: 'PBR 1배 미만에 ROE 10% 넘는 코스피 기업 시총 순으로 5개', columns: ['기업', 'PBR', 'ROE', '시가총액'], highlight: [1, 2], rows: [
+                [['기아', '000270'], '0.61', '12.4%', '37조'],
+                [['한국전력', '015760'], '0.34', '17.7%', '16조'],
+                [['DB손해보험', '005830'], '0.99', '16.4%', '11조'],
+                [['미래에셋증권', '006800'], '0.79', '11.8%', '10조'],
+                [['NH투자증권', '005940'], '0.89', '10.9%', '8.4조'],
+            ], note: '5개 기업 · 시가총액 순' },
+            { query: '삼성전자 최근 4개 분기 매출과 영업이익', columns: ['분기', '매출', '영업이익'], highlight: [2], rows: [
+                ['2025년 4분기', '93.8조', '20.1조'],
+                ['2026년 1분기', '133.9조', '57.2조'],
+                ['2026년 2분기', '171.5조', '89.5조'],
+                ['2026년 3분기', '195.3조', '107.4조'],
+            ], note: 'DART 분기·사업보고서 · 연결 기준' },
+            { query: '최근 6개월 동안 주가가 2배 이상 오른 나스닥 종목', columns: ['기업', '종가', '6개월 수익률'], highlight: [2], rows: [
+                [['RF Acquisition II', 'RFAI'], '$34', '+211.2%'],
+                [['Alpha Teknova', 'TKNO'], '$8', '+105.9%'],
+                [['Sight Sciences', 'SGHT'], '$11', '+116.1%'],
+                [['Entera Bio', 'ENTX'], '$3.5', '+178.2%'],
+            ], note: '67개 기업 중 4개' },
         ],
         en: [
-            { query: 'PER under 10 · ROE above 15% (semiconductors)', columns: ['Ticker', 'PER', 'ROE', 'Op Margin'], highlight: [1, 2], rows: [
-                ['005930', '8.2', '17.4%', '21.3%'],
-                ['000660', '9.1', '19.8%', '24.6%'],
-                ['042700', '7.6', '16.2%', '18.9%'],
-            ] },
-            { query: 'Op. margin 20%+ · Debt/Equity under 60%', columns: ['Ticker', 'PER', 'Op Margin', 'Debt/Equity'], highlight: [2], rows: [
-                ['035420', '9.1', '21.4%', '42%'],
-                ['AAPL', '7.6', '28.4%', '35%'],
-                ['MSFT', '9.8', '22.9%', '58%'],
-            ] },
-            { query: 'Samsung Electronics — last 4 quarters trend', columns: ['Quarter', 'Revenue YoY', 'Op. Income YoY', 'Op Margin'], highlight: [1, 2, 3], rows: [
-                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
-                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
-                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
-                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
-            ] },
+            { query: 'US companies with P/B under 3 and ROE above 20%: top 5 by 6-month return', columns: ['Company', 'P/B', 'ROE', '6M return'], highlight: [3], rows: [
+                ['SBC Medical Group', '2.5', '20.5%', '+96.1%'],
+                ['American Integrity Insurance', '1.5', '29.6%', '+75.3%'],
+                ['J.Jill', '2.6', '23.0%', '+67.2%'],
+                ['Q32 Bio', '2.5', '71.0%', '+49.8%'],
+                ['Rigel Pharmaceuticals', '1.9', '93.8%', '+44.7%'],
+            ], note: '5 companies' },
+            { query: "Apple's market cap is how many times its 2025 net income?", columns: ['Company', 'Fiscal year', 'Market cap / net income'], highlight: [2], rows: [
+                ['Apple', 'FY2025', '43x'],
+            ], note: 'Latest market cap · FY2025 annual report' },
+            { query: 'Samsung Electronics revenue and operating income, last 4 quarters', columns: ['Quarter', 'Revenue', 'Operating income'], highlight: [2], rows: [
+                ['Q4 2025', '₩93.8T', '₩20.1T'],
+                ['Q1 2026', '₩133.9T', '₩57.2T'],
+                ['Q2 2026', '₩171.5T', '₩89.5T'],
+                ['Q3 2026', '₩195.3T', '₩107.4T'],
+            ], note: 'DART filings · consolidated' },
+            { query: 'Top 5 Nasdaq stocks by 3-month return', columns: ['Company', '3M return'], highlight: [1], rows: [
+                ['Netcapital', '+917.6%'],
+                ['SunPower', '+860.3%'],
+                ['RedCloud Holdings', '+751.3%'],
+                ['Lisata Therapeutics', '+713.5%'],
+                ['TJGC Group', '+584.3%'],
+            ], note: '5 companies' },
         ],
         ja: [
-            { query: 'PER10倍以下・ROE15%以上の半導体株', columns: ['Ticker', 'PER', 'ROE', '営業利益率'], highlight: [1, 2], rows: [
-                ['005930', '8.2', '17.4%', '21.3%'],
-                ['000660', '9.1', '19.8%', '24.6%'],
-                ['042700', '7.6', '16.2%', '18.9%'],
-            ] },
-            { query: '営業利益率20%以上・負債比率60%以下', columns: ['Ticker', 'PER', '営業利益率', '負債比率'], highlight: [2], rows: [
-                ['035420', '9.1', '21.4%', '42%'],
-                ['AAPL', '7.6', '28.4%', '35%'],
-                ['MSFT', '9.8', '22.9%', '58%'],
-            ] },
-            { query: 'サムスン電子、直近4四半期の業績推移', columns: ['四半期', '売上高YoY', '営業利益YoY', '営業利益率'], highlight: [1, 2, 3], rows: [
-                ['2025.Q2', '+9.4%', '+21.3%', '13.2%'],
-                ['2025.Q3', '+11.8%', '+26.7%', '14.4%'],
-                ['2025.Q4', '+14.2%', '+31.5%', '15.8%'],
-                ['2026.Q1', '+16.6%', '+38.9%', '16.8%'],
-            ] },
+            { query: 'PBR1倍割れでROE10%以上の韓国企業、時価総額上位5社', columns: ['企業', 'PBR', 'ROE', '時価総額'], highlight: [1, 2], rows: [
+                [['起亜', '000270'], '0.61', '12.4%', '37兆ウォン'],
+                [['韓国電力', '015760'], '0.34', '17.7%', '16兆ウォン'],
+                [['DB損害保険', '005830'], '0.99', '16.4%', '11兆ウォン'],
+                [['未来アセット証券', '006800'], '0.79', '11.8%', '10兆ウォン'],
+                [['NH投資証券', '005940'], '0.89', '10.9%', '8.4兆ウォン'],
+            ], note: '5社 · 時価総額順' },
+            { query: '2025年の営業利益率が30%以上の米国企業、時価総額上位5社', columns: ['企業', '営業利益率 (2025年)'], highlight: [1], rows: [
+                ['Apple', '32.0%'],
+                ['NVIDIA', '60.4%'],
+                ['Microsoft', '45.6%'],
+                ['Meta Platforms', '41.4%'],
+                ['Broadcom', '39.9%'],
+            ], note: '5社 · 時価総額順' },
+            { query: 'メタのPER、PBR、ROEを教えて', columns: ['企業', 'PER', 'PBR', 'ROE'], highlight: [1, 2, 3], rows: [
+                ['Meta Platforms', '25', '6.9', '27.8%'],
+            ], note: '直近の決算・株価ベース' },
         ],
     };
+
+    const esc = (v) => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
     let demoIndex = 0;
     let running = false;
@@ -473,7 +507,7 @@ if (document.readyState === 'loading') {
         const tr = document.createElement('tr');
         tr.className = 'screener-row border-b border-white/10 text-slate-500';
         tr.innerHTML = columns.map((label, i) =>
-            '<th class="' + (i === 0 ? 'text-left' : 'text-right') + ' py-2 font-normal">' + label + '</th>'
+            '<th class="' + (i === 0 ? 'text-left' : 'text-right pl-3') + ' py-2 font-normal">' + esc(label) + '</th>'
         ).join('');
         thead.appendChild(tr);
         requestAnimationFrame(() => requestAnimationFrame(() => tr.classList.add('visible')));
@@ -483,9 +517,13 @@ if (document.readyState === 'loading') {
         const tr = document.createElement('tr');
         tr.className = 'screener-row border-b border-white/5';
         tr.innerHTML = cells.map((val, i) => {
-            if (i === 0) return '<td class="py-2">' + val + '</td>';
+            if (i === 0) {
+                const [name, ticker] = Array.isArray(val) ? val : [val];
+                return '<td class="py-2 text-slate-200">' + esc(name)
+                    + (ticker ? ' <span class="text-slate-500 text-[10px] ml-1">' + esc(ticker) + '</span>' : '') + '</td>';
+            }
             const isHighlighted = (highlight || []).includes(i);
-            return '<td class="text-right' + (isHighlighted ? ' text-primary font-bold' : '') + '">' + val + '</td>';
+            return '<td class="text-right pl-3' + (isHighlighted ? ' text-white font-semibold' : '') + '">' + esc(val) + '</td>';
         }).join('');
         tbody.appendChild(tr);
         requestAnimationFrame(() => requestAnimationFrame(() => tr.classList.add('visible')));
@@ -514,6 +552,8 @@ if (document.readyState === 'loading') {
             const demo = demos[demoIndex % demos.length];
             thead.innerHTML = '';
             tbody.innerHTML = '';
+            if (noteEl) { noteEl.textContent = ''; noteEl.classList.remove('visible'); }
+            if (stepEl) stepEl.textContent = (demoIndex % demos.length + 1) + ' / ' + demos.length;
             await typeText(demo.query);
             if (!running) break;
             await sleep(400);
@@ -524,6 +564,7 @@ if (document.readyState === 'loading') {
                 renderRow(row, demo.highlight);
                 await sleep(220);
             }
+            if (noteEl && running) { noteEl.textContent = demo.note || ''; noteEl.classList.add('visible'); }
             await sleep(3200);
             await eraseText();
             await sleep(300);

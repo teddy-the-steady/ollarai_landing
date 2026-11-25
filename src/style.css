@@ -157,14 +157,19 @@ html[lang="ja"] body {
 .bg-section-2 { background-color: var(--section-bg-2); }
 .bg-section-3 { background-color: var(--section-bg-3); }
 
-.vision-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* Landing cards: flat surface, hairline border, one small radius - no blur, glow or hover lift */
+.panel {
+    background: var(--card-bg);
+    border: 1px solid rgb(var(--c-white) / 0.08);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
 }
-.vision-card:hover {
-    transform: translateY(-10px);
-    background: rgb(var(--c-white) / 0.05);
-    border-color: rgba(116, 210, 78, 0.5);
-}
+.panel-solid { background: var(--surface); }
+
+/* Filing excerpt in the "from the filing" graphic */
+.dart-table { border-collapse: collapse; }
+.dart-table th, .dart-table td { padding: 3px 6px; border: 1px solid #e5e7eb; text-align: right; }
+.dart-table th:first-child, .dart-table td:first-child { text-align: left; }
 
 @media (max-width: 640px) {
     .lang-label-text { display: none; }
@@ -1139,7 +1144,6 @@ html:has(dialog[open]) { overflow: hidden; }
 }
 :root[data-theme="light"] nav.glass-morphism { box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04); }
 :root[data-theme="light"] .glass-morphism.shadow-xl { background: rgb(255, 255, 255); }  /* dropdown menus */
-:root[data-theme="light"] .vision-card:hover { background: rgb(255, 255, 255); }
 :root[data-theme="light"] .tooltip-box { box-shadow: 0 8px 24px var(--shadow-pop); }
 :root[data-theme="light"] .result-notice-warn,
 :root[data-theme="light"] .legal-archive-banner { background: rgba(245, 158, 11, 0.12); }
