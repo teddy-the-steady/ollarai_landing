@@ -91,8 +91,8 @@ const i18n = {
         title: 'Ollarai - 재무·시세 데이터, 물어보면 바로',
         // OG / Twitter meta, kept in sync with index.html (ko) and build-locale-pages.js (en, ja)
         'og-title': 'Ollarai - 재무·시세 데이터, 물어보면 바로',
-        'og-description': '숫자 찾는 시간은 0분으로. 재무제표부터 주가·거래량, PER·ROE 같은 지표까지 물어보면 공시와 시세 데이터에서 정확한 숫자를 찾아 드리는 AI 데이터 검색.',
-        'og-image': 'og/ollarai-og-image-ko.png',
+        'og-description': '재무제표, 주가, PER·ROE를 물어보면 한국·미국 상장사 9,300여 곳의 공시와 시세에서 숫자를 찾아 표로 보여 드립니다. 모든 숫자에 공시 원문 링크가 붙습니다.',
+        'og-image': 'og/ollarai-og-2611-ko.png',
         'og-locale': 'ko_KR',
         'nav-data': '데이터',
         'nav-sources': '출처',
@@ -172,8 +172,8 @@ const i18n = {
     en: {
         title: 'Ollarai - Financials & Market Data, Just Ask',
         'og-title': 'Ollarai - Financials & Market Data, Just Ask',
-        'og-description': 'Spend zero minutes hunting for numbers. Ask about financial statements, stock prices and volume, or metrics like P/E and ROE, and get exact figures from filings and market data.',
-        'og-image': 'og/ollarai-og-image.png',
+        'og-description': 'Ask about financial statements, stock prices, or P/E and ROE. Ollarai finds the figures in filings and market data for 9,300+ Korean and US-listed companies, and every number links to its source filing.',
+        'og-image': 'og/ollarai-og-2611-en.png',
         'og-locale': 'en_US',
         'nav-data': 'Data',
         'nav-sources': 'Sources',
@@ -253,8 +253,8 @@ const i18n = {
     ja: {
         title: 'Ollarai - 財務・株価データ、聞けばすぐ',
         'og-title': 'Ollarai - 財務・株価データ、聞けばすぐ',
-        'og-description': '数字を探す時間は0分に。財務諸表から株価・出来高、PER・ROEなどの指標まで、質問すれば開示資料と株価データから正確な数値を見つけるAIデータ検索。',
-        'og-image': 'og/ollarai-og-image-ja.png',
+        'og-description': '財務諸表、株価、PER・ROEを聞けば、韓国・米国の上場企業9,300社以上の開示と株価データから数字を探して表で表示します。すべての数字に開示原文へのリンク付き。',
+        'og-image': 'og/ollarai-og-2611-ja.png',
         'og-locale': 'ja_JP',
         'nav-data': 'データ',
         'nav-sources': '出典',
