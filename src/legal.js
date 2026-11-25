@@ -1,4 +1,5 @@
 import './style.css';
+import './theme.js';
 
 // Build table of contents from the h2 headings in .legal-content
 const toc = document.getElementById('legal-toc');

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <meta name="robots" content="noindex">
     <title>로그인 - Ollarai</title>
@@ -25,13 +27,16 @@
             <a id="home-link" href="/" class="cursor-pointer">
                 <span class="text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
             </a>
-            <div id="lang-switch" class="relative"></div>
+            <div class="flex items-center gap-1">
+                <button type="button" data-theme-toggle class="theme-toggle"></button>
+                <div id="lang-switch" class="relative"></div>
+            </div>
         </div>
     </nav>
 
     <main class="flex-1 flex items-center justify-center px-4 py-12">
         <div class="glass-morphism rounded-3xl p-8 md:p-10 w-full max-w-md shadow-2xl">
-            <div class="inline-block px-3 py-1 rounded-full text-[11px] font-bold mb-5 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: rgb(116, 210, 78);">Beta</div>
+            <div class="inline-block px-3 py-1 rounded-full text-[11px] font-bold mb-5 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: var(--primary-text);">Beta</div>
             <h1 id="auth-title" class="text-2xl md:text-3xl font-bold text-white mb-2" data-i18n="login.title">로그인</h1>
             <p id="auth-subtitle" class="text-slate-400 text-sm mb-8" data-i18n="login.subtitle">로그인하고 공시 데이터에 질문해 보세요.</p>
 
@@ -42,7 +47,7 @@
 
             <div data-modes="login signup">
                 <div id="auth-google-gis" class="w-full flex justify-center min-h-[44px]"></div>
-                <button id="auth-google" type="button" class="hidden w-full flex items-center justify-center gap-3 bg-white text-slate-800 py-3.5 rounded-xl font-bold transition hover:bg-slate-100 disabled:opacity-60">
+                <button id="auth-google" type="button" class="hidden w-full flex items-center justify-center gap-3 google-btn py-3.5 rounded-xl font-bold transition disabled:opacity-60">
                     <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
                         <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
                         <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
@@ -80,7 +85,7 @@
                 </label>
 
                 <p id="auth-error" class="hidden text-red-400 text-sm"></p>
-                <p id="auth-notice" class="hidden text-sm leading-relaxed rounded-xl px-4 py-3" style="background-color: rgba(116, 210, 78, 0.1); color: rgb(136, 220, 98);"></p>
+                <p id="auth-notice" class="hidden text-sm leading-relaxed rounded-xl px-4 py-3" style="background-color: rgba(116, 210, 78, 0.1); color: var(--brand-text);"></p>
                 <button id="auth-resend" type="button" class="hidden self-start text-sm text-primary underline underline-offset-2 disabled:opacity-60" data-i18n="auth.resend">인증 메일 다시 보내기</button>
 
                 <button id="auth-submit" type="submit" class="bg-primary bg-primary-hover text-white py-3.5 rounded-xl font-bold transition mt-2 disabled:opacity-60" data-i18n="login.submit">로그인</button>

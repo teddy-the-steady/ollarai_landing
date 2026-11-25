@@ -4,13 +4,26 @@
 // index and approximations only (PRICE_DATA_LICENSING_PLAN.md §5.3) - the range is shown as text beside it.
 // Lightweight Charts (Apache-2.0, TradingView attribution logo kept) is loaded only when a chart opens.
 import { lang, t } from './i18n.js';
+import { currentTheme } from '../theme.js';
 
 // Korean / Japanese charts: rising red, falling blue; English: green / red
 const UP_RED = lang === 'ko' || lang === 'ja';
 const UP = UP_RED ? '#ef4444' : '#22c55e';
 const DOWN = UP_RED ? '#3b82f6' : '#ef4444';
+// Axis text, grid, and the neutral lines / markers follow the page theme (redrawn on `themechange`)
+const PALETTES = {
+    dark: { text: '#94a3b8', grid: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.08)', neutral: '#e2e8f0', neckline: '#fbbf24', level: '#94a3b8' },
+    light: { text: '#64748b', grid: 'rgba(15,23,42,0.06)', border: 'rgba(15,23,42,0.12)', neutral: '#475569', neckline: '#d97706', level: '#64748b' },
+};
+const palette = () => PALETTES[currentTheme()];
 // The neckline only: no target / stop price is drawn (server pattern_charts.py - not investment advice)
-const LEVEL_COLORS = { neckline: '#fbbf24' };
+const levelColor = (kind, p) => (kind === 'neckline' ? p.neckline : p.level);
+const chromeOptions = (p) => ({
+    layout: { textColor: p.text },
+    grid: { vertLines: { color: p.grid }, horzLines: { color: p.grid } },
+    rightPriceScale: { borderColor: p.border },
+    timeScale: { borderColor: p.border },
+});
 // Moving averages (server `ma`: 5 / 20 / 60 / 120 days, or 5 / 10 / 20 / 60 weeks on weekly bars), by order
 const MA_COLORS = ['#f472b6', '#fb923c', '#38bdf8', '#a78bfa'];
 const maWeekly = (chart) => chart.timeframe === 'W' || chart.bars === 'W';
@@ -90,12 +103,12 @@ export async function renderPatternChart(container, chart) {
     area.className = 'pattern-chart-area';
     container.append(area, footer(chart));
 
+    let p = palette();
+    const chrome = chromeOptions(p);
     const view = createChart(area, {
         height: 260,
-        layout: { background: { color: 'transparent' }, textColor: '#94a3b8', fontSize: 11, attributionLogo: true },
-        grid: { vertLines: { color: 'rgba(255,255,255,0.04)' }, horzLines: { color: 'rgba(255,255,255,0.04)' } },
-        rightPriceScale: { borderColor: 'rgba(255,255,255,0.08)' },
-        timeScale: { borderColor: 'rgba(255,255,255,0.08)' },
+        ...chrome,
+        layout: { ...chrome.layout, background: { color: 'transparent' }, fontSize: 11, attributionLogo: true },
         crosshair: { mode: CrosshairMode.Normal },
         localization: { priceFormatter: (v) => v.toFixed(1) },
         handleScroll: false,
@@ -121,30 +134,44 @@ export async function renderPatternChart(container, chart) {
             lastValueVisible: false, crosshairMarkerVisible: false });
         line.setData(ma.points.map(([time, value]) => ({ time, value })));
     });
-    chart.lines.forEach(seg => {
-        const line = view.addLineSeries({ color: '#e2e8f0', lineWidth: 1, lineStyle: 2, priceLineVisible: false,
+    const neutralLines = chart.lines.map(seg => {
+        const line = view.addLineSeries({ color: p.neutral, lineWidth: 1, lineStyle: 2, priceLineVisible: false,
             lastValueVisible: false, crosshairMarkerVisible: false });
         // two points on the same bar (a one-day level) can't be a series: drawn as the price line instead
         if (seg[0].time !== seg[1].time) line.setData([...seg].sort((a, b) => (a.time < b.time ? -1 : 1)));
+        return line;
     });
-    chart.levels.forEach(lv => candles.createPriceLine({
-        price: lv.value, color: LEVEL_COLORS[lv.kind] ?? '#94a3b8', lineWidth: 1, lineStyle: 1, axisLabelVisible: true,
+    const priceLines = chart.levels.map(lv => [lv.kind, candles.createPriceLine({
+        price: lv.value, color: levelColor(lv.kind, p), lineWidth: 1, lineStyle: 1, axisLabelVisible: true,
         title: `${t(`result.chart.level.${lv.kind}`)} ${signed(lv.pct_from_last)}`,
-    }));
+    })]);
     const bull = chart.direction === 'bull';
-    candles.setMarkers(chart.points.map(p => ({
-        time: p.time,
-        position: p.value <= (chart.candles.find(c => c[0] === p.time)?.[3] ?? p.value) + 0.05 ? 'belowBar' : 'aboveBar',
+    const markers = () => chart.points.map(pt => ({
+        time: pt.time,
+        position: pt.value <= (chart.candles.find(c => c[0] === pt.time)?.[3] ?? pt.value) + 0.05 ? 'belowBar' : 'aboveBar',
         // no direction (a window screen's days, a volume spike): neutral
-        color: chart.direction == null ? '#e2e8f0' : bull ? UP : DOWN,
+        color: chart.direction == null ? p.neutral : bull ? UP : DOWN,
         shape: 'circle',
-        text: p.label,
-    })).sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0)));
+        text: pt.label,
+    })).sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
+    candles.setMarkers(markers());
     view.timeScale().fitContent();
+
+    const onTheme = () => {
+        // the result was cleared without closing the chart
+        if (!area.isConnected) return window.removeEventListener('themechange', onTheme);
+        p = palette();
+        view.applyOptions(chromeOptions(p));
+        neutralLines.forEach(line => line.applyOptions({ color: p.neutral }));
+        priceLines.forEach(([kind, line]) => line.applyOptions({ color: levelColor(kind, p) }));
+        candles.setMarkers(markers());
+    };
+    window.addEventListener('themechange', onTheme);
 
     const resize = new ResizeObserver(() => view.applyOptions({ width: area.clientWidth }));
     resize.observe(area);
     return () => {
+        window.removeEventListener('themechange', onTheme);
         resize.disconnect();
         view.remove();
     };

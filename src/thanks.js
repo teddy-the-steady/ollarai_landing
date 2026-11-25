@@ -1,4 +1,5 @@
 import './style.css';
+import './theme.js';
 import { t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 
 // Thank-you page after a Pro payment (the payment provider's success URL). No ?lang= needed: i18n.js

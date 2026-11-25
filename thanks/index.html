@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <meta name="robots" content="noindex">
     <title>결제 완료 - Ollarai</title>
@@ -26,7 +28,10 @@
             <a href="/" id="home-link" class="flex items-center gap-2 cursor-pointer">
                 <span class="text-2xl md:text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
             </a>
-            <div id="lang-switch" class="relative text-sm"></div>
+            <div class="flex items-center gap-1">
+                <button type="button" data-theme-toggle class="theme-toggle"></button>
+                <div id="lang-switch" class="relative text-sm"></div>
+            </div>
         </div>
     </nav>
 

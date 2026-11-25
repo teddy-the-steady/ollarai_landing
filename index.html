@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <title>Ollarai - 재무·시세 데이터, 물어보면 바로</title>
 
@@ -46,6 +48,7 @@
                 <a href="#vision" class="hover:text-primary transition" data-i18n="nav-roadmap"></a>
             </div>
             <div class="flex items-center gap-3">
+                <button type="button" data-theme-toggle class="theme-toggle"></button>
                 <div class="relative">
                     <button id="lang-btn" onclick="toggleLangMenu()" class="flex items-center gap-1.5 text-slate-300 hover:text-white px-3 py-2 rounded-full hover:bg-white/10 transition text-sm font-medium">
                         <i class="fas fa-globe text-base"></i>
@@ -66,7 +69,7 @@
     <!-- Hero Section -->
     <section class="pt-48 pb-32 hero-bg">
         <div class="container mx-auto px-6 text-center">
-            <div class="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 uppercase tracking-widest empty:hidden empty:p-0 empty:m-0" style="background-color: rgba(116, 210, 78, 0.15); color: rgb(116, 210, 78);" data-i18n="hero-kicker"></div>
+            <div class="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 uppercase tracking-widest empty:hidden empty:p-0 empty:m-0" style="background-color: rgba(116, 210, 78, 0.15); color: var(--primary-text);" data-i18n="hero-kicker"></div>
             <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-[1.1] tracking-tight" data-i18n="hero-title">
             </h1>
             <p class="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed font-light" data-i18n="hero-subtitle">
@@ -79,7 +82,7 @@
     </section>
 
     <!-- AI Stock Screening Section -->
-    <section id="screening" class="py-32 overflow-hidden" style="background-color: rgb(17, 27, 41);">
+    <section id="screening" class="py-32 overflow-hidden bg-section-3">
         <div class="container mx-auto px-6">
             <div class="flex flex-col lg:flex-row items-center gap-16">
                 <div class="lg:w-1/2">
@@ -105,7 +108,7 @@
                 <div class="lg:w-1/2 relative">
                     <div id="screener-demo" class="glass-morphism rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
                         <!-- Preview tag -->
-                        <div class="absolute top-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border" style="background-color: rgba(116, 210, 78, 0.12); color: rgb(116, 210, 78); border-color: rgba(116, 210, 78, 0.3);">
+                        <div class="absolute top-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border" style="background-color: rgba(116, 210, 78, 0.12); color: var(--primary-text); border-color: rgba(116, 210, 78, 0.3);">
                             <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                             <span data-i18n="screening-preview-tag"></span>
                         </div>
@@ -130,7 +133,7 @@
     </section>
 
     <!-- Problem Section -->
-    <section class="py-32" style="background-color: rgb(18, 28, 42);">
+    <section class="py-32 bg-section">
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto text-center mb-20">
                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-i18n="problem-title"></h2>
@@ -159,7 +162,7 @@
     </section>
 
     <!-- Key Differentiator Section -->
-    <section id="features" class="py-32 overflow-hidden" style="background-color: rgb(15, 23, 35);">
+    <section id="features" class="py-32 overflow-hidden bg-page">
         <div class="container mx-auto px-6">
             <div class="text-center mb-24">
                 <h2 class="text-4xl md:text-5xl font-bold text-white mb-6" data-i18n="features-title"></h2>
@@ -170,7 +173,7 @@
                 <!-- 1. Precise Data: DART Infographic -->
                 <div class="flex flex-col lg:flex-row items-center gap-16">
                     <div class="lg:w-1/2">
-                        <div class="inline-block px-4 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.2); color: rgb(116, 210, 78);">Absolute Accuracy</div>
+                        <div class="inline-block px-4 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.2); color: var(--primary-text);">Absolute Accuracy</div>
                         <h3 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight" data-i18n="feat1-title"></h3>
                         <p class="text-slate-400 text-lg leading-relaxed">
                             <span data-i18n="feat1-desc"></span>
@@ -193,7 +196,7 @@
                                 </table>
                             </div>
                             <!-- EDGAR Simulation (English) -->
-                            <div id="sim-edgar" class="hidden bg-white text-[#333] p-4 rounded-lg mb-4 opacity-80 pointer-events-none" style="border:1px solid #ddd;">
+                            <div id="sim-edgar" class="hidden bg-[#fff] text-[#333] p-4 rounded-lg mb-4 opacity-80 pointer-events-none" style="border:1px solid #ddd;">
                                 <div class="flex items-start justify-between border-b border-gray-300 pb-1.5 mb-2">
                                     <div>
                                         <p class="text-[5.5px] font-bold text-gray-500 uppercase tracking-wide">U.S. Securities and Exchange Commission · EDGAR</p>
@@ -253,7 +256,7 @@
     </section>
 
     <!-- Vision Roadmap -->
-    <section id="vision" class="py-32 relative overflow-hidden" style="background-color: rgb(20, 32, 48);">
+    <section id="vision" class="py-32 relative overflow-hidden bg-section-2">
         <div class="container mx-auto px-6">
             <div class="text-center mb-24">
                 <h2 class="text-4xl font-bold text-white mb-6" data-i18n="vision-title"></h2>

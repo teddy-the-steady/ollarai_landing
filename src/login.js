@@ -1,4 +1,5 @@
 import './style.css';
+import './theme.js';
 import { supabase, APP_PATH, LOGIN_PATH } from './beta/api.js';
 import { lang, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
 

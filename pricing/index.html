@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <title>요금 안내 - Ollarai</title>
     <meta name="description" content="Ollarai(올라AI) 요금제와 이용 한도">
@@ -31,6 +33,7 @@
             </a>
             <div class="flex items-center gap-1 text-sm font-medium">
                 <a href="/app/" class="hidden sm:inline px-3 py-2 mr-2 text-slate-300 hover:text-white transition">서비스 열기</a>
+                <button type="button" data-theme-toggle class="theme-toggle"></button>
                 <div class="relative" data-lang-menu>
                     <button type="button" class="flex items-center gap-1.5 text-slate-300 hover:text-white px-3 py-2 rounded-full hover:bg-white/10 transition" aria-label="Language" aria-haspopup="true" aria-expanded="false">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -55,7 +58,7 @@
             <p class="pricing-event mb-10 rounded-2xl px-5 py-4 text-sm leading-relaxed text-slate-300" style="background-color: rgba(116, 210, 78, 0.1); border: 1px solid rgba(116, 210, 78, 0.3);">
                 <strong class="text-white">출시 기념 이벤트</strong> · 가입하면 30일 동안 정밀 답변 100회와 모든 유료 기능을 무료로 써 볼 수 있어요. 결제 정보는 필요 없고, 기간이 끝나도 자동으로 결제되지 않아요.
                 <!-- Filled from ?event_until= (the app's event badge links here) -->
-                <span id="event-until" class="hidden mt-2 font-semibold" style="color: rgb(116, 210, 78);" data-text="내 이벤트는 {date}까지예요"></span>
+                <span id="event-until" class="hidden mt-2 font-semibold" style="color: var(--primary-text);" data-text="내 이벤트는 {date}까지예요"></span>
             </p>
 
             <!-- Plans: limits must match the server (FREE_MAX_ROWS, PAID_MONTHLY_QUERY_LIMIT) and stay the same in

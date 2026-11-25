@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <meta name="robots" content="noindex">
     <title>구독 관리 - Ollarai</title>
@@ -25,10 +27,9 @@
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center gap-4">
             <a href="/app/" class="flex items-center gap-2 cursor-pointer">
                 <span class="text-2xl md:text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: rgb(116, 210, 78);">Beta</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest" style="background-color: rgba(116, 210, 78, 0.15); color: var(--primary-text);">Beta</span>
             </a>
             <div class="flex items-center gap-3 md:gap-4 text-sm">
-                <div id="lang-switch" class="relative"></div>
                 <button id="logout-btn" type="button" class="text-slate-400 hover:text-white transition" data-i18n="app.logout">로그아웃</button>
             </div>
         </div>
@@ -46,6 +47,19 @@
 
         <!-- Filled by src/account.js from GET /me -->
         <div id="account-body" class="hidden flex-col gap-6"></div>
+
+        <!-- Display: theme and language live here, not in the app header (src/account.js) -->
+        <section class="account-card mt-6">
+            <p class="account-label" data-i18n="settings.display">화면</p>
+            <div class="settings-row">
+                <span id="theme-choice-label" data-i18n="settings.theme">테마</span>
+                <div id="theme-choice" class="tier-toggle" role="radiogroup" aria-labelledby="theme-choice-label"></div>
+            </div>
+            <div class="settings-row">
+                <span id="lang-choice-label" data-i18n="settings.language">언어</span>
+                <div id="lang-choice" class="tier-toggle" role="radiogroup" aria-labelledby="lang-choice-label"></div>
+            </div>
+        </section>
     </main>
 </body>
 </html>

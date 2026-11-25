@@ -1,10 +1,11 @@
 import './style.css';
+import './theme.js';
 import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
 import flagFontUrl from 'country-flag-emoji-polyfill/dist/TwemojiCountryFlags.woff2?url';
 import { supabase, api, ApiError, signOut, LOGIN_PATH, loginUrl } from './beta/api.js';
 import { VIEW_CURRENCIES, moneyCell, hasToggle } from './beta/money.js';
 import { createFormatter, shownColumns } from './beta/display.js';
-import { lang, locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+import { lang, locale, t, applyI18n, sitePath } from './beta/i18n.js';
 import { exampleQuestions, proExampleQuestions } from './beta/examples.js';
 import { rowFilings, tableFilings, filingLabel, systemName, refLink, refTopic, STATEMENTS, TOPICS } from './beta/sources.js';
 import { renderPatternChart } from './beta/patternChart.js';
@@ -13,7 +14,6 @@ import { renderPatternChart } from './beta/patternChart.js';
 polyfillCountryFlagEmojis('Twemoji Country Flags', flagFontUrl);
 
 applyI18n();
-langSwitch(document.getElementById('lang-switch'));
 document.getElementById('home-link').href = sitePath('/');
 
 const VIEWS = ['loading', 'start', 'pending', 'blocked', 'error', 'query'];

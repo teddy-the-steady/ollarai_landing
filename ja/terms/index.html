@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Theme before first paint: saved choice, else the system setting (src/theme.js) -->
+    <script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){}</script>
     <meta name="format-detection" content="telephone=no">
     <title>利用規約 - Ollarai</title>
     <meta name="description" content="Ollarai 利用規約">
@@ -30,6 +32,7 @@
                 <span class="text-3xl tracking-tighter text-white ollarai-brand">Ollarai</span>
             </a>
             <div class="flex items-center gap-1 text-sm font-medium">
+                <button type="button" data-theme-toggle class="theme-toggle mr-1"></button>
                 <a href="/terms/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">KO</a>
                 <a href="/en/terms/" class="px-3 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition">EN</a>
                 <a href="/ja/terms/" class="px-3 py-2 rounded-full text-white bg-white/10">JA</a>

@@ -1,14 +1,38 @@
 import './style.css';
+import './theme.js';
 import { supabase, api, ApiError, signOut, LOGIN_PATH, loginUrl } from './beta/api.js';
-import { locale, t, applyI18n, langSwitch, sitePath } from './beta/i18n.js';
+import { lang, LANGS, setLang, locale, t, applyI18n, sitePath } from './beta/i18n.js';
+import { themeChoice, setTheme } from './theme.js';
 
-// Subscription management (terms 제11조: cancelling must be no harder than subscribing).
+// Settings: subscription management (terms 제11조: cancelling must be no harder than subscribing).
 // Everything comes from GET /me (subscription, paid_source); changes go through
 // POST /subscription/cancel | resume.
 
 document.title = t('account.page-title');
 applyI18n();
-langSwitch(document.getElementById('lang-switch'));
+
+// Display settings: segmented choices (the .tier-toggle look). Theme applies at once; language reloads the page.
+function segmented(container, options, current, onPick) {
+    const buttons = options.map(([value, label]) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', String(value === current));
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.setAttribute('aria-checked', String(b === btn)));
+            onPick(value);
+        });
+        return btn;
+    });
+    container.replaceChildren(...buttons);
+}
+
+segmented(document.getElementById('theme-choice'),
+    ['system', 'light', 'dark'].map(v => [v, t(`settings.theme.${v}`)]), themeChoice(), setTheme);
+const LANG_NAMES = { ko: '한국어', en: 'English', ja: '日本語' };
+segmented(document.getElementById('lang-choice'),
+    LANGS.map(code => [code, LANG_NAMES[code]]), lang, (code) => { if (code !== lang) setLang(code); });
 
 const bodyEl = document.getElementById('account-body');
 const loadingEl = document.getElementById('account-loading');
