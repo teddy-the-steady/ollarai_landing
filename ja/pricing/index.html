@@ -54,14 +54,14 @@
             <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">料金案内</h1>
             <p class="text-slate-400 mb-12">まずは無料でお試しいただき、より多くの結果が必要になったらご購読ください。</p>
 
-            <!-- Launch event: numbers must match the server (EVENT_CREDITS, EVENT_CREDIT_DAYS); remove when the event ends -->
-            <p class="pricing-event mb-10 rounded-2xl px-5 py-4 text-sm leading-relaxed text-slate-300" style="background-color: rgba(116, 210, 78, 0.1); border: 1px solid rgba(116, 210, 78, 0.3);">
-                <strong class="text-white">リリース記念イベント</strong> · 登録すると30日間、精密回答100回を含むすべての有料機能を無料でお試しいただけます。お支払い情報は不要で、期間終了後に自動で課金されることはありません。
-                <!-- Filled from ?event_until= (the app's event badge links here) -->
-                <span id="event-until" class="hidden mt-2 font-semibold" style="color: var(--primary-text);" data-text="あなたのイベント期間は{date}までです"></span>
+            <!-- Pro trial (server "event credit": EVENT_CREDITS=5, EVENT_CREDIT_DAYS=30): shown only to members who have it -
+                 the app's trial badge links here with ?event_until= (src/legal.js). The offer itself is in the Free plan below. -->
+            <p id="event-banner" class="pricing-event hidden mb-10 rounded-2xl px-5 py-4 text-sm leading-relaxed text-slate-300" style="background-color: rgba(116, 210, 78, 0.1); border: 1px solid rgba(116, 210, 78, 0.3);">
+                <strong class="text-white">Pro体験</strong> · 体験期間中は有料機能を無料でご利用いただけます。期間終了後に自動で課金されることはありません。
+                <span id="event-until" class="hidden mt-2 font-semibold" style="color: var(--primary-text);" data-text="あなたの体験期間は{date}までです"></span>
             </p>
 
-            <!-- Plans: limits must match the server (FREE_MAX_ROWS, PAID_MONTHLY_QUERY_LIMIT) and stay the same in
+            <!-- Plans: limits must match the server (FREE_MAX_ROWS, PAID_MONTHLY_QUERY_LIMIT, EVENT_CREDITS, EVENT_CREDIT_DAYS) and stay the same in
                  /pricing/, /en/pricing/, /ja/pricing/ - terms 제7조, 제8조 -->
             <div class="grid md:grid-cols-2 gap-6 mb-16">
                 <section class="pricing-plan">
@@ -72,6 +72,7 @@
                         <li>1日100回まで質問</li>
                         <li>結果表の先頭20行まで表示</li>
                         <li>金額のウォン・ドル表示切替</li>
+                        <li><strong>精密回答5回</strong>を無料でお試し（最初の質問から30日間）</li>
                     </ul>
                     <a href="/app/" class="pricing-cta pricing-cta-secondary">無料で始める</a>
                 </section>
@@ -94,6 +95,7 @@
                 <h2 id="limits">利用上限</h2>
                 <ul>
                     <li>Freeプランでは1日100回まで質問でき、毎日午前0時（韓国時間）にリセットされます。Proプランのご利用中は、スピード回答も回数の制限なく利用できます。</li>
+                    <li>アカウントごとに1回、最初の質問から30日間、精密回答を5回まで無料でお試しいただけます。お試し中は結果表の全件表示など他の有料機能もご利用いただけ、5回を使い切るか30日が過ぎるとFreeプランに戻ります。自動で課金されることはありません。</li>
                     <li>精密回答の利用回数は毎月1日午前0時（韓国時間）にリセットされます。上限に達した月も、スピード回答で引き続き質問できます。</li>
                     <li>Proプランでは結果表を先に100行まで表示し、「さらに表示」から全件まで読み込めます。結果が非常に多い場合は読み込みに時間がかかることがあります。</li>
                 </ul>

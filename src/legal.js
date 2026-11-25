@@ -41,4 +41,6 @@ if (eventUntil && !isNaN(until)) {
     const date = new Intl.DateTimeFormat(document.documentElement.lang, { month: 'long', day: 'numeric' }).format(until);
     eventUntil.textContent = eventUntil.dataset.text.replace('{date}', date);
     eventUntil.classList.replace('hidden', 'block');
+    // The banner itself is hidden for everyone else: the event no longer takes new sign-ups
+    document.getElementById('event-banner')?.classList.remove('hidden');
 }

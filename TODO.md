@@ -63,7 +63,7 @@
   1. 앱 DB 마이그레이션: `0005_free_daily_usage.py`, `0006_users_is_internal.py`, `0007_event_credits.py` (`python src/app_db/migrations/<파일>`, 서버 코드 배포 **전에**)
   2. 내부 계정 지정: 앱 DB에서 `UPDATE users SET is_internal = true WHERE email IN ('<run_ai_beta 테스트 계정>', '<운영자>');`. 빠지면 `run_ai_beta.py`가 SQL·trace를 못 받고 무료 일일 한도에 걸림
   3. 자동 승인과 출시 이벤트: `infra/env.sh --no-apply AUTO_APPROVE_USERS=true EVENT_CREDITS=100 EVENT_CREDIT_DAYS=30` (4번 deploy에서 적용)
-     - 이벤트 숫자를 바꾸면 요금 안내 배너(ko/en/ja `pricing/index.html`의 "출시 기념 이벤트")도 같이 고치기
+     - 이벤트 숫자를 바꾸면 요금 안내(ko/en/ja)의 Pro 체험 문구(Free 플랜·이용 한도)도 같이 고치기
      선택: `FREE_DAILY_QUERY_LIMIT`(기본 100), `QUESTION_MAX_CHARS`(기본 500), `HISTORY_RETENTION_DAYS`(기본 180). `ENABLE_API_DOCS`는 운영에서 설정하지 않기
   4. `infra/deploy.sh` (180일 삭제 타이머 `ollarai-purge-expired`도 설치) → 프론트 배포
   5. ~~사전등록 Lambda `ALLOWED_ORIGIN`~~: 폼을 없앴으므로 대신 배포 후 Lambda를 내림 (아래 "사전등록자 처리")
@@ -87,7 +87,9 @@
 
 ## P2. 결제 도입 전 (통신판매업 신고 → PG·Paddle 가입 후)
 
-- [ ] **출시 이벤트 종료** (결제 시작할 때): `infra/env.sh EVENT_CREDITS=0`으로 새 지급 중단(이미 받은 크레딧은 기간까지 유지), 요금 안내의 이벤트 배너 제거 (ko/en/ja)
+- [ ] **출시 이벤트 → Pro 체험으로 전환** (결제 시작할 때, 2026-11-26 결정): 새 가입자는 정밀 답변 5회·30일 무료 체험(결제 전 맛보기, 약관 제12조 청약철회 제한의 근거). 서버 `infra/env.sh EVENT_CREDITS=5 EVENT_CREDIT_DAYS=30` (이미 100회를 받은 계정은 기간까지 유지)
+  - [x] 화면 문구 "출시 기념 이벤트" → "Pro 체험"(ko/en/ja `src/beta/i18n.js`), 요금 안내 Free 플랜·이용 한도에 체험 안내, 배너는 앱 체험 배지(`?event_until=`)로 온 회원에게만
+  - 숫자를 바꾸면 요금 안내(ko/en/ja) Free 플랜·이용 한도 문구도 같이 고치기
 - [ ] **결제 버튼 비활성 유지**: 결제 흐름과 아래 고지가 갖춰질 때까지 "결제 준비 중" 유지 (11/20 시행판이어도 결제가 없으면 적용받는 회원이 없음)
 - [ ] **결제 화면에 고지와 동의 넣기**: 약관에 "결제 화면에서 알리고 동의받는다"고 적었으므로 아래 항목이 화면에 실제로 있어야 함. 결제 버튼은 아직 "결제 준비 중"(비활성)이고, 국내 PG·Paddle 결제 흐름을 붙일 때 함께 넣기
   - 요금, 결제 주기, 자동 갱신 사실, 해지 방법 (약관 제9조 제2항). 요금 안내 화면에는 있음, 결제 직전 화면에도 다시 보여 주기
