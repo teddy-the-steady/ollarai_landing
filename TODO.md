@@ -10,6 +10,7 @@
 - 토스페이먼츠 입점 거절 (2026-11-05): 랜딩의 목표가 산출, 종목 비교·분석, 수익 전환 문구를 보고 투자정보 제공·유사투자자문 형태로 판단. 가입비·연관리비 환불은 메일 회신으로 요청
   - 대응: 랜딩에서 해당 문구·섹션 제거, 하단에 투자자문 아님 고지 추가, 약관·처리방침·요금 안내의 토스 기재를 "국내 결제대행사(PG)"로 일반화
 - Paddle 사용 중단 (2026-11-25): 해외 결제는 다른 서비스로 교체 예정. 프론트의 Paddle 코드는 제거했고 en/ja 결제 버튼은 "Coming soon"/"近日公開"로 막아 둠
+- Creem 승인 (2026-11-25): 해외(USD) 결제를 Creem(Armitage Labs OÜ, 에스토니아, Merchant of Record)으로 연동. 코드·약관·처리방침은 반영, 아래 P2 "해외 결제 교체"의 남은 항목(대시보드 설정·배포) 필요
 - 다음: 수정분 배포 → 포트원 문의(PG 일괄 신청)
 
 ## 결정 사항 (2026-10-30)
@@ -40,7 +41,7 @@
     - [ ] 본인 카드로 PC·모바일 실결제 9,900원 → 포트원 콘솔·이니시스 상점관리자 승인 확인 → 콘솔에서 결제 취소, `/account/` 해지·빌링키 삭제 확인
     - [ ] 첫 실결제 한 달 뒤 00:30 KST 갱신 로그(CloudWatch, `[portone] renewed=1`) 확인
     - [x] 처리방침(ko/en/ja) 제2조 국내 결제 항목·수집 방법, 안내 문단(운영자 미저장, 결제 요청 시 포트원에서 불러옴), 제3조 보유 기간, 11/20 개정 이력에 구매자 이름·휴대폰 번호 추가 (11/20판에 포함 - 공지 기간 3일)
-- [ ] **Paddle 신청**: 도메인 심사에서 요금·약관·환불·처리방침 페이지(en)를 확인함. 서비스 설명은 "공시 데이터 조회·분석 도구"로 쓰고 투자 자문이 아님을 분명히 (금융 관련 업종은 추가 확인 대상)
+- [x] ~~**Paddle 신청**~~ (Paddle 중단, 2026-11-25 Creem 승인): 도메인 심사에서 요금·약관·환불·처리방침 페이지(en)를 확인함. 서비스 설명은 "공시 데이터 조회·분석 도구"로 쓰고 투자 자문이 아님을 분명히 (금융 관련 업종은 추가 확인 대상)
 
 ## P0. 무료 버전 배포 전 필수
 
@@ -91,13 +92,15 @@
 - [ ] **결제 화면에 고지와 동의 넣기**: 약관에 "결제 화면에서 알리고 동의받는다"고 적었으므로 아래 항목이 화면에 실제로 있어야 함. 결제 버튼은 아직 "결제 준비 중"(비활성)이고, 국내 PG·Paddle 결제 흐름을 붙일 때 함께 넣기
   - 요금, 결제 주기, 자동 갱신 사실, 해지 방법 (약관 제9조 제2항). 요금 안내 화면에는 있음, 결제 직전 화면에도 다시 보여 주기
   - 유료 방식을 이용하면 청약철회가 제한된다는 안내 (약관 제12조 제2항). 요금 안내·구독 관리 화면에는 있음, 결제 직전 화면에도 넣기
-  - 해외 결제 시 Paddle 제공·국외 이전 동의 체크박스 (처리방침 제5조, 제7조)
+  - 해외 결제 시 Creem 제공·국외 이전 동의 체크박스 (처리방침 제5조, 제7조) - en/ja 대화상자에 넣음
   - 만 19세 미만 법정대리인 동의 안내 (약관 제13조)
-- [ ] **해외 결제 교체** (Paddle 대체): 프론트 Paddle 코드(`src/beta/paddle.js`, `/checkout/`, `/account/` 결제 수단 변경 버튼, en/ja 결제 대화상자의 Paddle 동의 2개)는 제거함. 이전 구현은 git 이력 참고
-  - [ ] 새 서비스로 en/ja 결제 버튼 연결: `src/pricing.js`의 해외 결제 분기, en/ja 요금 안내 버튼 `disabled` 해제, 대화상자에 제3자 제공·국외 이전 동의 다시 넣기
-  - [x] 약관·처리방침(ko/en/ja)과 요금 안내 본문에서 Paddle 삭제, 해외 결제는 "준비 중"으로 (2026-11-25 개정, 11/20본은 `/terms/2026-11-20/`, `/privacy/2026-11-20/`에 보관)
-  - [ ] 새 서비스 확정 후 약관 제8조·제9조·제12조, 처리방침 제2조·제5조·제7조·제10조에 해외 결제 내용 다시 넣는 개정 (시행 7일 전 공지)
-  - [ ] 서버: `POST /webhooks/paddle`, `billing.py` `_Paddle`, `/subscription/payment-method`, `PADDLE_*` 환경변수 정리
+- [ ] **해외 결제 교체** (Paddle → Creem): 흐름은 en/ja "Subscribe" → 로그인·구독 여부 확인 → 고지·동의 3개(결제, Creem 제3자 제공, 국외 이전) → 서버 `POST /subscription/creem`이 Creem 결제창 생성(`metadata.user_id`, `request_id` = 회원 id) → Creem 결제 → `/thanks/`. 구독 반영은 웹훅 `POST /webhooks/creem`(`creem-signature` HMAC), 해지·해지 취소는 Creem API(`mode: scheduled` / `resume`), `/account/` "결제 수단 변경"은 Creem 고객 포털
+  - [x] 프론트: `src/pricing.js` 해외 결제 분기, en/ja 버튼 활성화, 대화상자 MoR 안내와 Creem 동의 2개, `/account/` 결제 수단 변경 버튼·`account.provider.creem` 문구
+  - [x] 서버: `service_pipeline/creem.py`(API·웹훅), `billing.py` `_Creem`, `app_db.apply_creem_subscription`, 마이그레이션 `0014_subscription_creem.py`, Caddy 허용 목록 예외 `/webhooks/creem`, Paddle 코드·테스트 삭제 (`tests/test_creem.py`)
+  - [x] 약관·처리방침(ko/en/ja) 2026-11-25 개정을 "Paddle → Creem 변경"으로 (회원이 없어 공지 기간 없이 당일 시행): 약관 제8조·제9조·제12조, 처리방침 한눈에 보기·제2조·제5조·제7조·제10조의 Paddle을 Creem(Armitage Labs OÜ, 에스토니아, https://creem.io/privacy, 구매자 약관 https://creem.io/buyer-terms)으로, 한국어 요금 안내도. 11/20본은 `/terms/2026-11-20/`, `/privacy/2026-11-20/`에 보관
+  - [ ] Creem 대시보드(테스트 모드 먼저): Pro 상품(USD 7.99, 매월) → `CREEM_PRODUCT_ID`, API 키 → `CREEM_API_KEY`(`creem_test_`면 테스트 API), 웹훅 `https://<API_DOMAIN>/webhooks/creem` → `CREEM_WEBHOOK_SECRET`. 서버 반영 `infra/env.sh --no-apply CREEM_API_KEY CREEM_WEBHOOK_SECRET CREEM_PRODUCT_ID`, SSM의 옛 키는 `infra/env.sh --delete PADDLE_API_KEY PADDLE_WEBHOOK_SECRET`
+  - [ ] 배포: 마이그레이션 `0014_subscription_creem.py` → `infra/deploy.sh`(Caddyfile 포함) → 테스트 카드로 결제 → 웹훅 로그 `[creem] ... -> subscription=` 확인, `/account/`에서 해지·해지 취소·결제 수단 변경 확인
+  - [ ] 테스트 결제로 확인할 것(문서에 명시 없음): `subscription.*` 이벤트에 체크아웃 `metadata`가 복사되는지(없어도 `checkout.completed`로 회원을 찾음), 해지 취소 후 오는 이벤트가 `status: active`인지
   - [ ] 로그인 후 요금 안내로 돌아오기: 지금은 로그인하면 `/app/`으로 감
 - [ ] **운영 수치 검토**: 장애 보상(연속 4시간 이상 장애 시 이용 기간 3배 연장, 약관 제15조)과 7일 환불(약관 제12조)은 업계에서 흔히 쓰는 기준으로 넣은 값. 운영 방침에 맞게 조정하기
 - [ ] **법률 전문가 검토**: 결제를 시작하기 전에 약관과 처리방침 받아보기

@@ -86,7 +86,7 @@
                         <li><strong>市場データ</strong>：精密回答で、株価・時価総額・PERなど株価が必要な指標まで照会</li>
                         <li>結果表をすべて表示</li>
                     </ul>
-                    <button type="button" id="subscribe-btn" class="pricing-cta pricing-cta-primary" disabled>近日公開</button>
+                    <button type="button" id="subscribe-btn" class="pricing-cta pricing-cta-primary">申し込む</button>
                 </section>
             </div>
 
@@ -101,7 +101,7 @@
                 <h2 id="billing">お支払いと解約</h2>
                 <ul>
                     <li>初回決済日から1か月単位でご利用いただき、解約しない限り毎月同じ日に自動で決済されます（<a href="/ja/terms/#recurring">利用規約 第9条</a>）。</li>
-                    <li>米ドルでのお支払いは準備中です。韓国のお客様は国内の決済代行会社を通じて月9,900ウォン（付加価値税込み）でお支払いいただきます（<a href="/ja/terms/#fees">第8条</a>）。</li>
+                    <li>米ドルでのお支払いは販売代理人（Merchant of Record）であるCreemが処理し、適用される税金は決済時に加算されます。韓国のお客様は国内の決済代行会社を通じて月9,900ウォン（付加価値税込み）でお支払いいただきます（<a href="/ja/terms/#fees">第8条</a>）。</li>
                     <li>サブスクリプション管理画面からいつでも解約でき、お支払い済みの期間が終わるまで有料機能をご利用いただけます（<a href="/ja/terms/#cancellation">第11条</a>）。</li>
                     <li>決済日から7日以内であれば申込みを撤回できます。ただし、その期間に精密回答（規約上の有料方式）を利用した場合は撤回が制限されます（<a href="/ja/terms/#refund">第12条</a>）。</li>
                 </ul>
@@ -110,8 +110,8 @@
         </div>
     </main>
 
-    <!-- Proの決済 (src/pricing.js): 規約が「決済画面で」と約束した告知と同意 (第5条, 第9条第2項, 第12条第2項, 第13条)。
-         海外決済の決済代行会社は差し替え中: ボタンは無効のまま。第三者提供・国外移転の同意 (プライバシーポリシー 第5条, 第7条) はここに入る。/en/pricing/ と同じ内容 -->
+    <!-- Proの決済 (src/pricing.js): 規約が「決済画面で」と約束した告知と同意 (第5条, 第9条第2項, 第12条第2項, 第13条;
+         プライバシーポリシー 第5条, 第7条) の後に Creem の決済画面 (POST /subscription/creem)。/en/pricing/ と同じ内容 -->
     <dialog id="subscribe-dialog" class="subscribe-dialog" aria-labelledby="subscribe-title">
         <div data-state="loading" class="flex justify-center py-12"><span class="beta-spinner"></span></div>
 
@@ -125,11 +125,22 @@
             <ul class="subscribe-notes">
                 <li>決済日から7日以内であれば申込みを撤回できますが、<strong>その期間に精密回答を利用した場合は撤回できません</strong>。決済の前にFreeプランでお試しいただけます（<a href="/ja/terms/#refund" target="_blank" rel="noopener">利用規約 第12条</a>）。</li>
                 <li>19歳未満の方は、決済に法定代理人の同意が必要です（<a href="/ja/terms/#minors" target="_blank" rel="noopener">第13条</a>）。</li>
+                <li>販売代理人（Merchant of Record）であるArmitage Labs OÜ（Creem）がサブスクリプションを販売し、請求・税金・領収書を担当します。</li>
             </ul>
 
             <label class="subscribe-check">
                 <input type="checkbox" required>
                 <span><strong>（必須）</strong>上記の料金、自動更新、解約、申込みの撤回に関する内容と<a href="/ja/terms/" target="_blank" rel="noopener">利用規約</a>を確認し、決済に同意します。</span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>（必須）</strong>Creemへの個人情報の第三者提供に同意します。
+                    <span class="subscribe-detail">提供先：Armitage Labs OÜ（Creem） · 目的：販売代理人としてのサブスクリプション販売（請求・決済、税金の徴収・申告、返金、不正防止） · 項目：メールアドレス、アカウント識別子、選択したプラン · 保有期間：<a href="https://creem.io/privacy" target="_blank" rel="noopener">Creemのプライバシー通知</a>および関係法令（税法など）に定める期間。同意を拒否できますが、その場合はCreemによる決済を利用できません（Freeプランには影響しません。<a href="/ja/privacy/#third-party" target="_blank" rel="noopener">プライバシーポリシー 第5条</a>）。</span></span>
+            </label>
+            <label class="subscribe-check">
+                <input type="checkbox" required>
+                <span><strong>（必須）</strong>個人情報の国外移転に同意します。
+                    <span class="subscribe-detail">移転先：Armitage Labs OÜ（Creem、エストニア） · 項目：メールアドレス、アカウント識別子、選択したプラン · 目的：海外決済 · 時期・方法：決済に進むときにネットワーク経由で送信 · 保有期間：Creemのプライバシー通知および関係法令に定める期間。同意を拒否できますが、その場合はCreemによる決済を利用できません（<a href="/ja/privacy/#transfer" target="_blank" rel="noopener">第7条</a>）。</span></span>
             </label>
 
             <div class="subscribe-actions">

@@ -3,8 +3,9 @@ import { issueBillingKey, readRedirect } from './beta/portone.js';
 
 // Pro checkout on the pricing pages. The dialog shows the notices and takes the consents the terms
 // promise on the checkout screen, then:
-// - en/ja: no overseas payment provider yet (being replaced) - the button is disabled in the HTML,
-//   and submitting would only show the error state.
+// - en/ja: POST /subscription/creem opens a Creem checkout (Merchant of Record, USD) tied to the member
+//   on the server, and the page goes there. After payment Creem sends them to /thanks/; the subscription
+//   itself arrives on the server by webhook.
 // - ko: PortOne's KG Inicis window issues a billing key for the member (customer id = member id);
 //   POST /subscription/portone charges the first month with it and opens the subscription. On
 //   mobile the window takes over the page and comes back here with ?billingKey= (or ?code=).
@@ -75,6 +76,20 @@ async function startDomesticSubscription(billingKey) {
         console.error(error);
         if (error instanceof ApiError && error.status === 402) show('declined', error.detail?.message);
         else if (error instanceof ApiError && error.status === 409) show('subscribed');
+        else show('error');
+    }
+}
+
+// Creem's checkout, opened on the server for the member -> Creem's page (then /thanks/).
+async function startOverseasCheckout() {
+    const { api, ApiError } = await loadApi();
+    show('loading');
+    try {
+        const { url } = await api('/subscription/creem', { method: 'POST' });
+        window.location.href = url;
+    } catch (error) {
+        console.error(error);
+        if (error instanceof ApiError && error.status === 409) show('subscribed');
         else show('error');
     }
 }
@@ -169,8 +184,7 @@ if (button && dialog) {
             return;
         }
 
-        // Overseas payments: provider not connected yet
-        show('error');
+        await startOverseasCheckout();
     });
 
     // Back from PortOne's mobile window
