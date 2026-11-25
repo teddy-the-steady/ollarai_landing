@@ -395,8 +395,20 @@ queryForm.addEventListener('submit', (e) => {
     ask(question, selectedTier(), true, source);
 });
 
+// The answer a typed question may follow up on ("그럼 SK하이닉스는?" after "삼성전자 3분기 영업이익"): the last
+// one asked on this page, sent as previous_history_id while recent - the server writes a follow-up as a
+// question that stands alone (pipeline/follow_up.py) and leaves an unrelated one as it is.
+const FOLLOW_UP_WINDOW_MS = 30 * 60 * 1000;
+let lastAnswer = null; // { id, at }
+
+function previousHistoryId(source, followUp) {
+    if (!followUp || source !== 'typed' || !lastAnswer) return null;
+    return Date.now() - lastAnswer.at <= FOLLOW_UP_WINDOW_MS ? lastAnswer.id : null;
+}
+
 // tier: null lets the server use the account's tier. fromInput clears the box on success.
-async function ask(question, tier, fromInput = false, source = 'typed') {
+// followUp: false for a question asked again as it stands (the Precise retry).
+async function ask(question, tier, fromInput = false, source = 'typed', followUp = true) {
     setBusy(true);
     tierUpsell.classList.add('hidden');
     examplesDismissed = true;
@@ -406,8 +418,13 @@ async function ask(question, tier, fromInput = false, source = 'typed') {
 
     try {
         // auto: the server reads the language (any Hangul = ko) - 'ko' sent English / Japanese through Korean MT
-        const response = await api('/query', { method: 'POST', body: { question, language: 'auto', source, ...(tier ? { tier } : {}) } });
+        const previous = previousHistoryId(source, followUp);
+        const response = await api('/query', { method: 'POST', body: {
+            question, language: 'auto', source, ...(tier ? { tier } : {}),
+            ...(previous != null ? { previous_history_id: previous } : {}),
+        } });
         card.showResponse(response, response.history_id, true);
+        if (response.history_id != null) lastAnswer = { id: response.history_id, at: Date.now() };
         if (fromInput) {
             queryInput.value = '';
             autoResize();
@@ -486,7 +503,10 @@ function createResultCard(question, createdAt = new Date()) {
                     ? (key) => api(`/history/${historyId}/chart?part=${i}&key=${encodeURIComponent(key)}`) : null;
                 body.appendChild(renderPart(part, response.is_multi_query, loadAll, loadSummary, loadChart));
             });
-            if (live && response.tier === 'free') body.appendChild(retryPrecise(question));
+            // A follow-up is asked again as the question it was answered as (it stands alone).
+            if (live && response.tier === 'free') {
+                body.appendChild(retryPrecise(response.follow_up?.rewritten ? response.follow_up.question_used : question));
+            }
         },
         showError(message) {
             clearInterval(timer);
@@ -512,7 +532,7 @@ function retryPrecise(question) {
     btn.appendChild(el('span', null, t('result.retry-precise')));
     btn.addEventListener('click', () => {
         if (busy) return;
-        ask(question, 'paid');
+        ask(question, 'paid', false, 'typed', false);
         resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     return btn;

@@ -502,7 +502,7 @@ const STRINGS = {
         'thanks.start': 'Start using Ollarai',
         'thanks.account': 'Subscription settings',
         'thanks.note-delay': 'It can take up to a minute for Pro to show up on your account. If you don\'t see it yet, refresh in a moment.',
-        'thanks.note-receipt': 'We\'ll email you a receipt. You can cancel or view your billing anytime in Subscription settings.',
+        'thanks.note-receipt': 'Creem, our payment partner, will email you a receipt, and your card statement may show Creem. You can cancel or view your billing anytime in Subscription settings.',
         'thanks.note-contact': 'Contact: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
     },
     ja: {
@@ -731,7 +731,7 @@ const STRINGS = {
         'thanks.start': 'Ollarai を使い始める',
         'thanks.account': '購読設定',
         'thanks.note-delay': 'Pro がアカウントに反映されるまで1分ほどかかる場合があります。表示されない場合は、少し待ってから再読み込みしてください。',
-        'thanks.note-receipt': '領収書はメールでお送りします。解約やお支払い履歴は、購読設定からいつでも確認できます。',
+        'thanks.note-receipt': '領収書は決済パートナーのCreemからメールで届きます。カードの利用明細にもCreemと表示される場合があります。解約やお支払い履歴は、購読設定からいつでも確認できます。',
         'thanks.note-contact': 'お問い合わせ：<a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
     },
 };

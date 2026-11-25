@@ -971,6 +971,19 @@ html:has(dialog[open]) { overflow: hidden; }
 }
 .subscribe-summary dt { color: rgb(var(--c-slate-400)); }
 .subscribe-summary dd { color: rgb(var(--c-white)); }
+/* en/ja: Creem's name is what the buyer sees on the checkout, receipt and card statement - say so up front */
+.subscribe-merchant {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--primary-text) 45%, transparent);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--primary-text) 10%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgb(var(--c-slate-300));
+}
+.subscribe-merchant-title { margin-bottom: 0.25rem; font-size: 0.95rem; font-weight: 700; color: rgb(var(--c-white)); }
+.subscribe-merchant b { color: rgb(var(--c-white)); }
 .subscribe-notes {
     display: flex;
     flex-direction: column;
