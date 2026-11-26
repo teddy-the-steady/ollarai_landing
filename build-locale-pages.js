@@ -12,23 +12,25 @@ const base = fs.readFileSync('dist/index.html', 'utf8');
 const locales = {
   en: {
     dir: 'dist/en',
-    ogTitle:       'Ollarai - Financials & Market Data, Just Ask',
-    ogDesc:        'Ask about financial statements, stock prices, or P/E and ROE. Ollarai finds the figures in filings and market data for 9,300+ Korean and US-listed companies, and every number links to its source filing.',
+    title:         'OllarAI - Financials & Market Data, Just Ask',
+    ogTitle:       'OllarAI - Financials & Market Data, Just Ask',
+    ogDesc:        'Ask about financial statements, stock prices, or P/E and ROE. OllarAI finds the figures in filings and market data for 9,300+ Korean and US-listed companies, and every number links to its source filing.',
     ogImage:       `${DOMAIN}/og/ollarai-og-2611b-en.png`,
     ogImageType:   'image/png',
     ogLocale:      'en_US',
-    twTitle:       'Ollarai - Financials & Market Data, Just Ask',
-    twDesc:        'Ask about financial statements, stock prices, or P/E and ROE. Ollarai finds the figures in filings and market data for 9,300+ Korean and US-listed companies, and every number links to its source filing.',
+    twTitle:       'OllarAI - Financials & Market Data, Just Ask',
+    twDesc:        'Ask about financial statements, stock prices, or P/E and ROE. OllarAI finds the figures in filings and market data for 9,300+ Korean and US-listed companies, and every number links to its source filing.',
     twImage:       `${DOMAIN}/og/ollarai-og-2611b-en.png`,
   },
   ja: {
     dir: 'dist/ja',
-    ogTitle:       'Ollarai - 財務・株価データ、聞けばすぐ',
+    title:         'OllarAI - 財務・株価データ、聞けばすぐ',
+    ogTitle:       'OllarAI - 財務・株価データ、聞けばすぐ',
     ogDesc:        '財務諸表、株価、PER・ROEを聞けば、韓国・米国の上場企業9,300社以上の開示と株価データから数字を探して表で表示します。すべての数字に開示原文へのリンク付き。',
     ogImage:       `${DOMAIN}/og/ollarai-og-2611b-ja.png`,
     ogImageType:   'image/png',
     ogLocale:      'ja_JP',
-    twTitle:       'Ollarai - 財務・株価データ、聞けばすぐ',
+    twTitle:       'OllarAI - 財務・株価データ、聞けばすぐ',
     twDesc:        '財務諸表、株価、PER・ROEを聞けば、韓国・米国の上場企業9,300社以上の開示と株価データから数字を探して表で表示します。すべての数字に開示原文へのリンク付き。',
     twImage:       `${DOMAIN}/og/ollarai-og-2611b-ja.png`,
   },
@@ -39,6 +41,15 @@ for (const [lang, cfg] of Object.entries(locales)) {
 
   // Add <base href="/"> so all relative asset paths resolve from root
   html = html.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n    <base href="/">');
+
+  // The ko page leads with 올라AI (title, description, site name, JSON-LD); en/ja lead with OllarAI and
+  // keep 올라AI as an alternate name.
+  html = html
+    .replace('<html lang="ko">', `<html lang="${lang}">`)
+    .replace(/<title>[^<]*<\/title>/, `<title>${cfg.title}</title>`)
+    .replace(/(<meta name="description"\s+content=")[^"]*(")/,       `$1${cfg.ogDesc}$2`)
+    .replace(/(<meta property="og:site_name"\s+content=")[^"]*(")/,   '$1OllarAI$2')
+    .replace(/"name": "올라AI",(\s*)"alternateName": \["OllarAI", /g, '"name": "OllarAI",$1"alternateName": ["올라AI", ');
 
   // Swap OG meta tag content values
   html = html

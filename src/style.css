@@ -100,9 +100,21 @@
     font-family: 'Blinker', sans-serif;
 }
 
+/* The wordmark inside running text. Blinker's caps (627/1000) are ~14% shorter than Inter's, so at the
+   surrounding size the name reads small; 1.15em matches the cap height. line-height: 1 keeps the bigger
+   span from pushing the line box taller. (.ollarai-brand stays for the logos, sized by their own classes.) */
+.ollarai-brand-text {
+    font-family: 'Blinker', sans-serif;
+    font-size: 1.15em;
+    line-height: 1;
+}
+
+/* The "AI" of 올라AI, after .pretendard; same 1.15em so it stands as tall as 올라. */
 .ollarai-brand-bold {
     font-family: 'Blinker', sans-serif;
     font-weight: bold;
+    font-size: 1.15em;
+    line-height: 1;
 }
 
 .pretendard {

@@ -43,7 +43,7 @@ export function setLang(next) {
 const STRINGS = {
     ko: {
         // login
-        'login.page-title': '로그인 - Ollarai',
+        'login.page-title': '로그인 - OllarAI',
         'login.title': '로그인',
         'login.subtitle': '로그인하고 공시 데이터에 질문해 보세요.',
         'login.submit': '로그인',
@@ -210,7 +210,7 @@ const STRINGS = {
         'result.sources.hint': '숫자는 공시에서 읽어 정리한 값이에요. 4분기처럼 계산한 값은 원문에 그대로 나오지 않을 수 있어요.',
 
         // account: subscription management (/account/)
-        'account.page-title': '설정 - Ollarai',
+        'account.page-title': '설정 - OllarAI',
         'account.nav': '설정',
         'account.title': '설정',
         'settings.display': '화면',
@@ -266,10 +266,10 @@ const STRINGS = {
         'account.refund': '결제일부터 7일 안이고 그 기간에 정밀 답변을 쓰지 않았다면 청약을 철회(환불)할 수 있어요. <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a>으로 요청해 주세요 (<a href="{refund}" class="text-primary underline underline-offset-2">이용약관 제12조</a>).',
         'account.load-failed': '구독 정보를 불러오지 못했어요.',
 
-        'thanks.page-title': '결제 완료 - Ollarai',
+        'thanks.page-title': '결제 완료 - OllarAI',
         'thanks.title': '구독해 주셔서 감사해요',
-        'thanks.lead': 'Ollarai Pro 결제가 완료됐어요. 이제 모든 유료 기능을 쓸 수 있어요.',
-        'thanks.start': 'Ollarai 시작하기',
+        'thanks.lead': '<span class="ollarai-brand-text">OllarAI</span> Pro 결제가 완료됐어요. 이제 모든 유료 기능을 쓸 수 있어요.',
+        'thanks.start': '<span class="ollarai-brand-text">OllarAI</span> 시작하기',
         'thanks.account': '구독 설정',
         // Empty: domestic payments open the subscription before landing here, so there's no delay to explain
         'thanks.note-delay': '',
@@ -277,7 +277,7 @@ const STRINGS = {
         'thanks.note-contact': '문의: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
     },
     en: {
-        'login.page-title': 'Log in - Ollarai',
+        'login.page-title': 'Log in - OllarAI',
         'login.title': 'Log in',
         'login.subtitle': 'Log in to start asking about filing data.',
         'login.submit': 'Log in',
@@ -440,7 +440,7 @@ const STRINGS = {
         'result.sources.role.derived': 'used to compute (e.g. Q4 = annual − Q1 to Q3)',
         'result.sources.hint': 'Figures are read from these filings. Computed values such as Q4 may not appear in the filing as such.',
 
-        'account.page-title': 'Settings - Ollarai',
+        'account.page-title': 'Settings - OllarAI',
         'account.nav': 'Settings',
         'account.title': 'Settings',
         'settings.display': 'Display',
@@ -496,17 +496,17 @@ const STRINGS = {
         'account.refund': 'Within 7 days of a payment, if you haven\'t used precise answers in that period, you can withdraw and get a refund. Email <a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a> (<a href="{refund}" class="text-primary underline underline-offset-2">Terms, Article 12</a>).',
         'account.load-failed': 'Couldn\'t load your subscription.',
 
-        'thanks.page-title': 'Payment complete - Ollarai',
+        'thanks.page-title': 'Payment complete - OllarAI',
         'thanks.title': 'Thank you for subscribing',
-        'thanks.lead': 'Your Ollarai Pro payment is complete. Every paid feature is now yours to use.',
-        'thanks.start': 'Start using Ollarai',
+        'thanks.lead': 'Your <span class="ollarai-brand-text">OllarAI</span> Pro payment is complete. Every paid feature is now yours to use.',
+        'thanks.start': 'Start using <span class="ollarai-brand-text">OllarAI</span>',
         'thanks.account': 'Subscription settings',
         'thanks.note-delay': 'It can take up to a minute for Pro to show up on your account. If you don\'t see it yet, refresh in a moment.',
         'thanks.note-receipt': 'Creem, our payment partner, will email you a receipt, and your card statement may show Creem. You can cancel or view your billing anytime in Subscription settings.',
         'thanks.note-contact': 'Contact: <a href="mailto:contact@ollarai.com" class="underline underline-offset-2 hover:text-primary transition">contact@ollarai.com</a>',
     },
     ja: {
-        'login.page-title': 'ログイン - Ollarai',
+        'login.page-title': 'ログイン - OllarAI',
         'login.title': 'ログイン',
         'login.subtitle': 'ログインして開示データに質問してみましょう。',
         'login.submit': 'ログイン',
@@ -669,7 +669,7 @@ const STRINGS = {
         'result.sources.role.derived': '計算に使用（第4四半期 = 年間 − 第1〜3四半期など）',
         'result.sources.hint': '数値はこれらの開示から読み取ったものです。第4四半期など計算した値は原文にそのまま載っていない場合があります。',
 
-        'account.page-title': '設定 - Ollarai',
+        'account.page-title': '設定 - OllarAI',
         'account.nav': '設定',
         'account.title': '設定',
         'settings.display': '表示',
@@ -725,10 +725,10 @@ const STRINGS = {
         'account.refund': '決済日から7日以内で、その期間に精密回答を利用していない場合は、申込みを撤回（返金）できます。<a href="mailto:contact@ollarai.com" class="text-primary underline underline-offset-2">contact@ollarai.com</a> までご連絡ください（<a href="{refund}" class="text-primary underline underline-offset-2">利用規約 第12条</a>）。',
         'account.load-failed': 'サブスクリプション情報を読み込めませんでした。',
 
-        'thanks.page-title': 'お支払い完了 - Ollarai',
+        'thanks.page-title': 'お支払い完了 - OllarAI',
         'thanks.title': 'ご購読ありがとうございます',
-        'thanks.lead': 'Ollarai Pro のお支払いが完了しました。すべての有料機能をご利用いただけます。',
-        'thanks.start': 'Ollarai を使い始める',
+        'thanks.lead': '<span class="ollarai-brand-text">OllarAI</span> Pro のお支払いが完了しました。すべての有料機能をご利用いただけます。',
+        'thanks.start': '<span class="ollarai-brand-text">OllarAI</span> を使い始める',
         'thanks.account': '購読設定',
         'thanks.note-delay': 'Pro がアカウントに反映されるまで1分ほどかかる場合があります。表示されない場合は、少し待ってから再読み込みしてください。',
         'thanks.note-receipt': '領収書は決済パートナーのCreemからメールで届きます。カードの利用明細にもCreemと表示される場合があります。解約やお支払い履歴は、購読設定からいつでも確認できます。',
